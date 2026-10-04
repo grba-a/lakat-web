@@ -1,0 +1,199 @@
+@import "tailwindcss";
+
+/* Paleta 1:1 iz aplikacije (lakat-ios Theme.swift). Tamna tema je jedina. */
+@theme {
+  --color-bg: #09090b;
+  --color-surface: #131316;
+  --color-surface-2: #1a1a1f;
+  --color-line: #27272a;
+  --color-fg: #f4f4f5;
+  --color-muted: #8b8b94;
+  --color-soft: #c9c9cf;
+  --color-accent: #4ade80;
+  --color-amber: #f5b544;
+  --font-display: var(--font-anton), "Impact", "Arial Narrow", sans-serif;
+  --font-sans: var(--font-archivo), system-ui, -apple-system, sans-serif;
+}
+
+html {
+  background: var(--color-bg);
+  color-scheme: dark;
+}
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+::selection {
+  background: var(--color-accent);
+  color: #052e16;
+}
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* ---------- polje točkica (splash) ----------
+   Zelena u sredini prelazi u jantar prema rubu, kao SplashView u aplikaciji. */
+.dots {
+  background: radial-gradient(circle at 50% 50%, #4ade80 0%, #9bd86a 35%, #f5b544 62%, transparent 80%);
+  -webkit-mask: radial-gradient(circle, #000 1.1px, transparent 1.6px) 0 0 / 8px 8px;
+  mask: radial-gradient(circle, #000 1.1px, transparent 1.6px) 0 0 / 8px 8px;
+}
+.dots-lg {
+  background: radial-gradient(ellipse at 50% 38%, #4ade80 0%, #f5b544 52%, transparent 74%);
+  -webkit-mask: radial-gradient(circle, #000 1.2px, transparent 1.8px) 0 0 / 16px 16px;
+  mask: radial-gradient(circle, #000 1.2px, transparent 1.8px) 0 0 / 16px 16px;
+}
+.breathe {
+  animation: breathe 4.8s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+/* Metalni wordmark iz splasha (SplashWordmark u aplikaciji). */
+.metal {
+  background: linear-gradient(#fff, #e4e6ea 50%, #b7bbc3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- CSS mobitel (generički, rupica za kameru, nije iPhone) ---------- */
+.phone {
+  --w: 200px;
+  position: relative;
+  width: var(--w);
+  aspect-ratio: 9 / 19.5;
+  border-radius: calc(var(--w) * 0.16);
+  background: #0b0b0d;
+  border: 1px solid #44464e;
+  box-shadow:
+    inset 0 0 0 calc(var(--w) * 0.03) #050506,
+    0 0 0 1px #1c1d22,
+    0 40px 80px -24px rgb(0 0 0 / 0.85),
+    0 0 90px -30px rgb(74 222 128 / 0.35);
+  flex: none;
+}
+.phone-screen {
+  position: absolute;
+  inset: calc(var(--w) * 0.03);
+  border-radius: calc(var(--w) * 0.13);
+  overflow: hidden;
+  background: var(--color-bg);
+}
+.phone-punch {
+  position: absolute;
+  top: calc(var(--w) * 0.055);
+  left: 50%;
+  width: calc(var(--w) * 0.05);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: #000;
+  box-shadow: 0 0 0 1.5px #1a1a1d;
+  z-index: 3;
+}
+.phone-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.08) 48%, transparent 60%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Hero: CSS intro, bez GSAP-a. Sadržaj je vidljiv i bez animacije. */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes settle {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+.intro-1 { animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.intro-2 { animation: settle 0.9s 0.08s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.intro-3 { animation: rise 0.7s 0.18s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.float { animation: float 6s ease-in-out infinite; }
+@keyframes float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+
+/* ---------- preklopni timer ---------- */
+.flip {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--cw, 34px);
+  height: calc(var(--cw, 34px) * 1.46);
+  border-radius: 7px;
+  background: linear-gradient(#1f1f25 50%, #1a1a1f 50%);
+  font-family: var(--font-display);
+  font-size: var(--cw, 34px);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04), 0 6px 14px -8px rgb(0 0 0 / 0.8);
+}
+.flip::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: 1px;
+  background: #000;
+}
+.flip.go {
+  animation: flip 0.38s ease-out;
+}
+@keyframes flip {
+  0% { transform: rotateX(0); }
+  45% { transform: rotateX(-88deg); }
+  100% { transform: rotateX(0); }
+}
+
+/* Krigla izviri iz ekrana (easter egg, 5 tapova) */
+@keyframes peek {
+  0% { transform: translateY(110%) rotate(-8deg); }
+  60% { transform: translateY(-6%) rotate(4deg); }
+  100% { transform: translateY(0) rotate(0); }
+}
+.peek { animation: peek 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Zeleni sjaj iza Krigle u footeru: diše zajedno s lebdenjem. */
+.krigla-glow {
+  background: radial-gradient(closest-side, rgb(74 222 128 / 0.5), rgb(74 222 128 / 0.14) 55%, transparent 78%);
+  filter: blur(8px);
+  animation: glow 6s ease-in-out infinite;
+}
+@keyframes glow {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+/* Chat u „Pitaš se?“: poruka uđe odozdo, Krigla tipka s tri točke. */
+.chat-in { animation: rise 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-muted);
+  animation: typing 0.9s ease-in-out infinite;
+}
+@keyframes typing {
+  0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
