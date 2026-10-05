@@ -63,75 +63,101 @@ function Live({ id, on }) {
   return null;
 }
 
-const STEP_MS = 5200;
+// Tura na mobitelu (Petar, 2026-10-05): natrag na skrolanje, ali fluidno i čisto.
+// Skrol je nativni (bez Lenisa); animacija samo prati skrol i meko ga dostiže (lerp),
+// pa ekrani klize unutar mobitela točno uz prst, a naslovi se pretapaju.
+const STEP = 0.72; // visina jednog koraka u visinama ekrana
 
-// Tura na mobitelu kao Instagram story (Petar, 2026-10-05: skrolanje 01–06 mu se nije svidjelo).
-// Jedan ekran: trake napretka gore, tap desno = dalje, lijevo = natrag, drži = pauza, swipe radi.
-// Vrti se samo dok je na ekranu. Live sloj po ekranu ostaje (kotač, pinovi, podij, film).
 export function FeatureTourMobile() {
   const root = useRef(null);
+  const phone = useRef(null);
+  const screens = useRef([]);
+  const captions = useRef([]);
+  const fill = useRef(null);
   const [active, setActive] = useState(0);
-  const [visible, setVisible] = useState(false);
-  const [paused, setPaused] = useState(false);
-  const [cycle, setCycle] = useState(0); // restart trake kad se ručno promijeni
-  const touch = useRef(null);
 
   useEffect(() => {
-    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.55 });
-    io.observe(root.current);
-    return () => io.disconnect();
+    const el = root.current;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const n = FEATURES.length;
+    let shown = 0;
+    let raf = 0;
+    let running = false;
+    let cur = 0;
+
+    function target() {
+      const r = el.getBoundingClientRect();
+      const step = window.innerHeight * STEP;
+      return Math.max(0, Math.min(n - 1, -r.top / step));
+    }
+    function paint(d, vel) {
+      screens.current.forEach((node, k) => {
+        if (!node) return;
+        const o = k - d;
+        const a = Math.min(Math.abs(o), 1);
+        node.style.transform = `translate3d(0, ${o * 104}%, 0) scale(${1 - a * 0.08})`;
+        node.style.opacity = String(1 - a * 0.6);
+      });
+      captions.current.forEach((node, k) => {
+        if (!node) return;
+        const o = k - d;
+        // Oštrije pretapanje: na pola puta nijedan naslov nije vidljiv, pa se ne preklapaju.
+        node.style.opacity = String(Math.max(0, 1 - Math.abs(o) * 2.3));
+        node.style.transform = `translate3d(0, ${o * 40}px, 0)`;
+      });
+      if (fill.current) fill.current.style.transform = `scaleX(${(d + 1) / n})`;
+      if (phone.current) phone.current.style.transform = `perspective(1000px) rotateX(${Math.max(-6, Math.min(6, vel * 40))}deg)`;
+      const a = Math.round(d);
+      if (a !== shown) {
+        shown = a;
+        setActive(a);
+      }
+    }
+    function loop() {
+      const t = target();
+      const prev = cur;
+      cur = reduce ? t : cur + (t - cur) * 0.14;
+      if (Math.abs(t - cur) < 0.001) cur = t;
+      paint(cur, cur - prev);
+      if (cur !== t || Math.abs(cur - prev) > 0.0005) raf = requestAnimationFrame(loop);
+      else running = false;
+    }
+    function kick() {
+      if (!running) {
+        running = true;
+        raf = requestAnimationFrame(loop);
+      }
+    }
+    cur = target();
+    paint(cur, 0);
+    window.addEventListener("scroll", kick, { passive: true });
+    window.addEventListener("resize", kick);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", kick);
+      window.removeEventListener("resize", kick);
+    };
   }, []);
 
-  useEffect(() => {
-    if (!visible || paused) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = setTimeout(() => setActive((a) => (a + 1) % FEATURES.length), STEP_MS);
-    return () => clearTimeout(t);
-  }, [active, visible, paused, cycle]);
-
-  function go(d) {
-    setActive((a) => (a + d + FEATURES.length) % FEATURES.length);
-    setCycle((c) => c + 1);
-  }
-  function onDown(e) {
-    touch.current = { x: e.clientX, t: Date.now() };
-    setPaused(true);
-  }
-  function onUp(e) {
-    setPaused(false);
-    const s = touch.current;
-    touch.current = null;
-    if (!s) return;
-    const dx = e.clientX - s.x;
-    if (Math.abs(dx) > 40) return go(dx < 0 ? 1 : -1); // swipe
-    if (Date.now() - s.t > 350) return; // držanje = samo pauza
-    const r = e.currentTarget.getBoundingClientRect();
-    go(e.clientX - r.left > r.width * 0.33 ? 1 : -1);
-  }
-
   const f = FEATURES[active];
-  const run = visible && !paused;
 
   return (
-    <section ref={root} className="relative md:hidden" aria-label="Što stiže" data-krigla="Gle, to sam ja na ekranu.">
-      <div className="flex min-h-[100svh] flex-col items-center justify-center gap-5 px-5 pt-14 pb-[118px]">
-        <div
-          className="float relative touch-pan-y select-none"
-          onPointerDown={onDown}
-          onPointerUp={onUp}
-          onPointerCancel={() => setPaused(false)}
-          role="group"
-          aria-roledescription="story"
-          aria-label={`${active + 1} od ${FEATURES.length}: ${f.name}`}
-        >
+    <section
+      ref={root}
+      className="relative md:hidden"
+      style={{ height: `calc(100svh + ${(FEATURES.length - 1) * STEP * 100}svh)` }}
+      aria-label="Što stiže"
+      data-krigla="Gle, to sam ja na ekranu."
+    >
+      {/* Nativni scroll-snap (bez biblioteke): skrol meko stane na svakoj funkciji. */}
+      {FEATURES.map((x, k) => (
+        <span key={x.id} aria-hidden="true" className="tour-snap pointer-events-none absolute left-0 h-px w-px" style={{ top: `${k * STEP * 100}svh` }} />
+      ))}
+      <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center gap-5 overflow-hidden px-5 pt-12 pb-[118px]">
+        <div ref={phone} className="will-change-transform">
           <Phone width={PHONE_W}>
             {FEATURES.map((x, k) => (
-              <div
-                key={x.id}
-                className={`absolute inset-0 transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                  k === active ? "translate-x-0 scale-100 opacity-100" : k < active ? "-translate-x-[6%] scale-[0.96] opacity-0" : "translate-x-[6%] scale-[0.96] opacity-0"
-                }`}
-              >
+              <div key={x.id} ref={(node) => (screens.current[k] = node)} className="absolute inset-0 will-change-transform">
                 <div className="absolute top-0 left-1/2 h-full -translate-x-1/2" style={{ aspectRatio: "640 / 1317" }}>
                   <img
                     src={`/img/scr-${x.id}.webp`}
@@ -146,28 +172,10 @@ export function FeatureTourMobile() {
                 </div>
               </div>
             ))}
-            {/* Trake napretka kao u storyju. */}
-            <div className="absolute inset-x-[6%] top-[3.2%] z-[5] flex gap-1">
-              {FEATURES.map((x, k) => (
-                <span key={x.id} className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/25">
-                  <span
-                    key={k === active ? `${active}-${cycle}` : k}
-                    className="block h-full rounded-full bg-white"
-                    style={
-                      k < active
-                        ? { width: "100%" }
-                        : k > active
-                          ? { width: "0%" }
-                          : { width: "0%", animation: `story-bar ${STEP_MS}ms linear forwards`, animationPlayState: run ? "running" : "paused" }
-                    }
-                  />
-                </span>
-              ))}
-            </div>
             {!["krigla", "ekipe"].includes(f.id) && (
               <div
                 key={active}
-                className="push-drop absolute inset-x-[5%] top-[7.5%] z-[4] grid grid-cols-[auto_1fr] items-center gap-2 rounded-[14px] border border-white/5 bg-[#26262c]/95 px-2.5 py-2 text-left shadow-lg"
+                className="push-drop absolute inset-x-[5%] top-[7%] z-[4] grid grid-cols-[auto_1fr] items-center gap-2 rounded-[14px] border border-white/5 bg-[#26262c]/95 px-2.5 py-2 text-left shadow-lg"
                 style={{ fontSize: "calc(var(--w) * 0.048)" }}
               >
                 <img src="/img/krigla-lik.webp" alt="" width={48} height={48} className="object-contain" style={{ width: "calc(var(--w) * 0.13)", height: "calc(var(--w) * 0.13)" }} />
@@ -187,16 +195,27 @@ export function FeatureTourMobile() {
           </Phone>
         </div>
 
-        <div key={`c${active}`} className="caption-in grid gap-2 text-center" aria-live="polite">
-          <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-            0{active + 1} · {f.name}
-          </span>
-          <h2 className="font-display text-[clamp(28px,8.4vw,36px)] leading-[0.95] uppercase text-balance">
-            <Punct>{f.title}</Punct>
-          </h2>
-          <p className="mx-auto max-w-[34ch] text-[14px] text-soft text-pretty">{f.line}</p>
+        <div className="relative grid w-full max-w-[360px] text-center">
+          {FEATURES.map((x, k) => (
+            <div
+              key={x.id}
+              ref={(node) => (captions.current[k] = node)}
+              className="col-start-1 row-start-1 grid content-start gap-2 will-change-transform"
+              aria-hidden={k !== active}
+            >
+              <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+                0{k + 1} · {x.name}
+              </span>
+              <h2 className="font-display text-[clamp(28px,8.4vw,36px)] leading-[0.95] uppercase text-balance">
+                <Punct>{x.title}</Punct>
+              </h2>
+              <p className="mx-auto max-w-[34ch] text-[14px] text-soft text-pretty">{x.line}</p>
+            </div>
+          ))}
         </div>
-        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted/70">Tapni mobitel za dalje</p>
+        <div className="h-[3px] w-24 overflow-hidden rounded-full bg-line" aria-hidden="true">
+          <div ref={fill} className="h-full origin-left rounded-full bg-accent" style={{ transform: "scaleX(0.17)" }} />
+        </div>
       </div>
     </section>
   );

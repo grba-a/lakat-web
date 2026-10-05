@@ -19,6 +19,11 @@ html {
   background: var(--color-bg);
   color-scheme: dark;
 }
+/* Mobilna tura: proximity snap samo na njezinim točkama, ostatak stranice skrola slobodno. */
+@media (max-width: 767px) {
+  html { scroll-snap-type: y proximity; }
+  .tour-snap { scroll-snap-align: start; }
+}
 body {
   background: var(--color-bg);
   color: var(--color-fg);

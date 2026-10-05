@@ -34,3 +34,26 @@ usernames and rewards must match app accounts) or Brevo only / a separate projec
 ## Outside the web (Petar / campaign)
 w13 Instagram countdown sticker + „Add Yours“ · w22 pre-order needs the paid Apple account + approved build (check noon release) ·
 w23 Brevo launch mail at 12:00 · w26 Krigla poses (Codex, GPT-Image) · DEV recapture of screens without faces.
+
+# Round 3 — decisions 2026-10-05 (https://claude.ai/artifact/9UVSXPfX98nEiUhCDsCi7k, db `odluke/`)
+All „Da“. q1 Claude sets up Brevo via API · q2 A = LAKAT Supabase PROD (SQL file, Petar runs it) · q3 roleta yes · q4 Claude
+tries Vercel API for Analytics · q5 QR yes · q6 no App Store link yet · q7 Codex poses: Claude writes a prompt + context folder ·
+q8 later, but Claude may design people silhouettes instead of faces · q9 Claude drafts the /privatnost sentence ·
+t1 BACK TO SCROLL with fluid, clean scroll-linked animations (native scroll, no Lenis) · n1–n8 all yes.
+
+## Round 3A — no backend
+1. [ ] t1 scroll tour, scrubbed + lerp-smoothed (screens slide inside the phone, captions crossfade, progress rail)
+2. [ ] q3 roleta: last 60 min full-screen countdown, shutter at 12:00
+3. [ ] n2 friend greeting (?src=share/izazov) · n3 Krigla knows the time of day · n4 tab-title timer in the last 24 h
+4. [ ] n5 Krigla hunt (5 hidden Krigle → secret line + wallpaper later)
+5. [ ] n1 „Spremi za Story“ 9:16 „Još N dana“ image (next/og) + share
+6. [ ] n7 /press page
+7. [ ] q8 silhouettes instead of blurred faces in screens
+8. [ ] q5 QR on desktop after launch (`qrcode` dep)
+9. [ ] q9 /privatnost sentence draft (vault + PLAN) · q7 Codex prompt folder · q4 Vercel Analytics via API
+
+## Round 3B — backend (Supabase PROD + Brevo)
+- SQL `docs/supabase-lista1.sql`: table + security-definer RPCs for anon (upis, potvrda, kvart ranking, fill %, ime slobodno, ref count)
+- Own double opt-in: token link mailed via Brevo transactional → /potvrdi?t= → confirmed in Supabase + contact into the Brevo list
+- w05 ticket + QR referral · w06 dovedi pajdaša · w07 kvartovski rat · w08 Napunite Kriglu · w09 rezerviraj ime · w28 presence
+- n6 wallpapers after Codex poses · n8 3D phone (Blender + r3f) last
