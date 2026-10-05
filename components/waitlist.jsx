@@ -143,7 +143,7 @@ export function Waitlist({ prefix = "", android = false, inputRef }) {
             text={
               already
                 ? "Ti si već na listi. Vidimo se 1. 12."
-                : `Poslala sam potvrdu na ${sent}. Klikni je ili te ne upišem.${PRO ? " Nakon potvrde te čeka ulaznica." : ""}${platform === "android" ? " Javim ti kad Android stigne." : ""}`
+                : `Poslao sam potvrdu na ${sent}. Klikni je ili te ne upišem.${PRO ? " Nakon potvrde te čeka ulaznica." : ""}${platform === "android" ? " Javim ti kad Android stigne." : ""}`
             }
             size={40}
             onView={false}

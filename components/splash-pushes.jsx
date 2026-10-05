@@ -9,7 +9,7 @@ const PUSHES = [
   "Ena je za šankom, a ti skrolaš mobitel. Sramota.",
   "Ante je za šankom. Miči guzicu.",
   "Bepo je objavio rundu. Tko časti?",
-  "Krigla: Nula rundi ovaj tjedan. Vidiš kako sam prazna?",
+  "Krigla: Nula rundi ovaj tjedan. Vidiš kako sam prazan?",
 ];
 
 export function SplashPushes({ start = true }) {
