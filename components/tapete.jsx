@@ -39,7 +39,7 @@ export function Tapete() {
 
   return (
     <section data-krigla="Stavi me na zaključani ekran." className="mx-auto grid max-w-3xl gap-6 px-5 py-20">
-      <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">Tapete za mobitel</span>
+      <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">Pozadine za mobitel</span>
       <h2 className="font-display text-[clamp(40px,11vw,52px)] leading-[0.95] uppercase text-balance">
         Krigla na zaključanom ekranu<span className="text-accent">.</span>
       </h2>

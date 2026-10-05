@@ -15,9 +15,6 @@ export async function NapuniteKriglu() {
         <img src={`/img/krigla/${s.razina}.webp`} alt={`Krigla je ${s.pct} % puna`} width={480} height={480} className="float relative w-full object-contain" />
       </div>
       <div className="grid gap-4">
-        <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
-          Krigla {Math.min(s.korak + 1, 4)} od 4{s.sljedeci ? ` · cilj ${s.cilj}` : ""}
-        </span>
         <h2 className="font-display text-[clamp(40px,11vw,56px)] leading-[0.95] uppercase">
           Napunite Kriglu<span className="text-accent">.</span>
         </h2>
@@ -31,7 +28,7 @@ export async function NapuniteKriglu() {
           </p>
         </div>
         <p className="text-[15px] text-soft text-pretty">
-          Svaki potvrđeni upis je jedna kap. Kad se Krigla napuni, otkrije trag o sedmoj funkciji, i kreće nova, veća.
+          Svaki potvrđeni upis je jedna kap. Kad se Krigla napuni, otkriva se trag o sedmoj funkciji.
         </p>
         {s.tragovi.map((t) => (
           <KriglaSays key={t} size={40}>
