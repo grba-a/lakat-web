@@ -81,7 +81,7 @@ export function PlayGame({ challenge = null }) {
 export function Film() {
   return (
     <section className="mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-24 text-center md:grid-cols-2 md:items-center md:text-left">
-      <div className="grid justify-items-center gap-4 md:order-2 md:justify-items-start" data-krigla="Ja sam glavna u filmu.">
+      <div className="grid justify-items-center gap-4 md:order-2 md:justify-items-start" data-krigla="Ja sam glavni u filmu.">
         <Eyebrow>Najava</Eyebrow>
         <H2>Pogledaj prije svih.</H2>
         <div className="hidden md:block">
