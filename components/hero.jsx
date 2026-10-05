@@ -9,7 +9,7 @@ import { TiltPhone } from "./tilt-phone";
 //
 // Mobitel se skalira po visini ekrana da naslov, mobitel i timer stanu u prvi
 // pogled i na 360×640.
-const PHONE_W = "clamp(128px, min(46vw, calc((100svh - 400px) / 2.17)), 300px)";
+const PHONE_W = "clamp(112px, min(46vw, calc((100svh - 430px) / 2.17)), 300px)";
 
 export function Hero({ live = false }) {
   const initial = remaining();
@@ -27,7 +27,7 @@ export function Hero({ live = false }) {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-6xl justify-items-center gap-5 px-5 pt-3 pb-32 text-center md:grid-cols-[1.1fr_1fr] md:min-h-[calc(100svh-64px)] md:content-center md:items-center md:gap-x-10 md:gap-y-8 md:pt-4 md:pb-28 md:text-left">
+      <div className="mx-auto grid max-w-6xl justify-items-center gap-5 px-5 pt-3 pb-32 [@media(max-height:700px)]:gap-3 text-center md:grid-cols-[1.1fr_1fr] md:min-h-[calc(100svh-64px)] md:content-center md:items-center md:gap-x-10 md:gap-y-8 md:pt-4 md:pb-28 md:text-left">
         <h1 className="intro-1 font-display text-[clamp(48px,14vw,62px)] leading-[0.93] uppercase text-balance md:col-start-1 md:row-start-1 md:self-end md:justify-self-start md:text-[clamp(64px,7.4vw,112px)]">
           {live ? (
             <>
@@ -46,14 +46,15 @@ export function Hero({ live = false }) {
           </div>
         </div>
 
-        <div className="intro-3 grid gap-4 md:col-start-1 md:row-start-2 md:self-start md:justify-self-start md:justify-items-start">
+        <div className="intro-3 grid gap-4 [@media(max-height:700px)]:gap-2.5 md:col-start-1 md:row-start-2 md:self-start md:justify-self-start md:justify-items-start">
           {live ? (
             <StoreButtons />
           ) : (
-            <TimerTalk initial={initial} className="[--cw:34px] md:justify-start md:[--cw:46px]" />
+            <TimerTalk initial={initial} className="[--cw:34px] [@media(max-height:700px)]:[--cw:27px] md:justify-start md:[--cw:46px]" />
           )}
           <p className="max-w-[34ch] text-[15px] text-soft text-pretty md:text-[17px]">
-            {live ? "Vidiš tko je vani, tko stiže i tko časti." : "1. 12. u podne na iPhoneu, Android uskoro. Vidiš tko je vani, tko stiže i tko časti."}
+            Karta tvoje ekipe. Tko je vani, tko stiže, tko časti.
+            {!live && <span className="[@media(max-height:700px)]:hidden"> 1. 12. u podne na iPhoneu, Android uskoro.</span>}
           </p>
         </div>
       </div>

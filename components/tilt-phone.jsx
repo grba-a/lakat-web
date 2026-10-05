@@ -6,6 +6,12 @@ import { Phone, Splash } from "./phone";
 import { SplashPushes } from "./splash-pushes";
 
 const REST = { x: 7, y: -16, z: 2 };
+// Pajdaši na karti u heroju (izmišljena imena kao u najavi).
+const PINS = [
+  { l: "A", x: "52%", y: "17%" },
+  { l: "E", x: "36%", y: "29%" },
+  { l: "B", x: "64%", y: "36%" },
+];
 
 // Mobitel prati miš (desktop) ili prst (povlačenje po mobitelu), a kad ga
 // pustiš, vrati se u mirni nagib. Pet brzih tapova = Krigla izviri.
@@ -16,6 +22,13 @@ export function TiltPhone({ width, live = false }) {
   const raf = useRef(0);
   const taps = useRef([]);
   const [krigla, setKrigla] = useState(false);
+  // Hero se „upali“ (Petar w01): splash, pa uklizi karta s pajdašima.
+  const [booted, setBooted] = useState(false);
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const t = setTimeout(() => setBooted(true), reduce ? 0 : 1300);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     const el = wrap.current;
@@ -97,8 +110,26 @@ export function TiltPhone({ width, live = false }) {
             <img src="/img/scr-karta.webp" alt="" width={640} height={1317} className="absolute inset-0 h-full w-full object-cover object-top" />
           ) : (
             <>
-              <Splash />
-              <SplashPushes />
+              <div
+                className={`absolute inset-0 z-[1] transition-transform duration-[650ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  booted ? "translate-y-0" : "translate-y-full"
+                }`}
+              >
+                <img src="/img/hero-karta.webp" alt="" width={420} height={864} className="h-full w-full object-cover object-top" />
+                {PINS.map((p, i) => (
+                  <span
+                    key={p.l}
+                    className={`hero-pin ${booted ? "on" : ""}`}
+                    style={{ left: p.x, top: p.y, transitionDelay: `${700 + i * 180}ms` }}
+                  >
+                    {p.l}
+                  </span>
+                ))}
+              </div>
+              <div className={`absolute inset-0 transition-opacity duration-500 ${booted ? "opacity-0" : "opacity-100"}`}>
+                <Splash />
+              </div>
+              <SplashPushes start={booted} />
             </>
           )}
           {krigla && (

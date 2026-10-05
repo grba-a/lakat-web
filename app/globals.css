@@ -125,37 +125,60 @@ body {
   50% { translate: 0 -8px; }
 }
 
-/* ---------- preklopni timer ---------- */
-.flip {
+/* ---------- split-flap timer (w03) ---------- */
+.sf {
   position: relative;
-  display: grid;
-  place-items: center;
+  display: block;
   width: var(--cw, 34px);
   height: calc(var(--cw, 34px) * 1.46);
-  border-radius: 7px;
-  background: linear-gradient(#1f1f25 50%, #1a1a1f 50%);
+  perspective: calc(var(--cw, 34px) * 8);
   font-family: var(--font-display);
   font-size: var(--cw, 34px);
-  line-height: 1;
   font-variant-numeric: tabular-nums;
-  overflow: hidden;
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04), 0 6px 14px -8px rgb(0 0 0 / 0.8);
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.55));
 }
-.flip::after {
-  content: "";
+.sf-h {
   position: absolute;
   inset-inline: 0;
-  top: 50%;
-  height: 1px;
-  background: #000;
+  height: 50%;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
-.flip.go {
-  animation: flip 0.38s ease-out;
+.sf-h i {
+  position: absolute;
+  inset-inline: 0;
+  height: 200%;
+  display: grid;
+  place-items: center;
+  font-style: normal;
+  line-height: 1;
 }
-@keyframes flip {
-  0% { transform: rotateX(0); }
-  45% { transform: rotateX(-88deg); }
-  100% { transform: rotateX(0); }
+.sf-t {
+  top: 0;
+  border-radius: 7px 7px 0 0;
+  background: #202027;
+  transform-origin: 50% 100%;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05);
+}
+.sf-t i { top: 0; }
+.sf-b {
+  bottom: 0;
+  border-radius: 0 0 7px 7px;
+  background: #1a1a20;
+  transform-origin: 50% 0;
+  border-top: 1px solid #000;
+}
+.sf-b i { bottom: 0; }
+.sf-ft { z-index: 2; animation: sf-down 0.26s cubic-bezier(0.55, 0, 0.9, 0.4) both; }
+.sf-fb { z-index: 2; animation: sf-up 0.26s 0.26s cubic-bezier(0.1, 0.6, 0.4, 1) both; }
+@keyframes sf-down {
+  from { transform: rotateX(0); }
+  to { transform: rotateX(-90deg); filter: brightness(0.6); }
+}
+@keyframes sf-up {
+  from { transform: rotateX(90deg); filter: brightness(1.4); }
+  to { transform: rotateX(0); }
 }
 
 /* Krigla izviri iz ekrana (easter egg, 5 tapova) */
@@ -175,6 +198,33 @@ body {
 @keyframes glow {
   0%, 100% { opacity: 0.8; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.06); }
+}
+
+/* Pajdaši na karti u heroju: iskoče jedan po jedan i dišu. */
+.hero-pin {
+  position: absolute;
+  width: calc(var(--w) * 0.12);
+  aspect-ratio: 1;
+  margin: calc(var(--w) * -0.06) 0 0 calc(var(--w) * -0.06);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--color-accent);
+  background: #0c1f14;
+  color: var(--color-accent);
+  font-family: var(--font-display);
+  font-size: calc(var(--w) * 0.055);
+  transform: scale(0);
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 0 0 rgb(74 222 128 / 0.5);
+}
+.hero-pin.on {
+  transform: scale(1);
+  animation: pin-pulse 2.4s 1.6s ease-out infinite;
+}
+@keyframes pin-pulse {
+  0% { box-shadow: 0 0 0 0 rgb(74 222 128 / 0.45); }
+  70%, 100% { box-shadow: 0 0 0 calc(var(--w) * 0.06) rgb(74 222 128 / 0); }
 }
 
 /* Krigla se stisne na tap (tajna). */

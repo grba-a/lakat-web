@@ -2,23 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// Prave LAKAT obavijesti iz najave padaju na splash u heroju (Petar k3).
+// Prave LAKAT obavijesti padaju na mobitel u heroju (Petar k3 + w01).
 // Kreću nakon intra, vrte se dok je hero na ekranu i stanu kad ode.
 const PUSHES = [
-  "Ante je za šankom. Miči guzicu.",
+  "Ante je vani u Gružu.",
   "Ena je za šankom, a ti skrolaš mobitel. Sramota.",
+  "Ante je za šankom. Miči guzicu.",
   "Bepo je objavio rundu. Tko časti?",
   "Krigla: Nula rundi ovaj tjedan. Vidiš kako sam prazna?",
 ];
 
-export function SplashPushes() {
+export function SplashPushes({ start = true }) {
   const box = useRef(null);
   const [i, setI] = useState(-1);
   const [shown, setShown] = useState(false);
 
   useEffect(() => {
     const el = box.current;
-    if (!el) return;
+    if (!el || !start) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       const t = setTimeout(() => {
         setI(0);
@@ -50,12 +51,12 @@ export function SplashPushes() {
       }
     });
     io.observe(el);
-    timers.push(setTimeout(cycle, 1800));
+    timers.push(setTimeout(cycle, 1500));
     return () => {
       io.disconnect();
       timers.forEach(clearTimeout);
     };
-  }, []);
+  }, [start]);
 
   return (
     <div ref={box} className="pointer-events-none absolute inset-x-[5%] top-[7%] z-[4]" aria-live="off">
