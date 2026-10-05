@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="hr" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark">
+<title>LAKAT.</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;padding:0;background:#09090B}
+  a{color:#4ADE80}
+  @media (max-width:600px){.card{padding:28px 20px!important}.h1{font-size:38px!important}}
+</style>
+</head>
+<body style="margin:0;padding:0;background:#09090B;">
+<span style="display:none;max-height:0;overflow:hidden;opacity:0;color:#09090B">LAKAT je vani. Šank je otvoren.</span>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#09090B;">
+<tr><td align="center" style="padding:32px 12px 40px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+<tr><td align="center" style="padding:0 0 22px;"><img src="https://lakat-web.vercel.app/img/mail/wordmark.png" width="112" alt="LAKAT." style="display:block;border:0;width:112px;height:auto;"></td></tr>
+<tr><td class="card" align="center" style="background:#131316;border:1px solid #27272A;border-radius:28px;padding:36px 32px 34px;background-image:radial-gradient(ellipse at 50% 30%,#12301d 0%,#131316 62%);">
+<p style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#8B8B94;margin:0 0 16px;">1. 12. · 12:00</p>
+<h1 class="h1" style="font-family:Anton,Impact,'Arial Narrow Bold','Arial Black',sans-serif;font-weight:400;font-size:46px;line-height:46px;letter-spacing:.5px;text-transform:uppercase;color:#F4F4F5;margin:0;">Šank je otvoren<span style="color:#4ADE80;">.</span></h1>
+<div style="height:18px;line-height:18px;">&nbsp;</div>
+<img src="https://lakat-web.vercel.app/img/mail/krigla.png" width="168" alt="Krigla" style="display:block;border:0;width:168px;height:auto;margin:0 auto 14px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;"><tr>
+<td style="background:#1A1A1F;border:1px solid #27272A;border-radius:18px 18px 18px 6px;padding:10px 16px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:21px;color:#F4F4F5;">Stigla sam. Ekipa je već na karti.</td></tr></table>
+<div style="height:22px;line-height:22px;">&nbsp;</div>
+{% if contact.PLATFORMA == "android" %}
+<p style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;color:#C9C9CF;margin:0;">LAKAT je od danas na iPhoneu. Android stiže uskoro i tada ti javljam, kako sam obećala.</p>
+<div style="height:24px;line-height:24px;">&nbsp;</div>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;"><tr>
+<td align="center" bgcolor="#4ADE80" style="border-radius:999px;box-shadow:0 10px 30px -10px rgba(74,222,128,.6);">
+<a href="https://www.instagram.com/lakat_app/" style="display:inline-block;padding:16px 34px;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;line-height:20px;color:#052e16;text-decoration:none;border-radius:999px;">Prati @lakat_app</a></td></tr></table>
+{% else %}
+<p style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;color:#C9C9CF;margin:0;">LAKAT je vani na App Storeu. Skini ga, nađi ekipu na karti i vidi tko je vani.</p>
+<div style="height:24px;line-height:24px;">&nbsp;</div>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:0 auto;"><tr>
+<td align="center" bgcolor="#4ADE80" style="border-radius:999px;box-shadow:0 10px 30px -10px rgba(74,222,128,.6);">
+<a href="{{ params.appstore }}" style="display:inline-block;padding:16px 34px;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;line-height:20px;color:#052e16;text-decoration:none;border-radius:999px;">Skini LAKAT</a></td></tr></table>
+{% endif %}
+</td></tr>
+<tr><td align="center" style="padding:28px 16px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#8B8B94;">
+LAKAT. · 1. 12. u podne na iPhoneu<br>
+<a href="https://lakat-web.vercel.app/privatnost" style="color:#8B8B94;text-decoration:underline;">Privatnost</a> &nbsp;·&nbsp;
+<a href="https://www.instagram.com/lakat_app/" style="color:#8B8B94;text-decoration:underline;">@lakat_app</a> &nbsp;·&nbsp;
+<a href="mailto:support@laktarenje.com" style="color:#8B8B94;text-decoration:underline;">support@laktarenje.com</a>
+<br><br><a href="{{ unsubscribe }}" style="color:#8B8B94;text-decoration:underline;">Odjavi se s liste</a>
+</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
