@@ -15,7 +15,6 @@ export function Game({ challenge = null }) {
   const game = useRef(null);
   const [state, setState] = useState("spreman"); // spreman | trci | kraj
   const [score, setScore] = useState(0);
-  const [best, setBest] = useState(0);
   const [rounds, setRounds] = useState(0);
   const [daily, setDaily] = useState(null); // službeni rezultat dana
   const [shared, setShared] = useState("");
@@ -28,6 +27,7 @@ export function Game({ challenge = null }) {
     game.current = pokreniTrkac(canvas.current, {
       reduciran: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
       rng: seeded(todayKey()),
+      tresi: false,
       onBod: (n) => {
         last.current = n;
         setScore(n);
@@ -35,7 +35,6 @@ export function Game({ challenge = null }) {
       onKraj: () => {
         saveDaily(last.current);
         setDaily(readDaily());
-        setBest((b) => Math.max(b, last.current));
         setRounds((r) => r + 1);
         setState("kraj");
       },
@@ -61,13 +60,8 @@ export function Game({ challenge = null }) {
     e.preventDefault();
     e.currentTarget.setPointerCapture?.(e.pointerId);
     const st = game.current?.stanje();
-    if (st === "kraj") {
-      setScore(0);
-      make();
-      game.current.kreni();
-      setState("trci");
-      return;
-    }
+    // Na padu tap po igri ne radi ništa: nova partija samo preko „Probaj opet“ (Petar, 2026-10-05).
+    if (st === "kraj") return;
     if (st === "spreman") {
       game.current.kreni();
       setState("trci");
@@ -78,17 +72,27 @@ export function Game({ challenge = null }) {
   function up() {
     game.current?.pusti();
   }
+  function again() {
+    setScore(0);
+    make();
+    game.current.kreni();
+    setState("trci");
+    track("game_start", { ponovo: true });
+  }
 
+  const verdict = challenge !== null && score > challenge ? `${score}! Pobijedio si pajdaša. Javi mu.` : `${presuda(score)} Još jednom?`;
+
+  // Sve stoji unutar mobitela, pa se stranica ne pomiče kad padneš.
   return (
-    <div className="grid justify-items-center gap-4">
-      <Phone width="clamp(240px, 70vw, 320px)">
-        <div className="absolute inset-0 flex flex-col justify-center gap-3 bg-bg">
-          <div className="flex items-end justify-between px-5">
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-              {daily ? `Danas ${daily.score} · trening` : "Igra dana · 1 pokušaj"}
-            </span>
-            <span className="font-display text-[44px] leading-none text-accent tabular-nums">{score}</span>
-          </div>
+    <Phone width="clamp(240px, 70vw, 320px)">
+      <div className="absolute inset-0 flex flex-col justify-center gap-3 bg-bg">
+        <div className="flex items-end justify-between px-5">
+          <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
+            {daily ? `Danas ${daily.score} · trening` : "Igra dana · 1 pokušaj"}
+          </span>
+          <span className="font-display text-[44px] leading-none text-accent tabular-nums">{score}</span>
+        </div>
+        <div className="relative">
           <canvas
             ref={canvas}
             className="block w-full touch-none select-none"
@@ -98,37 +102,37 @@ export function Game({ challenge = null }) {
             onPointerCancel={up}
             aria-label="Igra: tapni za skok, drži dulje za viši skok"
           />
-          <p className="min-h-[3em] px-5 text-center text-[13px] leading-snug text-soft" aria-live="polite">
-            {state === "spreman" && "Tapni za start."}
-            {state === "trci" && "Drži dulje za viši skok."}
-            {state === "kraj" && "Tapni za novu."}
-          </p>
+          {state === "kraj" && (
+            <div className="chat-in absolute inset-0 grid place-items-center bg-bg/70 backdrop-blur-[2px]">
+              <button
+                type="button"
+                onClick={again}
+                className="inline-flex min-h-[52px] items-center gap-2 rounded-full bg-accent px-6 text-[16px] font-bold text-[#052e16] active:scale-[0.97]"
+              >
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+                  <path d="M3 3v5h5" />
+                </svg>
+                Probaj opet
+              </button>
+            </div>
+          )}
         </div>
-      </Phone>
-      {/* Krigla komentira rezultat (Petar k5); izazov pajdaša (w10). */}
-      {state === "kraj" && (
-        <KriglaTyping
-          key={rounds}
-          text={
-            challenge !== null && score > challenge
-              ? `${score}! Pobijedio si pajdaša. Javi mu.`
-              : `${presuda(score)} Još jednom?`
-          }
-          size={44}
-          onView={false}
-          trigger={rounds}
-          className="chat-in max-w-[320px]"
-        />
-      )}
-      {daily && (
-        <button
-          type="button"
-          onClick={challengeFriend}
-          className="inline-flex min-h-[48px] items-center rounded-full bg-accent px-5 text-[15px] font-bold text-[#052e16] active:scale-[0.98]"
-        >
-          {shared === "copied" ? "Link kopiran" : `Izazovi pajdaša · ${daily.score}`}
-        </button>
-      )}
-    </div>
+        <div className="grid min-h-[96px] content-start justify-items-center gap-2 px-4">
+          {state === "spreman" && <p className="text-center text-[13px] text-soft">Tapni za start.</p>}
+          {state === "trci" && <p className="text-center text-[13px] text-soft">Drži dulje za viši skok.</p>}
+          {state === "kraj" && (
+            <>
+              <KriglaTyping key={rounds} text={verdict} size={30} onView={false} trigger={rounds} className="chat-in" />
+              {daily && (
+                <button type="button" onClick={challengeFriend} className="text-[13px] font-bold text-accent underline underline-offset-4">
+                  {shared === "copied" ? "Link kopiran" : `Izazovi pajdaša · ${daily.score}`}
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </Phone>
   );
 }

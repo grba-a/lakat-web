@@ -6,12 +6,12 @@ import { play } from "@/lib/sfx";
 // Tajna (Petar k4): svaki tap na Kriglu otkrije još komadić, a onda „šef“ prekine.
 // Ništa se stvarno ne otkriva — sedma funkcija još ne postoji.
 const LINES = [
-  "Ima još nešto, ali ako ti rečem, šef će me razbit.",
+  "Ima još nešto, ali ako ti rečem, šef će me razbiti.",
   "Dobro, samo malo… Ima veze s…",
   "…s onim kad se ujutro probudiš i…",
   "…i shvatiš da je cijela ekipa…",
 ];
-const BOSS = "ŠEF: Krigla! Na mjesto.";
+const BOSS = "KRIGLAAAA!!!";
 
 export function SecretKrigla() {
   const [n, setN] = useState(0);
@@ -50,7 +50,14 @@ export function SecretKrigla() {
           }`}
           aria-live="polite"
         >
-          {text}
+          {boss ? (
+            <>
+              <span className="block font-mono text-[10px] tracking-[0.16em]">ŠEF</span>
+              <span className="font-display text-[26px] leading-none tracking-wide">{text}</span>
+            </>
+          ) : (
+            text
+          )}
         </p>
       </div>
       <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">

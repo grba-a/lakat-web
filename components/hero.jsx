@@ -23,7 +23,6 @@ export function Hero({ live = false }) {
           LAKAT<span className="text-accent">.</span>
         </span>
         <div className="flex items-center gap-3">
-          <span className="font-mono text-[11px] tracking-[0.14em] text-muted">iOS · 1. 12.</span>
           <SoundToggle />
         </div>
       </header>
@@ -51,12 +50,8 @@ export function Hero({ live = false }) {
           {live ? (
             <StoreButtons />
           ) : (
-            <TimerTalk initial={initial} className="[--cw:34px] [@media(max-height:700px)]:[--cw:27px] md:justify-start md:[--cw:46px]" />
+            <TimerTalk initial={initial} className="[--cw:38px] [@media(max-height:700px)]:[--cw:30px] md:justify-start md:[--cw:46px]" />
           )}
-          <p className="max-w-[34ch] text-[15px] text-soft text-pretty md:text-[17px]">
-            Karta tvoje ekipe. Tko je vani, tko stiže, tko časti.
-            {!live && <span className="[@media(max-height:700px)]:hidden"> 1. 12. u podne na iPhoneu, Android uskoro.</span>}
-          </p>
         </div>
       </div>
     </section>

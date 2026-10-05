@@ -120,14 +120,16 @@ export function WaitlistSection({ live = false }) {
 export function Instagram({ live }) {
   return (
     <section data-krigla="Prati me, tamo sam svaki dan." className="mx-auto grid max-w-6xl justify-items-start gap-6 px-5 py-20">
-      <KriglaSays size={64}>{live ? "Sve novo prvo ide na Instagram. Prati." : "Ne daš mail? Dobro. Onda me barem prati."}</KriglaSays>
+      <KriglaSays size={64}>{live ? "Sve novo prvo ide na Instagram. Prati." : "Ne daš mail? Dobro. Onda me barem zaprati."}</KriglaSays>
+      {/* Istaknuti gumb u Instagramovim bojama (Petar, 2026-10-05). */}
       <a
         href={INSTAGRAM}
         target="_blank"
         rel="noopener"
-        className="inline-flex min-h-[52px] items-center gap-2.5 rounded-full border border-[#3a3a42] px-6 text-[16px] font-semibold text-fg transition-[border-color,background-color] hover:border-accent hover:bg-surface"
+        className="ig-btn inline-flex min-h-[56px] items-center gap-3 rounded-full px-7 text-[17px] font-bold text-white active:scale-[0.98]"
       >
-        {IG}@lakat_app
+        {IG}
+        Zaprati @lakat_app
       </a>
     </section>
   );
@@ -174,12 +176,36 @@ export function Footer() {
         <p className="font-display text-[30px] leading-none uppercase">
           Vidimo se za šankom<span className="text-accent">.</span>
         </p>
-        <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-[14px] text-muted">
-          <a className="py-2 hover:text-fg" href="https://laktarenje.com/privatnost">Privatnost</a>
-          <a className="py-2 hover:text-fg" href="https://laktarenje.com/uvjeti">Uvjeti</a>
-          <a className="py-2 hover:text-fg" href="mailto:support@laktarenje.com">support@laktarenje.com</a>
-          <a className="py-2 hover:text-fg" href={INSTAGRAM} target="_blank" rel="noopener">@lakat_app</a>
-        </nav>
+        {/* Donji dio footera, sređen (Petar, 2026-10-05): Instagram i kontakt kao gumbi, pravno sitno ispod. */}
+        <div className="mt-4 grid w-full max-w-sm gap-3">
+          <a
+            href={INSTAGRAM}
+            target="_blank"
+            rel="noopener"
+            className="ig-btn flex min-h-[52px] items-center justify-center gap-2.5 rounded-full text-[16px] font-bold text-white"
+          >
+            {IG}@lakat_app
+          </a>
+          <a
+            href="mailto:support@laktarenje.com"
+            className="flex min-h-[52px] items-center justify-center gap-2.5 rounded-full border border-line bg-surface text-[15px] font-semibold text-fg transition-colors hover:border-[#3f3f46]"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="14" rx="3" />
+              <path d="m4 7 8 6 8-6" />
+            </svg>
+            support@laktarenje.com
+          </a>
+        </div>
+        <div className="mt-6 flex w-full max-w-sm items-center justify-between border-t border-line pt-5 text-[13px] text-muted">
+          <span className="font-display text-[18px] leading-none text-fg">
+            LAKAT<span className="text-accent">.</span>
+          </span>
+          <nav className="flex gap-5">
+            <a className="py-2 hover:text-fg" href="https://laktarenje.com/privatnost">Privatnost</a>
+            <a className="py-2 hover:text-fg" href="https://laktarenje.com/uvjeti">Uvjeti</a>
+          </nav>
+        </div>
       </div>
     </footer>
   );

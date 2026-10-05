@@ -264,6 +264,10 @@ body {
   from { opacity: 0; transform: translateY(-130%); }
   to { opacity: 1; transform: none; }
 }
+@keyframes story-bar {
+  from { width: 0%; }
+  to { width: 100%; }
+}
 .caption-in { animation: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .wheel-spin { animation: wheel-spin 2.6s 0.35s cubic-bezier(0.15, 0.6, 0.2, 1) both; }
 @keyframes wheel-spin {
@@ -276,6 +280,16 @@ body {
 @keyframes btn-glow {
   0%, 100% { box-shadow: 0 0 0 0 rgb(74 222 128 / 0); }
   50% { box-shadow: 0 0 0 calc(var(--w) * 0.02) rgb(74 222 128 / 0.55), 0 0 calc(var(--w) * 0.12) rgb(74 222 128 / 0.5); }
+}
+
+/* Instagram gumb u Instagramovim bojama. */
+.ig-btn {
+  background: linear-gradient(45deg, #feda75 0%, #fa7e1e 22%, #d62976 50%, #962fbf 76%, #4f5bd5 100%);
+  box-shadow: 0 12px 32px -12px rgb(214 41 118 / 0.75);
+  transition: box-shadow 0.2s, scale 0.15s;
+}
+.ig-btn:hover {
+  box-shadow: 0 14px 40px -10px rgb(214 41 118 / 0.95);
 }
 
 /* Krigla se stisne na tap (tajna). */
