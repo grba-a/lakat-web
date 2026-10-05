@@ -3,6 +3,7 @@ import { HeroBg } from "./hero-bg";
 import { HuntKrigla } from "./hunt";
 import { SoundToggle } from "./sound-toggle";
 import { StoreButtons } from "./store";
+import { StoreQR } from "./store-qr";
 import { TimerTalk } from "./timer-talk";
 import { TiltPhone } from "./tilt-phone";
 
@@ -50,7 +51,10 @@ export function Hero({ live = false }) {
 
         <div className="intro-3 grid gap-4 [@media(max-height:700px)]:gap-2.5 md:col-start-1 md:row-start-2 md:self-start md:justify-self-start md:justify-items-start">
           {live ? (
-            <StoreButtons />
+            <>
+              <StoreButtons />
+              <StoreQR />
+            </>
           ) : (
             <TimerTalk initial={initial} className="[--cw:38px] [@media(max-height:700px)]:[--cw:30px] md:justify-start md:[--cw:46px]" />
           )}
