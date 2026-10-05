@@ -43,7 +43,7 @@ export function PrivacyWords() {
   const done = lit >= WORDS.length;
 
   return (
-    <section ref={ref} className="relative isolate overflow-hidden">
+    <section ref={ref} className="relative isolate overflow-hidden" data-krigla="Ja ništa ne vidim. Stvarno.">
       <div
         className={`dots-lg pointer-events-none absolute inset-0 -z-10 transition-opacity duration-700 ${done ? "opacity-[0.07]" : "opacity-25"}`}
         aria-hidden="true"

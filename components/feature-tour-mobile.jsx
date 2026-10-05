@@ -84,7 +84,7 @@ export function FeatureTourMobile() {
   const f = FEATURES[active];
 
   return (
-    <section ref={root} className="relative md:hidden" aria-label="Što stiže">
+    <section ref={root} className="relative md:hidden" aria-label="Što stiže" data-krigla="Gle, to sam ja na ekranu.">
       <div className="pointer-events-none sticky top-0 z-0 flex h-[100svh] justify-center pt-[max(44px,env(safe-area-inset-top))]" aria-hidden="true">
         <div className="float">
           <Phone width={PHONE_W}>

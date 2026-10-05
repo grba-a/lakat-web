@@ -19,6 +19,9 @@ export function StickyCta({ live: launched = false }) {
   const [open, setOpen] = useState(false);
   const [signed, setSigned] = useState(false);
   const input = useRef(null);
+  // Krigla uz gumb mijenja repliku po sekciji (Petar w26).
+  const [line, setLine] = useState({ text: "", k: 0 });
+  const [talk, setTalk] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -43,6 +46,33 @@ export function StickyCta({ live: launched = false }) {
     const io = new IntersectionObserver(([e]) => setHidden(e.isIntersecting), { rootMargin: "0px 0px -20% 0px" });
     io.observe(target);
     return () => io.disconnect();
+  }, [live]);
+
+  useEffect(() => {
+    if (live) return;
+    const els = [...document.querySelectorAll("[data-krigla]")];
+    let last = "";
+    let hide = 0;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const text = e.target.dataset.krigla;
+          if (text === last) return;
+          last = text;
+          setLine((l) => ({ text, k: l.k + 1 }));
+          setTalk(true);
+          clearTimeout(hide);
+          hide = setTimeout(() => setTalk(false), 2800);
+        });
+      },
+      { rootMargin: "-48% 0px -48% 0px" }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => {
+      io.disconnect();
+      clearTimeout(hide);
+    };
   }, [live]);
 
   useEffect(() => {
@@ -75,15 +105,30 @@ export function StickyCta({ live: launched = false }) {
         }`}
         style={{ background: "linear-gradient(transparent, rgb(9 9 11 / 0.92) 45%)" }}
       >
+        <div className="relative mx-auto flex max-w-sm items-center gap-2.5 md:max-w-xs">
+        {!live && (
+          <div className="pointer-events-none relative shrink-0">
+            <img src="/img/krigla-lik.webp" alt="" width={48} height={48} className="size-12 object-contain drop-shadow-[0_6px_14px_rgb(74_222_128/0.35)]" />
+            {talk && line.text && (
+              <p
+                key={line.k}
+                className="chat-in absolute bottom-[110%] left-0 w-max max-w-[240px] rounded-[16px] rounded-bl-md border border-line bg-surface-2 px-3 py-2 text-[13px] leading-snug text-fg shadow-lg"
+              >
+                {line.text}
+              </p>
+            )}
+          </div>
+        )}
         <a
           href={live ? APP_STORE : "#lista"}
           onClick={onTap}
           tabIndex={hidden || open ? -1 : 0}
           aria-hidden={hidden || open}
-          className="pointer-events-auto mx-auto flex min-h-[52px] w-full max-w-sm items-center justify-center rounded-full bg-accent text-[16px] font-bold text-[#052e16] shadow-[0_10px_30px_-10px_rgb(74_222_128/0.6)] active:scale-[0.98] md:max-w-xs"
+          className="pointer-events-auto flex min-h-[52px] w-full items-center justify-center rounded-full bg-accent text-[16px] font-bold text-[#052e16] shadow-[0_10px_30px_-10px_rgb(74_222_128/0.6)] active:scale-[0.98]"
         >
           {live ? "Skini LAKAT" : signed ? "Pošalji ekipi" : "Javi mi prvi"}
         </a>
+        </div>
       </div>
 
       {!live && (

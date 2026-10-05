@@ -35,7 +35,7 @@ const IG = (
 // Tajna (C): sedma funkcija koju tek izmišljamo. Krigla se skoro izlane.
 export function Secret({ live = false }) {
   return (
-    <section className="mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-24 text-center md:grid-cols-2 md:items-center md:text-left">
+    <section data-krigla="Ne gledaj me tako. Ne smijem." className="mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-24 text-center md:grid-cols-2 md:items-center md:text-left">
       <div className="grid justify-items-center gap-6 md:justify-items-start">
         <Eyebrow>I još nešto…</Eyebrow>
         <SecretKrigla />
@@ -55,7 +55,7 @@ export function Secret({ live = false }) {
 // Igra (A): u mobitelu, bez imena igre.
 export function PlayGame({ challenge = null }) {
   return (
-    <section id="igra" className="mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-24 text-center md:grid-cols-2 md:items-center md:text-left">
+    <section id="igra" data-krigla="Ajde, pobijedi me." className="mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-24 text-center md:grid-cols-2 md:items-center md:text-left">
       <div className="grid justify-items-center gap-4 md:justify-items-start">
         <Eyebrow>{challenge !== null ? "Izazov" : "Igra dana · ista staza za sve"}</Eyebrow>
         <H2>{challenge !== null ? `Pajdaš ima ${challenge}. Možeš li bolje?` : "Primjer onoga što dolazi."}</H2>
@@ -78,7 +78,7 @@ export function PlayGame({ challenge = null }) {
 export function Film() {
   return (
     <section className="mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-24 text-center md:grid-cols-2 md:items-center md:text-left">
-      <div className="grid justify-items-center gap-4 md:order-2 md:justify-items-start">
+      <div className="grid justify-items-center gap-4 md:order-2 md:justify-items-start" data-krigla="Ja sam glavna u filmu.">
         <Eyebrow>Najava</Eyebrow>
         <H2>Pogledaj prije svih.</H2>
         <div className="hidden md:block">
@@ -119,7 +119,7 @@ export function WaitlistSection({ live = false }) {
 // Instagram (D): Krigla zove.
 export function Instagram({ live }) {
   return (
-    <section className="mx-auto grid max-w-6xl justify-items-start gap-6 px-5 py-20">
+    <section data-krigla="Prati me, tamo sam svaki dan." className="mx-auto grid max-w-6xl justify-items-start gap-6 px-5 py-20">
       <KriglaSays size={64}>{live ? "Sve novo prvo ide na Instagram. Prati." : "Ne daš mail? Dobro. Onda me barem prati."}</KriglaSays>
       <a
         href={INSTAGRAM}
@@ -145,7 +145,7 @@ const FAQ = [
 export function Faq({ live }) {
   const items = live ? [["Kad izlazi?", "Već je vani. Na iPhoneu odmah, Android uskoro iza."], ...FAQ.slice(1)] : FAQ;
   return (
-    <section className="mx-auto grid max-w-2xl gap-6 px-5 py-24">
+    <section data-krigla="Pitaj što god hoćeš." className="mx-auto grid max-w-2xl gap-6 px-5 py-24">
       <H2>Pitaš se?</H2>
       <FaqChat items={items} />
     </section>
