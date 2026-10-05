@@ -8,7 +8,7 @@ import { pokreniTrkac, presuda } from "@/lib/trkac";
 import { KriglaTyping } from "./krigla-typing";
 import { Phone } from "./phone";
 
-// Igra u mobitelu (varijanta A). Prava jezgra trkača iz web aplikacije.
+// Igra u mobitelu (varijanta A). Prava jezgra trkača iz web aplikacije, a trkač je Krigla (Petar, 2026-10-05).
 // Tap = skok, dulji tap = viši skok. Igra se pokreće tek kad je netko tapne.
 export function Game({ challenge = null }) {
   const canvas = useRef(null);
@@ -28,6 +28,7 @@ export function Game({ challenge = null }) {
       reduciran: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
       rng: seeded(todayKey()),
       tresi: false,
+      lik: { trci: "/img/krigla/sm/puna.webp", pao: "/img/krigla/sm/sok.webp" },
       onBod: (n) => {
         last.current = n;
         setScore(n);
