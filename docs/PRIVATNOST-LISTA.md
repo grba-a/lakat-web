@@ -1,3 +1,5 @@
+> Stavljeno u /privatnost 2026-10-05 (odjeljak 9). Rok čuvanja Claude je upisao: 60 dana nakon zadnjeg najavljenog maila.
+
 # Nacrt: odjeljak „Lista čekanja“ za /privatnost (Petar q9, na pregled)
 
 Claude je napisao nacrt 2026-10-05. Ne ide na stranicu dok ga Petar ne pročita i ne popuni dvije stavke označene [PETAR].
@@ -20,9 +22,9 @@ Osnova: tvoja privola (čl. 6. st. 1. t. a GDPR-a). Povlačiš je kad hoćeš, l
 support@laktarenje.com, i tada brišemo tvoje podatke s liste.
 
 Tko još vidi podatke: mailove šalje Brevo (Sendinblue SAS, Francuska). Podaci liste čuvaju se u bazi aplikacije
-(Supabase) [PETAR: potvrdi regiju PROD projekta, npr. EU – Frankfurt].
+(Supabase) regija je eu-west-1.
 
-Koliko dugo: [PETAR: rok, npr. „do 30 dana nakon zadnjeg najavljenog maila“], ili dok ne povučeš privolu.
+Koliko dugo: [neznam stavi nešto], ili dok ne povučeš privolu.
 Ako se 1. 12. registriraš u aplikaciji, rezervirano ime prelazi na tvoj račun, a upis na listi se briše.
 
 Na ovoj stranici: posjete brojimo preko Vercel Web Analyticsa, bez kolačića i bez praćenja po drugim stranicama.

@@ -9,7 +9,7 @@ export default function PrivatnostPage() {
   return (
     <PravnaStranica
       naslov="Pravila privatnosti"
-      verzija="Verzija 1 · listopad 2026."
+      verzija="Verzija 2 · listopad 2026. (dodana lista čekanja)"
       sazetak={[
         "Tvoje runde, slike i lokaciju vide samo tvoji prihvaćeni pajdaši. Iznimka je runda koju sam staviš „Javno u blizini”.",
         "Ne prodajemo ti podatke. Nema reklama, nema praćenja po drugim appovima.",
@@ -144,7 +144,42 @@ export default function PrivatnostPage() {
         </p>
       </Odjeljak>
 
-      <Odjeljak broj="9" naslov="Izmjene">
+      {/* Lista čekanja (Petar q9, pregledao 2026-10-05). */}
+      <Odjeljak broj="9" naslov="Lista čekanja i ova stranica">
+        <p>Kad se na laktarenje.com upišeš na listu čekanja, spremamo:</p>
+        <Popis
+          stavke={[
+            "tvoj e-mail,",
+            "je li ti mobitel iPhone ili Android,",
+            "odakle si došao na stranicu (npr. Instagram ili link koji ti je poslao pajdaš, i čiji je to link),",
+            "ako ih upišeš: grad, kvart i ime koje želiš rezervirati u aplikaciji,",
+            "vrijeme upisa i potvrde.",
+          ]}
+        />
+        <p>
+          <b>Zašto:</b> da ti pošaljemo mail za potvrdu i jedan mail kad LAKAT izađe (ako imaš Android, kad izađe Android
+          verzija). Grad i kvart koristimo samo za poredak kvartova na stranici, gdje se vidi samo kvart, nikad ti.
+        </p>
+        <p>
+          <b>Osnova:</b> tvoja privola (čl. 6. st. 1. t. a GDPR-a). Povlačiš je kad hoćeš, linkom za odjavu u mailu ili mailom
+          na <a className="text-accent underline underline-offset-4" href={`mailto:${VODITELJ.mail}`}>{VODITELJ.mail}</a>, i tada
+          brišemo tvoje podatke s liste.
+        </p>
+        <p>
+          <b>Tko još vidi podatke:</b> mailove šalje Brevo (Sendinblue SAS, Francuska). Podaci liste čuvaju se u bazi aplikacije
+          (Supabase, regija eu-west-1, EU).
+        </p>
+        <p>
+          <b>Koliko dugo:</b> do 60 dana nakon što ti pošaljemo zadnji najavljeni mail, ili dok ne povučeš privolu. Ako se 1. 12.
+          registriraš u aplikaciji, rezervirano ime prelazi na tvoj račun, a upis na listi se briše.
+        </p>
+        <p>
+          <b>Na ovoj stranici:</b> posjete brojimo preko Vercel Web Analyticsa, bez kolačića i bez praćenja po drugim stranicama.
+          Postavke zvuka, rezultat igre i lov na Krigle pamti samo tvoj preglednik i ne šalju se nama.
+        </p>
+      </Odjeljak>
+
+      <Odjeljak broj="10" naslov="Izmjene">
         <p>
           Kad se ova pravila bitno promijene, javimo u appu i tražimo ponovni pristanak gdje je potreban. Na vrhu
           uvijek piše verzija.
