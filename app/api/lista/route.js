@@ -2,7 +2,11 @@
 // Ključevi su samo u env varijablama (lokalno .env.local, na Vercelu u projektu), nikad u repou.
 //   BREVO_API_KEY, BREVO_LIST_ID, BREVO_DOI_TEMPLATE_ID, (opcionalno) BREVO_DOI_REDIRECT
 //   BREVO_ATTRS=1 kad u Brevu postoje atributi PLATFORMA i IZVOR (w20, w24); bez toga ih ne šaljemo.
+import { GRADOVI } from "@/lib/gradovi";
+import { dbReady, imeSlobodno, mailReady, posaljiPotvrdu, upis } from "@/lib/lista";
+
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const clean = (v, n) => String(v || "").replace(/[<>"`]/g, "").trim().slice(0, n);
 
 export async function POST(request) {
   let body;
@@ -21,6 +25,32 @@ export async function POST(request) {
   }
   if (body?.privola !== true) {
     return Response.json({ poruka: "Kvačica je obavezna, inače ti ne smijemo pisati." }, { status: 400 });
+  }
+
+  // Vlastita lista u Supabaseu + mail za potvrdu preko Brevoa (q1/q2, 2026-10-05).
+  if (dbReady() && mailReady()) {
+    const platforma = body?.platforma === "android" ? "android" : "iphone";
+    const izvor = clean(body?.izvor || "direkt", 40).replace(/[^a-z0-9-]/gi, "") || "direkt";
+    const grad = GRADOVI.includes(body?.grad) ? body.grad : null;
+    const kvart = clean(body?.kvart, 40) || null;
+    const pozvao = /^[A-Z2-9]{6}$/.test(body?.pozvao || "") ? body.pozvao : null;
+    let ime = clean(body?.ime, 20).toLowerCase() || null;
+    if (ime && !/^[a-z0-9_.]{3,20}$/.test(ime)) {
+      return Response.json({ poruka: "Ime: 3 do 20 slova, brojki, točka ili donja crta." }, { status: 400 });
+    }
+    try {
+      if (ime && !(await imeSlobodno(ime))) {
+        return Response.json({ poruka: `Ime ${ime} je već zauzeto. Probaj drugo.` }, { status: 409 });
+      }
+      const r = await upis({ email, platforma, izvor, grad, kvart, ime, pozvao });
+      if (r.already) return Response.json({ ok: true, potvrdeno: true, ref: r.ref });
+      const origin = new URL(request.url).origin;
+      await posaljiPotvrdu(email, `${origin}/potvrdi?t=${r.token}`);
+      return Response.json({ ok: true, ref: r.ref });
+    } catch (e) {
+      console.error("lista", String(e).slice(0, 200));
+      return Response.json({ poruka: "Nešto je puklo kod nas. Probaj za minutu." }, { status: 502 });
+    }
   }
 
   const key = process.env.BREVO_API_KEY;

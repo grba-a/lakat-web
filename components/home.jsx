@@ -2,6 +2,7 @@ import { FeatureTour } from "./feature-tour";
 import { FeatureTourMobile } from "./feature-tour-mobile";
 import { Hero } from "./hero";
 import { Faq, Film, Footer, Instagram, PlayGame, Privacy, Secret, WaitlistSection } from "./sections";
+import { KvartRat } from "./kvart-rat";
 import { LaunchTakeover } from "./launch-takeover";
 import { Podne } from "./podne";
 import { PwaSaved } from "./pwa-saved";
@@ -23,6 +24,7 @@ export function Home({ challenge = null }) {
         <Film />
         <Privacy />
         <WaitlistSection live={live && Boolean(APP_STORE)} />
+        {!live && <KvartRat />}
         <Instagram live={live} />
         <Faq live={live} />
       </main>

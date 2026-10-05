@@ -5,14 +5,14 @@ import { useState } from "react";
 import { INSTAGRAM } from "@/lib/launch";
 import { shareLakat } from "@/lib/share";
 
-export function ConfirmedActions() {
+export function ConfirmedActions({ refKod }) {
   const [shared, setShared] = useState("");
   return (
     <div className="grid gap-3">
       <p className="text-[15px] font-semibold text-soft">LAKAT bez ekipe je prazna karta.</p>
       <button
         type="button"
-        onClick={async () => setShared(await shareLakat())}
+        onClick={async () => setShared(await shareLakat(refKod))}
         className="min-h-[52px] rounded-full bg-accent text-[16px] font-bold text-[#052e16] active:scale-[0.98]"
       >
         {shared === "copied" ? "Link kopiran" : "Pošalji ekipi"}
