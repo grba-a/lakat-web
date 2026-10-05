@@ -1,6 +1,7 @@
 // Lista čekanja → Brevo, s potvrdom e-maila (double opt-in, Petar g5 2026-10-04).
 // Ključevi su samo u env varijablama (lokalno .env.local, na Vercelu u projektu), nikad u repou.
 //   BREVO_API_KEY, BREVO_LIST_ID, BREVO_DOI_TEMPLATE_ID, (opcionalno) BREVO_DOI_REDIRECT
+//   BREVO_ATTRS=1 kad u Brevu postoje atributi PLATFORMA i IZVOR (w20, w24); bez toga ih ne šaljemo.
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export async function POST(request) {
@@ -38,6 +39,12 @@ export async function POST(request) {
       includeListIds: [listId],
       templateId,
       redirectionUrl: process.env.BREVO_DOI_REDIRECT || `${origin}/potvrdeno`,
+      ...(process.env.BREVO_ATTRS === "1" && {
+        attributes: {
+          PLATFORMA: body?.platforma === "android" ? "android" : "iphone",
+          IZVOR: String(body?.izvor || "direkt").replace(/[^a-z0-9-]/gi, "").slice(0, 40),
+        },
+      }),
     }),
   });
 

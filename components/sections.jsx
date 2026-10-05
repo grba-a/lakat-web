@@ -4,7 +4,9 @@ import { FaqChat } from "./faq-chat";
 import { Game } from "./game";
 import { SecretKrigla } from "./secret-krigla";
 import { Phone, Splash } from "./phone";
+import { PrivacyWords } from "./privacy-words";
 import { PromoVideo } from "./promo-video";
+import { CatchPoint } from "./sticky-cta";
 import { Waitlist } from "./waitlist";
 
 // Sekcije ispod funkcija, po Petrovim izborima iz artifacta (2026-10-04).
@@ -60,8 +62,14 @@ export function PlayGame() {
         <p className="max-w-[36ch] text-[15px] text-soft text-pretty md:text-[17px]">
           Igre u LAKTU nemaju kraja, samo rekord. Ovo je jedna od njih. Tap je skok, dulji tap viši skok.
         </p>
+        <div className="hidden md:block">
+          <CatchPoint />
+        </div>
       </div>
       <Game />
+      <div className="md:hidden">
+        <CatchPoint />
+      </div>
     </section>
   );
 }
@@ -73,38 +81,36 @@ export function Film() {
       <div className="grid justify-items-center gap-4 md:order-2 md:justify-items-start">
         <Eyebrow>Najava</Eyebrow>
         <H2>Pogledaj prije svih.</H2>
+        <div className="hidden md:block">
+          <CatchPoint text="Svidjelo ti se? Budi prvi za šankom." />
+        </div>
       </div>
       <PromoVideo />
+      <div className="md:hidden">
+        <CatchPoint text="Svidjelo ti se? Budi prvi za šankom." />
+      </div>
     </section>
   );
 }
 
-// Privatnost (Petar nije odabrao varijantu; A je zadana dok ne kaže drugačije).
+// Privatnost: riječ po riječ (Petar w29).
 export function Privacy() {
-  return (
-    <section className="mx-auto grid max-w-6xl gap-6 px-5 py-28">
-      <h2 className="font-display text-[clamp(52px,15vw,64px)] leading-[0.92] uppercase text-balance md:text-[clamp(72px,8vw,128px)]">
-        Vidi te samo tvoj pajdaš<span className="text-accent">.</span>
-      </h2>
-      <p className="max-w-[40ch] text-[16px] text-soft text-pretty md:text-[19px]">
-        Javno objavljuješ samo kad ti to uključiš. „Vani sam“ se sam ugasi kad odeš.
-      </p>
-    </section>
-  );
+  return <PrivacyWords />;
 }
 
 // Lista čekanja (D): Krigla pita. id="lista" skriva donji gumb kad je forma na ekranu.
-export function WaitlistSection() {
+// Nakon lansiranja forma ostaje za Android (w20).
+export function WaitlistSection({ live = false }) {
   return (
     <section id="lista" className="mx-auto grid max-w-6xl gap-8 px-5 py-24 md:grid-cols-2 md:items-center">
       <div className="grid gap-4">
-        <H2>Javi mi prvi.</H2>
+        <H2>{live ? "Imaš Android?" : "Javi mi prvi."}</H2>
         <p className="max-w-[36ch] text-[15px] text-soft text-pretty md:text-[17px]">
-          Jedan mail 1. 12. u podne kad LAKAT izađe. Ništa više.
+          {live ? "Stiže iza iPhonea. Ostavi mail i javim ti kad stigne." : "Potvrda sad, a 1. 12. u podne jedan mail s linkom. Ništa više."}
         </p>
       </div>
       <div className="w-full max-w-md">
-        <Waitlist />
+        <Waitlist android={live} />
       </div>
     </section>
   );
@@ -130,6 +136,7 @@ export function Instagram({ live }) {
 // FAQ (B): chat, Krigla odgovara na predložena pitanja. Samo ono što je Petar potvrdio.
 const FAQ = [
   ["Kad izlazi?", "1. 12. u podne. Prvo na iPhoneu, Android uskoro iza."],
+  ["Imam Android. Što sad?", "Stiže iza iPhonea. Ostavi mail i javim ti kad stigne."],
   ["Što je s mojim računom s weba?", "Ostaje. Prijaviš se u aplikaciji i sve te čeka."],
   ["Zašto ne mogu u web app?", "Web je bio proba i bio je solidan. Tek sada dolazi nešto što para gaće."],
   ["Tko me vidi na karti?", "Samo pajdaši koje prihvatiš. Javno samo ako ti to uključiš."],

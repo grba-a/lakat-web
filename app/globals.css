@@ -30,9 +30,12 @@ body {
   background: var(--color-accent);
   color: #052e16;
 }
-:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
+/* U base sloju, da ga Tailwind klase (npr. outline-none na polju u formi) mogu nadjačati. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
 }
 
 /* ---------- polje točkica (splash) ----------

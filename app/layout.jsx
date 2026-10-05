@@ -1,4 +1,5 @@
 import { Anton, Archivo } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { TabTitle } from "@/components/tab-title";
 import "./globals.css";
 
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-dvh">
         {children}
         <TabTitle />
+        <Analytics />
       </body>
     </html>
   );

@@ -21,7 +21,7 @@ export default function Home() {
         <PlayGame />
         <Film />
         <Privacy />
-        {(!live || !APP_STORE) && <WaitlistSection />}
+        <WaitlistSection live={live && Boolean(APP_STORE)} />
         <Instagram live={live} />
         <Faq live={live} />
       </main>
