@@ -53,12 +53,12 @@ export function Secret({ live = false }) {
 }
 
 // Igra (A): u mobitelu, bez imena igre.
-export function PlayGame() {
+export function PlayGame({ challenge = null }) {
   return (
     <section id="igra" className="mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-24 text-center md:grid-cols-2 md:items-center md:text-left">
       <div className="grid justify-items-center gap-4 md:justify-items-start">
-        <Eyebrow>Probaj odmah</Eyebrow>
-        <H2>Primjer onoga što dolazi.</H2>
+        <Eyebrow>{challenge !== null ? "Izazov" : "Igra dana · ista staza za sve"}</Eyebrow>
+        <H2>{challenge !== null ? `Pajdaš ima ${challenge}. Možeš li bolje?` : "Primjer onoga što dolazi."}</H2>
         <p className="max-w-[36ch] text-[15px] text-soft text-pretty md:text-[17px]">
           Igre u LAKTU nemaju kraja, samo rekord. Ovo je jedna od njih. Tap je skok, dulji tap viši skok.
         </p>
@@ -66,7 +66,7 @@ export function PlayGame() {
           <CatchPoint />
         </div>
       </div>
-      <Game />
+      <Game challenge={challenge} />
       <div className="md:hidden">
         <CatchPoint />
       </div>

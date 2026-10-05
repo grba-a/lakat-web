@@ -1,19 +1,24 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { track } from "@vercel/analytics";
+import { readDaily, saveDaily, seeded, todayKey } from "@/lib/daily";
+import { shareText } from "@/lib/share";
 import { pokreniTrkac, presuda } from "@/lib/trkac";
 import { KriglaTyping } from "./krigla-typing";
 import { Phone } from "./phone";
 
 // Igra u mobitelu (varijanta A). Prava jezgra trkača iz web aplikacije.
 // Tap = skok, dulji tap = viši skok. Igra se pokreće tek kad je netko tapne.
-export function Game() {
+export function Game({ challenge = null }) {
   const canvas = useRef(null);
   const game = useRef(null);
   const [state, setState] = useState("spreman"); // spreman | trci | kraj
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(0);
   const [rounds, setRounds] = useState(0);
+  const [daily, setDaily] = useState(null); // službeni rezultat dana
+  const [shared, setShared] = useState("");
 
   const last = useRef(0);
 
@@ -22,11 +27,14 @@ export function Game() {
     last.current = 0;
     game.current = pokreniTrkac(canvas.current, {
       reduciran: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      rng: seeded(todayKey()),
       onBod: (n) => {
         last.current = n;
         setScore(n);
       },
       onKraj: () => {
+        saveDaily(last.current);
+        setDaily(readDaily());
         setBest((b) => Math.max(b, last.current));
         setRounds((r) => r + 1);
         setState("kraj");
@@ -36,8 +44,18 @@ export function Game() {
 
   useEffect(() => {
     make();
-    return () => game.current?.stop();
+    const t = setTimeout(() => setDaily(readDaily()), 0);
+    return () => {
+      clearTimeout(t);
+      game.current?.stop();
+    };
   }, []);
+
+  async function challengeFriend() {
+    const r = daily?.score ?? score;
+    track("share_tap", { gdje: "igra", r });
+    setShared(await shareText(`/i/${r}`, `Igra dana na LAKTU: imam ${r}. Možeš li bolje?`));
+  }
 
   function down(e) {
     e.preventDefault();
@@ -67,7 +85,7 @@ export function Game() {
         <div className="absolute inset-0 flex flex-col justify-center gap-3 bg-bg">
           <div className="flex items-end justify-between px-5">
             <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-              {best > 0 ? `Rekord ${best}` : "Bez kraja"}
+              {daily ? `Danas ${daily.score} · trening` : "Igra dana · 1 pokušaj"}
             </span>
             <span className="font-display text-[44px] leading-none text-accent tabular-nums">{score}</span>
           </div>
@@ -87,9 +105,29 @@ export function Game() {
           </p>
         </div>
       </Phone>
-      {/* Krigla komentira rezultat (Petar k5). */}
+      {/* Krigla komentira rezultat (Petar k5); izazov pajdaša (w10). */}
       {state === "kraj" && (
-        <KriglaTyping key={rounds} text={`${presuda(score)} Još jednom?`} size={44} onView={false} trigger={rounds} className="chat-in max-w-[320px]" />
+        <KriglaTyping
+          key={rounds}
+          text={
+            challenge !== null && score > challenge
+              ? `${score}! Pobijedio si pajdaša. Javi mu.`
+              : `${presuda(score)} Još jednom?`
+          }
+          size={44}
+          onView={false}
+          trigger={rounds}
+          className="chat-in max-w-[320px]"
+        />
+      )}
+      {daily && (
+        <button
+          type="button"
+          onClick={challengeFriend}
+          className="inline-flex min-h-[48px] items-center rounded-full bg-accent px-5 text-[15px] font-bold text-[#052e16] active:scale-[0.98]"
+        >
+          {shared === "copied" ? "Link kopiran" : `Izazovi pajdaša · ${daily.score}`}
+        </button>
       )}
     </div>
   );
