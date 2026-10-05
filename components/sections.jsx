@@ -4,6 +4,7 @@ import { FaqChat } from "./faq-chat";
 import { Game } from "./game";
 import { HuntKrigla } from "./hunt";
 import { SecretKrigla } from "./secret-krigla";
+import { StoryButton } from "./story-button";
 import { Phone, Splash } from "./phone";
 import { PrivacyWords } from "./privacy-words";
 import { PromoVideo } from "./promo-video";
@@ -133,6 +134,7 @@ export function Instagram({ live }) {
         {IG}
         Zaprati @lakat_app
       </a>
+      {!live && <StoryButton />}
     </section>
   );
 }
