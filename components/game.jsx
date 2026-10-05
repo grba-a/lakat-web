@@ -57,6 +57,8 @@ export function Game({ challenge = null }) {
   }
 
   function down(e) {
+    // Cijeli ekran mobitela je površina za igru (Petar, 2026-10-05); gumbi unutra rade svoje.
+    if (e.target.closest("button, a")) return;
     e.preventDefault();
     e.currentTarget.setPointerCapture?.(e.pointerId);
     const st = game.current?.stanje();
@@ -85,7 +87,12 @@ export function Game({ challenge = null }) {
   // Sve stoji unutar mobitela, pa se stranica ne pomiče kad padneš.
   return (
     <Phone width="clamp(240px, 70vw, 320px)">
-      <div className="absolute inset-0 flex flex-col justify-center gap-3 bg-bg">
+      <div
+        className={`absolute inset-0 flex cursor-pointer flex-col justify-center gap-3 bg-bg select-none ${state === "trci" ? "touch-none" : "touch-pan-y"}`}
+        onPointerDown={down}
+        onPointerUp={up}
+        onPointerCancel={up}
+      >
         <div className="flex items-end justify-between px-5">
           <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
             {daily ? `Danas ${daily.score} · trening` : "Igra dana · 1 pokušaj"}
@@ -95,11 +102,8 @@ export function Game({ challenge = null }) {
         <div className="relative">
           <canvas
             ref={canvas}
-            className="block w-full touch-none select-none"
+            className="block w-full"
             style={{ height: 190 }}
-            onPointerDown={down}
-            onPointerUp={up}
-            onPointerCancel={up}
             aria-label="Igra: tapni za skok, drži dulje za viši skok"
           />
           {state === "kraj" && (
