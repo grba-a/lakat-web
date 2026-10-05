@@ -3,6 +3,11 @@
 import { track } from "@vercel/analytics";
 import { useState } from "react";
 
+function kapi(n) {
+  const z = n % 10, zz = n % 100;
+  return z === 1 && zz !== 11 ? "kap" : z >= 2 && z <= 4 && (zz < 12 || zz > 14) ? "kapi" : "kapi";
+}
+
 // Ulaznica za šank (w05) s osobnim kodom (w06). Slika za story dolazi s /api/ulaznica.
 export function Ticket({ refKod, ime, mjesto, doveo }) {
   const [torn, setTorn] = useState(false);
@@ -38,7 +43,9 @@ export function Ticket({ refKod, ime, mjesto, doveo }) {
         {busy ? "…" : "Spremi ulaznicu za Story"}
       </button>
       <p className="text-[14px] text-muted">
-        {doveo > 0 ? `Preko tvog linka upisalo se ${doveo} ${doveo === 1 ? "pajdaš" : "pajdaša"}.` : "Pošalji link ekipi. Tko se upiše preko njega, broji se tebi."}
+        {/* Napunite Kriglu (k4): tvoj upis je jedna kap, svaki pajdaš preko tvog linka još jedna. */}
+        Ti si dolio {1 + doveo} {kapi(1 + doveo)} u Kriglu.{" "}
+        {doveo > 0 ? `Preko tvog linka upisalo se ${doveo} ${doveo === 1 ? "pajdaš" : "pajdaša"}.` : "Pošalji link ekipi, svaki njihov upis je još jedna tvoja kap."}
       </p>
     </div>
   );

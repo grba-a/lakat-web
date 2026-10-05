@@ -24,6 +24,8 @@ export function StickyCta({ live: launched = false }) {
   // Krigla uz gumb mijenja repliku po sekciji (Petar w26).
   const [line, setLine] = useState({ text: "", k: 0 });
   const [talk, setTalk] = useState(false);
+  // Krigla se puni dok skrolaš prema listi (Petar w26): prazna → pola → puna.
+  const [razina, setRazina] = useState("prazna");
 
   useEffect(() => {
     const sync = () => {
@@ -49,6 +51,27 @@ export function StickyCta({ live: launched = false }) {
     io.observe(target);
     return () => io.disconnect();
   }, [live]);
+
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      if (signed) return setRazina("puna");
+      const lista = document.getElementById("lista");
+      const end = lista ? lista.getBoundingClientRect().top + window.scrollY - window.innerHeight : document.body.scrollHeight;
+      const p = end > 0 ? window.scrollY / end : 1;
+      setRazina(p < 0.33 ? "prazna" : p < 0.8 ? "pola" : "puna");
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [signed]);
 
   // Bilo tko na stranici može natjerati Kriglu da nešto kaže (lov na Krigle).
   useEffect(() => {
@@ -137,7 +160,14 @@ export function StickyCta({ live: launched = false }) {
         <div className="relative mx-auto flex max-w-sm items-center gap-2.5 md:max-w-xs">
         {!live && (
           <div className="pointer-events-none relative shrink-0">
-            <img src="/img/krigla-lik.webp" alt="" width={48} height={48} className="size-12 object-contain drop-shadow-[0_6px_14px_rgb(74_222_128/0.35)]" />
+            <img
+              key={razina}
+              src={`/img/krigla/${razina}.webp`}
+              alt=""
+              width={48}
+              height={48}
+              className="chat-in size-12 object-contain drop-shadow-[0_6px_14px_rgb(74_222_128/0.35)]"
+            />
             {talk && line.text && (
               <p
                 key={line.k}

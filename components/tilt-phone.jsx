@@ -137,7 +137,7 @@ export function TiltPhone({ width, live = false }) {
               <p className="peek rounded-2xl border border-line bg-surface-2 px-3 py-2 text-center text-[13px] leading-snug">
                 {live ? "Što me bockaš? Skini me već jednom." : "Što me bockaš? Strpi se do 1. 12."}
               </p>
-              <img src="/img/krigla-lik.webp" alt="" className="peek w-[46%]" />
+              <img src="/img/krigla/sok.webp" alt="" className="peek w-[46%]" />
             </div>
           )}
         </Phone>

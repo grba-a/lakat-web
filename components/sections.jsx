@@ -170,7 +170,7 @@ export function Footer() {
           <div className="krigla-glow pointer-events-none absolute inset-[-10%] rounded-full" aria-hidden="true" />
           <div className="float">
             <img
-              src="/img/krigla-lik.webp"
+              src="/img/krigla/mase.webp"
               alt=""
               width={480}
               height={480}

@@ -39,7 +39,7 @@ export function HuntKrigla({ id, className = "", size = 26 }) {
     setPop(true);
     setTimeout(() => setFound(true), 450);
     play(list.length === TOTAL ? "kasa" : "zvecka");
-    say(list.length === TOTAL ? "Našao si svih pet. Pravi lovac. Sad znaš više od šefa." : `Našao si me. ${list.length} od ${TOTAL}.`);
+    say(list.length === TOTAL ? "Našao si svih pet. Pravi lovac. Dolje te čeka tajna tapeta." : `Našao si me. ${list.length} od ${TOTAL}.`);
   }
 
   if (found) return null;

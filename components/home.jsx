@@ -4,9 +4,11 @@ import { Hero } from "./hero";
 import { Faq, Film, Footer, Instagram, PlayGame, Privacy, Secret, WaitlistSection } from "./sections";
 import { KvartRat } from "./kvart-rat";
 import { LaunchTakeover } from "./launch-takeover";
+import { NapuniteKriglu } from "./napunite-kriglu";
 import { Podne } from "./podne";
 import { PwaSaved } from "./pwa-saved";
 import { StickyCta } from "./sticky-cta";
+import { Tapete } from "./tapete";
 import { APP_STORE, isLive } from "@/lib/launch";
 
 // Cijela stranica. `challenge` = rezultat pajdaša kad netko dođe preko izazova (/i/37).
@@ -23,10 +25,12 @@ export function Home({ challenge = null }) {
         <PlayGame challenge={challenge} />
         <Film />
         <Privacy />
+        {!live && <NapuniteKriglu />}
         <WaitlistSection live={live && Boolean(APP_STORE)} />
         {!live && <KvartRat />}
         <Instagram live={live} />
         <Faq live={live} />
+        <Tapete />
       </main>
       <Footer />
       <StickyCta live={live} />

@@ -36,7 +36,7 @@ export function SecretKrigla() {
         >
           <img
             key={squish}
-            src="/img/krigla-lik.webp"
+            src={boss ? "/img/krigla/sok.webp" : "/img/krigla/psst.webp"}
             alt=""
             width={72}
             height={72}

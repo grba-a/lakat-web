@@ -38,7 +38,7 @@ export function PwaSaved({ live = false }) {
         <span className="font-display text-[20px] leading-none">
           LAKAT<span className="text-accent">.</span>
         </span>
-        <img src="/img/krigla-lik.webp" alt="" width={160} height={160} className="float size-40 object-contain drop-shadow-[0_16px_40px_rgb(74_222_128/0.5)]" />
+        <img src="/img/krigla/mase.webp" alt="" width={160} height={160} className="float size-40 object-contain drop-shadow-[0_16px_40px_rgb(74_222_128/0.5)]" />
         <h1 className="font-display text-[clamp(44px,13vw,60px)] leading-[0.92] uppercase">
           Račun ti je spremljen<span className="text-accent">.</span>
         </h1>

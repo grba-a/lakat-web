@@ -53,8 +53,8 @@ export default function Press() {
           <b className="font-display text-[24px] leading-none font-normal uppercase">Najava · 0:49</b>
           <span className="text-[14px] text-muted">Video 9:16, MP4. Preuzmi.</span>
         </a>
-        <a href="/img/krigla-lik.webp" download className="grid grid-cols-[64px_1fr] items-center gap-4 rounded-2xl border border-line bg-surface p-5 hover:border-[#3f3f46]">
-          <img src="/img/krigla-lik.webp" alt="Krigla" width={64} height={64} className="size-16 object-contain" />
+        <a href="/img/krigla/puna.webp" download className="grid grid-cols-[64px_1fr] items-center gap-4 rounded-2xl border border-line bg-surface p-5 hover:border-[#3f3f46]">
+          <img src="/img/krigla/puna.webp" alt="Krigla" width={64} height={64} className="size-16 object-contain" />
           <span className="grid gap-1">
             <b className="font-display text-[24px] leading-none font-normal uppercase">Krigla</b>
             <span className="text-[14px] text-muted">Maskota, WebP s prozirnom pozadinom.</span>
