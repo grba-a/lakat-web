@@ -287,6 +287,23 @@ body {
   50% { box-shadow: 0 0 0 calc(var(--w) * 0.02) rgb(74 222 128 / 0.55), 0 0 calc(var(--w) * 0.12) rgb(74 222 128 / 0.5); }
 }
 
+/* Roleta šanka (q3): metalne lamele. */
+.roleta {
+  background: repeating-linear-gradient(#3b3d44 0 14px, #2a2b31 14px 17px, #45474f 17px 22px);
+  box-shadow: inset 0 -30px 40px -20px #000;
+}
+/* Prasak zelenih točkica kad se roleta digne. */
+.burst {
+  background: radial-gradient(circle, #4ade80 2px, transparent 3px) 0 0 / 26px 26px;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 0 10%, transparent 11%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 0 10%, transparent 11%);
+  animation: burst 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}
+@keyframes burst {
+  from { -webkit-mask-size: 0% 0%; mask-size: 0% 0%; opacity: 1; }
+  to { -webkit-mask-size: 900% 900%; mask-size: 900% 900%; opacity: 0; }
+}
+
 /* Instagram gumb u Instagramovim bojama. */
 .ig-btn {
   background: linear-gradient(45deg, #feda75 0%, #fa7e1e 22%, #d62976 50%, #962fbf 76%, #4f5bd5 100%);

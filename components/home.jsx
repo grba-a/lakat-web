@@ -2,6 +2,7 @@ import { FeatureTour } from "./feature-tour";
 import { FeatureTourMobile } from "./feature-tour-mobile";
 import { Hero } from "./hero";
 import { Faq, Film, Footer, Instagram, PlayGame, Privacy, Secret, WaitlistSection } from "./sections";
+import { LaunchTakeover } from "./launch-takeover";
 import { Podne } from "./podne";
 import { StickyCta } from "./sticky-cta";
 import { APP_STORE, isLive } from "@/lib/launch";
@@ -26,6 +27,7 @@ export function Home({ challenge = null }) {
       </main>
       <Footer />
       <StickyCta live={live} />
+      <LaunchTakeover />
     </>
   );
 }

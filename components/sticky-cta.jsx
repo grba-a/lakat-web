@@ -4,7 +4,8 @@ import { track } from "@vercel/analytics";
 import { useEffect, useRef, useState } from "react";
 import { APP_STORE, storeLink } from "@/lib/launch";
 import { play } from "@/lib/sfx";
-import { shareLakat } from "@/lib/share";
+import { greeting, moodLine } from "@/lib/krigla-voice";
+import { shareLakat, source } from "@/lib/share";
 import { SIGNED_KEY, Waitlist } from "./waitlist";
 
 export const OPEN_SHEET = "lakat-lista";
@@ -47,6 +48,17 @@ export function StickyCta({ live: launched = false }) {
     io.observe(target);
     return () => io.disconnect();
   }, [live]);
+
+  // Pozdrav nakon par sekundi: od pajdaša (n2) ili prema dobu dana (n3).
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const text = greeting(source()) || moodLine();
+      setLine((l) => ({ text, k: l.k + 1 }));
+      setTalk(true);
+      setTimeout(() => setTalk(false), 3600);
+    }, 2600);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     if (live) return;
