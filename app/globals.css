@@ -227,6 +227,26 @@ body {
   70%, 100% { box-shadow: 0 0 0 calc(var(--w) * 0.06) rgb(74 222 128 / 0); }
 }
 
+/* Mobilna tura (w02): push padne, naslov uđe odozdo, kotač se zavrti, podij naraste, film se razvije. */
+.push-drop { animation: push-drop 0.5s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes push-drop {
+  from { opacity: 0; transform: translateY(-130%); }
+  to { opacity: 1; transform: none; }
+}
+.caption-in { animation: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.wheel-spin { animation: wheel-spin 2.6s 0.35s cubic-bezier(0.15, 0.6, 0.2, 1) both; }
+@keyframes wheel-spin {
+  from { transform: rotate(0); }
+  to { transform: rotate(1080deg); }
+}
+.develop { filter: invert(1) sepia(0.6) contrast(0.8) brightness(0.55); transition: filter 2.4s ease 0.3s; }
+.develop.on { filter: none; }
+.btn-glow { animation: btn-glow 1.6s ease-in-out 0.4s infinite; }
+@keyframes btn-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(74 222 128 / 0); }
+  50% { box-shadow: 0 0 0 calc(var(--w) * 0.02) rgb(74 222 128 / 0.55), 0 0 calc(var(--w) * 0.12) rgb(74 222 128 / 0.5); }
+}
+
 /* Krigla se stisne na tap (tajna). */
 .squish { animation: squish 0.38s cubic-bezier(0.22, 1, 0.36, 1); }
 @keyframes squish {

@@ -1,4 +1,5 @@
 import { FeatureTour } from "@/components/feature-tour";
+import { FeatureTourMobile } from "@/components/feature-tour-mobile";
 import { Hero } from "@/components/hero";
 import { Faq, Film, Footer, Instagram, PlayGame, Privacy, Secret, WaitlistSection } from "@/components/sections";
 import { StickyCta } from "@/components/sticky-cta";
@@ -14,6 +15,7 @@ export default function Home() {
     <>
       <main className="overflow-x-clip">
         <Hero live={live} />
+        <FeatureTourMobile />
         <FeatureTour />
         <Secret live={live} />
         <PlayGame />

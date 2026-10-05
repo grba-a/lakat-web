@@ -88,7 +88,7 @@ export function FeatureTour() {
   }, []);
 
   return (
-    <section ref={root} id="funkcije" className="relative" aria-label="Što stiže">
+    <section ref={root} id="funkcije" className="relative hidden md:block" aria-label="Što stiže">
       <div className="pointer-events-none sticky top-0 z-0 grid h-[100svh] place-items-center" aria-hidden="true">
         <div ref={phone} className="will-change-transform">
           <Phone width={PHONE_W}>
