@@ -4,6 +4,7 @@ import { Hero } from "./hero";
 import { Faq, Film, Footer, Instagram, PlayGame, Privacy, Secret, WaitlistSection } from "./sections";
 import { LaunchTakeover } from "./launch-takeover";
 import { Podne } from "./podne";
+import { PwaSaved } from "./pwa-saved";
 import { StickyCta } from "./sticky-cta";
 import { APP_STORE, isLive } from "@/lib/launch";
 
@@ -28,6 +29,7 @@ export function Home({ challenge = null }) {
       <Footer />
       <StickyCta live={live} />
       <LaunchTakeover />
+      <PwaSaved live={live} />
     </>
   );
 }

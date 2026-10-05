@@ -208,8 +208,8 @@ export function Footer() {
             LAKAT<span className="text-accent">.</span>
           </span>
           <nav className="flex gap-5">
-            <a className="py-2 hover:text-fg" href="https://laktarenje.com/privatnost">Privatnost</a>
-            <a className="py-2 hover:text-fg" href="https://laktarenje.com/uvjeti">Uvjeti</a>
+            <a className="py-2 hover:text-fg" href="/privatnost">Privatnost</a>
+            <a className="py-2 hover:text-fg" href="/uvjeti">Uvjeti</a>
             <a className="py-2 hover:text-fg" href="/press">Press</a>
           </nav>
         </div>
