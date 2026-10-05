@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import QRCode from "qrcode";
+import { mjestoNaUlaznici } from "@/lib/gradovi";
 import { dbReady, poRefu } from "@/lib/lista";
 
 // Ulaznica za šank (w05): 1080×1920 za Instagram story, s QR kodom na osobni link (w06).
@@ -14,7 +15,7 @@ export async function GET(request) {
   const link = `${url.origin}/?ref=${row.ref_kod}`;
   const qr = await QRCode.toString(link, { type: "svg", margin: 1, color: { dark: "#09090B", light: "#F3F1EA" } });
   const name = row.ime ? `@${row.ime}` : "Pajdaš";
-  const mjesto = [row.kvart, row.grad].filter(Boolean).join(", ");
+  const mjesto = mjestoNaUlaznici(row.grad);
 
   return new ImageResponse(
     (

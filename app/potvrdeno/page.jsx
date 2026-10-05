@@ -1,6 +1,7 @@
 import { KriglaSays } from "@/components/brand";
 import { ConfirmedActions } from "@/components/confirmed-actions";
 import { Ticket } from "@/components/ticket";
+import { mjestoNaUlaznici } from "@/lib/gradovi";
 import { dbReady, poRefu, pozvani } from "@/lib/lista";
 
 export const metadata = { title: "Na listi si. LAKAT" };
@@ -29,7 +30,7 @@ export default async function Potvrdeno({ searchParams }) {
         Na listi si<span className="text-accent">.</span>
       </h1>
       <KriglaSays size={72}>Javim ti 1. 12. u podne. Do tada ništa, obećajem.</KriglaSays>
-      {row && <Ticket refKod={row.ref_kod} ime={row.ime} mjesto={[row.kvart, row.grad].filter(Boolean).join(", ")} doveo={doveo} />}
+      {row && <Ticket refKod={row.ref_kod} ime={row.ime} mjesto={mjestoNaUlaznici(row.grad)} doveo={doveo} />}
       <ConfirmedActions refKod={row?.ref_kod} />
     </main>
   );
