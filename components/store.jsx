@@ -1,4 +1,4 @@
-import { APP_STORE } from "@/lib/launch";
+import { storeLink } from "@/lib/launch";
 
 // Nakon lansiranja: App Store + „Android uskoro“ (Petar s6: iOS 1. 12., Android poslije).
 // TODO prije 1. 12.: zamijeniti službenim Appleovim badgeom (SVG s developer.apple.com),
@@ -7,7 +7,7 @@ export function StoreButtons({ className = "" }) {
   return (
     <div className={`grid justify-items-center gap-3 md:justify-items-start ${className}`}>
       <a
-        href={APP_STORE || "#lista"}
+        href={storeLink("web-hero") || "#lista"}
         className="inline-flex h-[54px] items-center gap-3 rounded-[12px] border border-[#a6a6a6] bg-black px-5 text-left text-white"
         aria-label="Preuzmi LAKAT na App Storeu"
       >

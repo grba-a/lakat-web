@@ -1,6 +1,7 @@
 import { Anton, Archivo } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { TabTitle } from "@/components/tab-title";
+import { APP_STORE_ID, isLive } from "@/lib/launch";
 import "./globals.css";
 
 const anton = Anton({
@@ -14,7 +15,11 @@ const archivo = Archivo({
   subsets: ["latin", "latin-ext"],
 });
 
+// Smart App Banner se pojavi tek nakon lansiranja, kad postoji App Store link (w23).
+const banner = APP_STORE_ID && isLive() ? { itunes: { appId: APP_STORE_ID } } : {};
+
 export const metadata = {
+  ...banner,
   metadataBase: new URL(process.env.SITE_URL || "https://lakat-web.vercel.app"),
   title: "LAKAT. Šank se otvara 1. 12.",
   description:

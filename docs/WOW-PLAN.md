@@ -15,12 +15,16 @@ Pushing to main deploys lakat-web.vercel.app (Petar asked to push 2026-10-04).
 5. [x] w18 sticky CTA opens a bottom sheet with the focused field; w21 catch points under game + film
 6. [x] w15 success state (echo mail, spam hint, „Krivi mail? Ispravi.“, open mail, share, .ics, IG) + w16 /potvrdeno;
        w19 „Imam 18+“; w25 copy; w20 iPhone/Android choice (Brevo attribute PLATFORMA)
-7. [ ] w10 daily seeded game + share challenge (`/i/[r]` page with its own OG image)
-8. [ ] w11 daily noon reveal (polaroid develops; content from approved feature copy only)
-9. [ ] w26 Krigla docked to the CTA with a line per section (one pose for now; fill needs 3–5 poses)
-10. [ ] w27 dots → Adriatic coastline + desktop flashlight
-11. [ ] w23 launch kit: Smart App Banner (env app id), QR on desktop after launch, ct tokens on App Store links
+7. [x] w10 daily seeded game + share challenge (`/i/[r]` page with its own OG image)
+8. [x] w11 daily noon reveal (polaroid develops; content from approved feature copy only)
+9. [x] w26 Krigla docked to the CTA with a line per section (one pose for now; fill needs 3–5 poses)
+10. [x] w27 dots → Adriatic coastline + desktop flashlight
+11. [x] w23 launch kit: Smart App Banner (env app id), QR on desktop after launch, ct tokens on App Store links
 12. [x] w24 Vercel Web Analytics + events + `?src=` → Brevo IZVOR
+
+Notes: w26 has lines per section with one Krigla pose (fill waits for poses); w23 QR on desktop not built (needs a QR
+dependency — ask) and needs `NEXT_PUBLIC_APP_STORE_URL` (+ optional `NEXT_PUBLIC_APP_STORE_PT`); w24 needs Web Analytics
+switched on in the Vercel project (Analytics tab), custom events may need a paid plan (unverified).
 
 ## Phase B — needs a data decision (question in vault PITANJA-ZA-PETRA)
 w05 ticket card with QR referral · w06 dovedi pajdaša · w07 kvartovski rat · w08 Napunite Kriglu · w09 rezerviraj ime ·

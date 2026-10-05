@@ -2,7 +2,7 @@
 
 import { track } from "@vercel/analytics";
 import { useEffect, useRef, useState } from "react";
-import { APP_STORE } from "@/lib/launch";
+import { APP_STORE, storeLink } from "@/lib/launch";
 import { play } from "@/lib/sfx";
 import { shareLakat } from "@/lib/share";
 import { SIGNED_KEY, Waitlist } from "./waitlist";
@@ -120,7 +120,7 @@ export function StickyCta({ live: launched = false }) {
           </div>
         )}
         <a
-          href={live ? APP_STORE : "#lista"}
+          href={live ? storeLink("web-sticky") : "#lista"}
           onClick={onTap}
           tabIndex={hidden || open ? -1 : 0}
           aria-hidden={hidden || open}
