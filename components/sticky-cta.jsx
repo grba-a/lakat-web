@@ -6,6 +6,7 @@ import { APP_STORE, storeLink } from "@/lib/launch";
 import { play } from "@/lib/sfx";
 import { greeting, moodLine } from "@/lib/krigla-voice";
 import { shareLakat, source } from "@/lib/share";
+import { SAY } from "./hunt";
 import { SIGNED_KEY, Waitlist } from "./waitlist";
 
 export const OPEN_SHEET = "lakat-lista";
@@ -48,6 +49,22 @@ export function StickyCta({ live: launched = false }) {
     io.observe(target);
     return () => io.disconnect();
   }, [live]);
+
+  // Bilo tko na stranici može natjerati Kriglu da nešto kaže (lov na Krigle).
+  useEffect(() => {
+    let t = 0;
+    const onSay = (e) => {
+      setLine((l) => ({ text: e.detail, k: l.k + 1 }));
+      setTalk(true);
+      clearTimeout(t);
+      t = setTimeout(() => setTalk(false), 3800);
+    };
+    window.addEventListener(SAY, onSay);
+    return () => {
+      window.removeEventListener(SAY, onSay);
+      clearTimeout(t);
+    };
+  }, []);
 
   // Pozdrav nakon par sekundi: od pajdaša (n2) ili prema dobu dana (n3).
   useEffect(() => {

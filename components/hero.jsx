@@ -1,5 +1,6 @@
 import { remaining } from "@/lib/launch";
 import { HeroBg } from "./hero-bg";
+import { HuntKrigla } from "./hunt";
 import { SoundToggle } from "./sound-toggle";
 import { StoreButtons } from "./store";
 import { TimerTalk } from "./timer-talk";
@@ -17,6 +18,7 @@ export function Hero({ live = false }) {
   return (
     <section className="relative isolate overflow-hidden">
       <HeroBg />
+      <HuntKrigla id="hero" className="right-3 bottom-36 md:right-10 md:bottom-16" />
 
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 pt-[max(14px,env(safe-area-inset-top))] pb-2">
         <span className="font-display text-[22px] leading-none">

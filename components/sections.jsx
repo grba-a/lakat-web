@@ -2,6 +2,7 @@ import { INSTAGRAM } from "@/lib/launch";
 import { KriglaSays, Punct } from "./brand";
 import { FaqChat } from "./faq-chat";
 import { Game } from "./game";
+import { HuntKrigla } from "./hunt";
 import { SecretKrigla } from "./secret-krigla";
 import { Phone, Splash } from "./phone";
 import { PrivacyWords } from "./privacy-words";
@@ -35,10 +36,11 @@ const IG = (
 // Tajna (C): sedma funkcija koju tek izmišljamo. Krigla se skoro izlane.
 export function Secret({ live = false }) {
   return (
-    <section data-krigla="Ne gledaj me tako. Ne smijem." className="mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-24 text-center md:grid-cols-2 md:items-center md:text-left">
+    <section data-krigla="Ne gledaj me tako. Ne smijem." className="relative mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-24 text-center md:grid-cols-2 md:items-center md:text-left">
       <div className="grid justify-items-center gap-6 md:justify-items-start">
         <Eyebrow>I još nešto…</Eyebrow>
         <SecretKrigla />
+        <HuntKrigla id="tajna" size={20} className="top-6 left-2" />
         <H2>{live ? "Uskoro u aplikaciji." : "Vidimo se 1. 12."}</H2>
       </div>
       <div className="float">
@@ -147,7 +149,8 @@ const FAQ = [
 export function Faq({ live }) {
   const items = live ? [["Kad izlazi?", "Već je vani. Na iPhoneu odmah, Android uskoro iza."], ...FAQ.slice(1)] : FAQ;
   return (
-    <section data-krigla="Pitaj što god hoćeš." className="mx-auto grid max-w-2xl gap-6 px-5 py-24">
+    <section data-krigla="Pitaj što god hoćeš." className="relative mx-auto grid max-w-2xl gap-6 px-5 py-24">
+      <HuntKrigla id="faq" size={22} className="right-1 bottom-6" />
       <H2>Pitaš se?</H2>
       <FaqChat items={items} />
     </section>
@@ -157,7 +160,8 @@ export function Faq({ live }) {
 // Footer (C): Krigla maše. Bez potpisa (Petar d5).
 export function Footer() {
   return (
-    <footer className="border-t border-line px-5 pt-14 pb-36 text-center">
+    <footer className="relative border-t border-line px-5 pt-14 pb-36 text-center">
+      <HuntKrigla id="footer" size={20} className="top-4 right-4" />
       <div className="mx-auto grid max-w-6xl justify-items-center gap-4">
         {/* Veća Krigla koja lebdi, sa zelenim brend sjajem (Petar, 2026-10-04). */}
         <div className="relative grid place-items-center py-4">

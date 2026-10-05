@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { HuntKrigla } from "./hunt";
 
 // „Podne“ (Petar w11): svaki dan u 12:00 po Zagrebu razvije se jedna polaroid fotka s nečim
 // iz aplikacije čega nema u turi. Prije podneva je negativ i odbrojava se do razvijanja.
@@ -47,7 +48,8 @@ export function Podne() {
   const leftText = left >= 60 ? `${Math.floor(left / 60)} h ${left % 60} min` : `${left} min`;
 
   return (
-    <section ref={ref} data-krigla="Svaki dan u podne nešto novo." className="mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-24 text-center md:grid-cols-2 md:items-center md:text-left">
+    <section ref={ref} data-krigla="Svaki dan u podne nešto novo." className="relative mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-24 text-center md:grid-cols-2 md:items-center md:text-left">
+      <HuntKrigla id="podne" size={22} className="bottom-8 left-3" />
       <div className="grid justify-items-center gap-4 md:justify-items-start">
         <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">Svaki dan u 12:00</span>
         <h2 className="font-display text-[clamp(40px,11vw,52px)] leading-[0.95] uppercase text-balance md:text-[clamp(56px,5.6vw,84px)]">
