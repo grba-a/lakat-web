@@ -1,4 +1,5 @@
 import { remaining } from "@/lib/launch";
+import { HeroBg } from "./hero-bg";
 import { SoundToggle } from "./sound-toggle";
 import { StoreButtons } from "./store";
 import { TimerTalk } from "./timer-talk";
@@ -15,7 +16,7 @@ export function Hero({ live = false }) {
   const initial = remaining();
   return (
     <section className="relative isolate overflow-hidden">
-      <div className="dots-lg pointer-events-none absolute inset-0 -z-10 opacity-30" aria-hidden="true" />
+      <HeroBg />
 
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 pt-[max(14px,env(safe-area-inset-top))] pb-2">
         <span className="font-display text-[22px] leading-none">

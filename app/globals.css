@@ -50,6 +50,34 @@ body {
   -webkit-mask: radial-gradient(circle, #000 1.2px, transparent 1.8px) 0 0 / 16px 16px;
   mask: radial-gradient(circle, #000 1.2px, transparent 1.8px) 0 0 / 16px 16px;
 }
+/* Obala od točkica (w27): gotova slika (točkice samo na kopnu), jer WebKit ne slaže dvije maske. */
+.land-dots {
+  background: url(/img/obala-tocke.webp) center / 100% 100% no-repeat;
+  opacity: 0.3;
+}
+.city-dot {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  opacity: 0.85;
+  animation: city 4s ease-out infinite;
+}
+@keyframes city {
+  0% { box-shadow: 0 0 0 0 rgb(74 222 128 / 0.55); }
+  60%, 100% { box-shadow: 0 0 0 16px rgb(74 222 128 / 0); }
+}
+/* Svjetiljka na desktopu: točkice oko miša zasvijetle (jedna maska, točkice su pozadina). */
+.lamp {
+  opacity: calc(var(--lamp, 0) * 0.8);
+  transition: opacity 0.4s;
+  background: radial-gradient(circle, #4ade80 1.4px, transparent 2px) 0 0 / 16px 16px;
+  -webkit-mask-image: radial-gradient(circle 220px at var(--mx, -999px) var(--my, -999px), #000, transparent);
+  mask-image: radial-gradient(circle 220px at var(--mx, -999px) var(--my, -999px), #000, transparent);
+}
+
 .breathe {
   animation: breathe 4.8s ease-in-out infinite;
 }
