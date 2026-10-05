@@ -167,7 +167,8 @@ export function Footer() {
       <div className="mx-auto grid max-w-6xl justify-items-center gap-4">
         {/* Veća Krigla koja lebdi, sa zelenim brend sjajem (Petar, 2026-10-04). */}
         <div className="relative grid place-items-center py-4">
-          <div className="krigla-glow pointer-events-none absolute inset-[-10%] rounded-full" aria-hidden="true" />
+          {/* Sjaj je samo gradijent: drop-shadow i blur na mobitelu WebKit iscrta kao zeleni kvadrat (Petar, 2026-10-05). */}
+          <div className="krigla-glow pointer-events-none absolute inset-[-25%]" aria-hidden="true" />
           <div className="float">
             <img
               src="/img/krigla/mase.webp"
@@ -175,7 +176,7 @@ export function Footer() {
               width={480}
               height={480}
               loading="lazy"
-              className="relative w-[clamp(170px,48vw,250px)] object-contain drop-shadow-[0_16px_44px_rgb(74_222_128/0.55)]"
+              className="relative w-[clamp(170px,48vw,250px)] object-contain"
             />
           </div>
         </div>

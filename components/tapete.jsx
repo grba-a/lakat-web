@@ -3,12 +3,12 @@
 import { track } from "@vercel/analytics";
 import { useEffect, useState } from "react";
 
-// Krigla tapete za mobitel (Petar n6). Treća („psst“) je nagrada iz lova na Krigle (n5).
+// Krigla tapete za mobitel (Petar n6). Srednja, sretna Krigla, nagrada je iz lova na Krigle (Petar, 2026-10-05).
 const LOV_KEY = "lakat-lov";
 const TAPETE = [
-  { n: 1, ime: "Puna Krigla" },
   { n: 2, ime: "Krigla maše" },
-  { n: 3, ime: "Psst", nagrada: true },
+  { n: 1, ime: "Sretna Krigla", nagrada: true },
+  { n: 3, ime: "Psst" },
 ];
 
 // Zaključana tapeta nije link (nema kamo voditi), otključana se preuzima.

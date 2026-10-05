@@ -227,13 +227,12 @@ body {
 
 /* Zeleni sjaj iza Krigle u footeru: diše zajedno s lebdenjem. */
 .krigla-glow {
-  background: radial-gradient(closest-side, rgb(74 222 128 / 0.5), rgb(74 222 128 / 0.14) 55%, transparent 78%);
-  filter: blur(8px);
+  background: radial-gradient(closest-side, rgb(74 222 128 / 0.6), rgb(74 222 128 / 0.24) 42%, rgb(74 222 128 / 0.07) 68%, transparent);
   animation: glow 6s ease-in-out infinite;
 }
 @keyframes glow {
-  0%, 100% { opacity: 0.8; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.06); }
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
 }
 
 /* Pajdaši na karti u heroju: iskoče jedan po jedan i dišu. */
