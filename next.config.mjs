@@ -28,6 +28,12 @@ const nextConfig = {
       ],
     };
   },
+  // Stare adrese web aplikacije (zabilješke, početni ekran, linkovi iz pusheva) nakon prelaska vode
+  // na početnu, gdje instalirani web app vidi „Račun ti je spremljen“. Privremeno (307), da ne zaglavi u cacheu.
+  async redirects() {
+    const stare = ["/login", "/register", "/welcome", "/uskoro", "/mapa", "/rang", "/igre", "/liga", "/upute", "/profil/:path*", "/profil", "/korisnik/:path*"];
+    return stare.map((source) => ({ source, destination: "/", permanent: false }));
+  },
   async headers() {
     // Novi service worker mora stići odmah, inače stari na instaliranim web appovima čeka 24 h.
     return [{ source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }] }];
