@@ -1,5 +1,18 @@
 # laktarenje.com → lakat-web: switch-day runbook
 
+## DONE 2026-10-05 (Petar's word in session)
+- `api.laktarenje.com` (CNAME at Namecheap by Petar) added to Vercel `lakat`; Supabase URL config confirmed by Petar.
+- lakat-pwa main = `ac1face`: branch prelazak-domene + lockdown keeps /f, /s, reset public + `assetPrefix` from
+  `LAKAT_ASSET_PREFIX=https://api.laktarenje.com` (Vercel does NOT apply fallback rewrites to `/_next/static`, so proxied
+  pages had 404 JS until the old project served its assets from its own domain). `LAKAT_LOCKDOWN=1` on `lakat` (web push off,
+  api.laktarenje.com/ → /uskoro).
+- lakat-web env: `LAKAT_API_ORIGIN=https://api.laktarenje.com` (prod+preview), `SITE_URL=https://laktarenje.com` (prod).
+- `laktarenje.com` + `www` (308 → apex) moved from `lakat` to `lakat-web`.
+- Verified: native API answers identical via proxy and direct (401/405/400), /f /s /reset /zaboravio render with assets in WebKit,
+  forgot-password server action works through the proxy, old paths 307 → /.
+- Brevo templates 1 + 2 now link laktarenje.com; `?pwa=demo` / `?roleta=demo` only work off laktarenje.com.
+- Still open: Petar's phone check (login, photo, his /f link), then delete the web UI (d8); IG bio → `https://laktarenje.com/?src=ig-bio`.
+
 Decisions: https://claude.ai/artifact/UB3wK4SRpdZaFtc4ohgdW3 (db `domena/`, Petar 2026-10-05).
 Inventory of what iOS needs: `~/Projects/lakat-web-plan/review/pwa-inventory.md`.
 When: only when Petar says, with everything below prepared and verified first (d6).

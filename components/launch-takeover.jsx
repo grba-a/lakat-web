@@ -17,7 +17,8 @@ export function LaunchTakeover() {
   const [up, setUp] = useState(false);
 
   useEffect(() => {
-    const demo = new URLSearchParams(window.location.search).get("roleta") === "demo";
+    // Demo samo izvan prave domene (Petar, prelazak 2026-10-05): na laktarenje.com ga nitko ne vidi slučajno.
+    const demo = !/laktarenje\.com$/.test(window.location.hostname) && new URLSearchParams(window.location.search).get("roleta") === "demo";
     const t0 = setTimeout(() => {
       if (demo) setTarget(Date.now() + 8000);
       setNow(Date.now());

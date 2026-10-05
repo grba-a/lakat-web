@@ -16,7 +16,8 @@ export function PwaSaved({ live = false }) {
 
   useEffect(() => {
     const standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
-    const demo = new URLSearchParams(window.location.search).get("pwa") === "demo";
+    // Demo samo izvan prave domene (Petar, prelazak 2026-10-05): na laktarenje.com ga nitko ne vidi slučajno.
+    const demo = !/laktarenje\.com$/.test(window.location.hostname) && new URLSearchParams(window.location.search).get("pwa") === "demo";
     if (!standalone && !demo) return;
     const t0 = setTimeout(() => {
       setOn(true);
