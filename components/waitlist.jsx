@@ -268,7 +268,7 @@ export function Waitlist({ prefix = "", android = false, inputRef }) {
             <input name="privola" type="checkbox" className="mt-0.5 size-5 shrink-0 accent-[#4ade80]" />
             <span>
               Imam 18+. Pošaljite mi potvrdu i jedan mail kad LAKAT izađe. Ništa više.{" "}
-              <a href="/privatnost" className="underline underline-offset-2">
+              <a href="/privatnost" className="relative underline underline-offset-2 after:absolute after:-inset-x-2 after:-inset-y-3">
                 Privatnost
               </a>
             </span>

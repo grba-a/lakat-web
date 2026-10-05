@@ -178,7 +178,7 @@ export function FeatureTourMobile() {
                 className="push-drop absolute inset-x-[5%] top-[7%] z-[4] grid grid-cols-[auto_1fr] items-center gap-2 rounded-[14px] border border-white/5 bg-[#26262c]/95 px-2.5 py-2 text-left shadow-lg"
                 style={{ fontSize: "calc(var(--w) * 0.048)" }}
               >
-                <img src="/img/krigla-lik.webp" alt="" width={48} height={48} className="object-contain" style={{ width: "calc(var(--w) * 0.13)", height: "calc(var(--w) * 0.13)" }} />
+                <img src="/img/krigla-lik-128.webp" alt="" width={48} height={48} className="object-contain" style={{ width: "calc(var(--w) * 0.13)", height: "calc(var(--w) * 0.13)" }} />
                 <span className="leading-snug">
                   <b className="flex justify-between font-semibold">
                     KRIGLA <span className="font-normal text-muted">sada</span>

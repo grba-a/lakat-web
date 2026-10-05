@@ -103,7 +103,7 @@ export function KriglaTyping({ text, size = 40, className = "", trigger, onView 
 
   return (
     <div ref={ref} className={`flex items-end gap-2.5 ${className}`}>
-      <img src="/img/krigla-lik.webp" alt="" width={size} height={size} className="shrink-0 object-contain" style={{ width: size, height: size }} loading="lazy" />
+      <img src="/img/krigla-lik-128.webp" alt="" width={size} height={size} className="shrink-0 object-contain" style={{ width: size, height: size }} loading="lazy" />
       <p
         className={`relative min-h-[42px] rounded-[18px] rounded-bl-md border border-line bg-surface-2 px-3.5 py-2.5 text-left text-[14px] leading-snug md:text-[15px] ${tone || "text-fg"}`}
       >

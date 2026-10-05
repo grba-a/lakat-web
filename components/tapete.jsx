@@ -11,6 +11,16 @@ const TAPETE = [
   { n: 3, ime: "Psst", nagrada: true },
 ];
 
+// Zaključana tapeta nije link (nema kamo voditi), otključana se preuzima.
+function Wrap({ zakljucano, children, ...a }) {
+  if (zakljucano) return <div className="grid gap-2">{children}</div>;
+  return (
+    <a {...a} className="group grid gap-2">
+      {children}
+    </a>
+  );
+}
+
 export function Tapete() {
   const [lov, setLov] = useState(false);
   useEffect(() => {
@@ -37,13 +47,12 @@ export function Tapete() {
         {TAPETE.map((t) => {
           const zakljucano = t.nagrada && !lov;
           return (
-            <a
+            <Wrap
               key={t.n}
-              href={zakljucano ? undefined : `/img/tapete/lakat-tapeta-${t.n}.jpg`}
-              download={zakljucano ? undefined : `lakat-tapeta-${t.n}.jpg`}
-              onClick={() => !zakljucano && track("tapeta_tap", { n: t.n })}
-              aria-disabled={zakljucano}
-              className={`group grid gap-2 ${zakljucano ? "cursor-default" : ""}`}
+              zakljucano={zakljucano}
+              href={`/img/tapete/lakat-tapeta-${t.n}.jpg`}
+              download={`lakat-tapeta-${t.n}.jpg`}
+              onClick={() => track("tapeta_tap", { n: t.n })}
             >
               <span className="relative block overflow-hidden rounded-2xl border border-line">
                 <img
@@ -61,7 +70,7 @@ export function Tapete() {
                 )}
               </span>
               <span className="text-center text-[13px] text-muted">{zakljucano ? "Zaključano" : "Preuzmi"}</span>
-            </a>
+            </Wrap>
           );
         })}
       </div>

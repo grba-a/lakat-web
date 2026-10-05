@@ -21,6 +21,7 @@ export function StickyCta({ live: launched = false }) {
   const [open, setOpen] = useState(false);
   const [signed, setSigned] = useState(false);
   const input = useRef(null);
+  const sheetRoot = useRef(null);
   // Krigla uz gumb mijenja repliku po sekciji (Petar w26).
   const [line, setLine] = useState({ text: "", k: 0 });
   const [talk, setTalk] = useState(false);
@@ -135,6 +136,8 @@ export function StickyCta({ live: launched = false }) {
   }, [open]);
 
   function openSheet() {
+    // Zatvoreni sheet je `inert` (ništa unutra ne prima fokus); skini to odmah, prije fokusa.
+    if (sheetRoot.current) sheetRoot.current.inert = false;
     setOpen(true);
     // Fokus u istom tapu, inače iOS ne otvori tipkovnicu.
     input.current?.focus({ preventScroll: true });
@@ -162,7 +165,7 @@ export function StickyCta({ live: launched = false }) {
           <div className="pointer-events-none relative shrink-0">
             <img
               key={razina}
-              src={`/img/krigla/${razina}.webp`}
+              src={`/img/krigla/sm/${razina}.webp`}
               alt=""
               width={48}
               height={48}
@@ -191,7 +194,7 @@ export function StickyCta({ live: launched = false }) {
       </div>
 
       {!live && (
-        <div className={`fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`} aria-hidden={!open}>
+        <div ref={sheetRoot} inert={!open} className={`fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`}>
           <button
             type="button"
             tabIndex={-1}

@@ -1,3 +1,4 @@
+import { preload } from "react-dom";
 import { remaining } from "@/lib/launch";
 import { HeroBg } from "./hero-bg";
 import { HuntKrigla } from "./hunt";
@@ -15,6 +16,8 @@ import { TiltPhone } from "./tilt-phone";
 const PHONE_W = "clamp(112px, min(46vw, calc((100svh - 430px) / 2.17)), 300px)";
 
 export function Hero({ live = false }) {
+  // Obala od točkica je najveći element na mobitelu (LCP): neka krene odmah, s prioritetom.
+  preload("/img/obala-tocke.png", { as: "image", fetchPriority: "high" });
   const initial = remaining();
   return (
     <section className="relative isolate overflow-hidden">

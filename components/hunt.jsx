@@ -50,7 +50,7 @@ export function HuntKrigla({ id, className = "", size = 26 }) {
       aria-label="Skrivena Krigla"
       className={`absolute z-[3] grid place-items-center rounded-full p-2 opacity-60 transition-[opacity,scale] hover:opacity-100 ${pop ? "scale-150 opacity-0 duration-500" : ""} ${className}`}
     >
-      <img src="/img/krigla-lik.webp" alt="" width={size} height={size} style={{ width: size, height: size }} className="rotate-[-12deg] object-contain" />
+      <img src="/img/krigla-lik-128.webp" alt="" width={size} height={size} style={{ width: size, height: size }} className="rotate-[-12deg] object-contain" />
     </button>
   );
 }

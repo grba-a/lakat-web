@@ -57,7 +57,7 @@ body {
 }
 /* Obala od točkica (w27): gotova slika (točkice samo na kopnu), jer WebKit ne slaže dvije maske. */
 .land-dots {
-  background: url(/img/obala-tocke.webp) center / 100% 100% no-repeat;
+  background: url(/img/obala-tocke.png) center / 100% 100% no-repeat;
   opacity: 0.3;
 }
 .city-dot {

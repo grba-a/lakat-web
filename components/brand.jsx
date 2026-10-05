@@ -15,7 +15,7 @@ export function Punct({ children }) {
 export function KriglaSays({ children, size = 48, className = "" }) {
   return (
     <div className={`flex items-end gap-2.5 ${className}`}>
-      <img src="/img/krigla-lik.webp" alt="" width={size} height={size} className="shrink-0 object-contain" style={{ width: size, height: size }} loading="lazy" />
+      <img src="/img/krigla-lik-128.webp" alt="" width={size} height={size} className="shrink-0 object-contain" style={{ width: size, height: size }} loading="lazy" />
       <p className="relative rounded-[18px] rounded-bl-md border border-line bg-surface-2 px-3.5 py-2.5 text-left text-[14px] leading-snug text-fg md:text-[15px]">
         {children}
       </p>

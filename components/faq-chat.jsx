@@ -9,7 +9,7 @@ const OPENER = "Pitaj me nešto. Ne grizem.";
 const OUTRO = "To je sve što smijem reći. Ostalo piši na support@laktarenje.com.";
 
 function Avatar() {
-  return <img src="/img/krigla-lik.webp" alt="" width={36} height={36} className="size-9 shrink-0 object-contain" />;
+  return <img src="/img/krigla-lik-128.webp" alt="" width={36} height={36} className="size-9 shrink-0 object-contain" />;
 }
 
 function KriglaBubble({ text, typing, reduce }) {

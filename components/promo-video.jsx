@@ -34,7 +34,7 @@ export function PromoVideo() {
   }
 
   return (
-    <button type="button" onClick={toggle} className="group relative block" aria-label={muted ? "Pusti zvuk" : "Ugasi zvuk"}>
+    <button type="button" onClick={toggle} className="group relative block">
       <Phone width="clamp(220px, 64vw, 300px)">
         <video
           ref={video}
@@ -48,7 +48,7 @@ export function PromoVideo() {
         />
         {/* Film je 9:16, a ekran uži: cijeli kadar stoji unutra, a crne trake gore i dolje
             postaju dio playera umjesto da rubovi filma bježe s ekrana (Petar, 2026-10-05). */}
-        <span className="absolute inset-x-0 top-[5%] z-[2] text-center font-mono tracking-[0.16em] text-muted uppercase" style={{ fontSize: "calc(var(--w) * 0.036)" }}>
+        <span aria-hidden="true" className="absolute inset-x-0 top-[5%] z-[2] text-center font-mono tracking-[0.16em] text-muted uppercase" style={{ fontSize: "calc(var(--w) * 0.036)" }}>
           LAKAT<span className="text-accent">.</span> · najava · 0:49
         </span>
       </Phone>

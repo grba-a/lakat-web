@@ -37,9 +37,9 @@ export function TimerTalk({ initial, className }) {
           setN((k) => k + 1);
         }}
         className="cursor-pointer rounded-2xl"
-        aria-label="Tapni timer, Krigla nešto kaže"
       >
         <Countdown initial={initial} className={className} />
+        <span className="sr-only">Tapni timer, Krigla nešto kaže</span>
       </button>
       {n >= 0 && <KriglaTyping key={n} text={text} size={36} onView={false} trigger={n} className="chat-in max-w-[320px]" />}
     </div>
