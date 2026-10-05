@@ -42,18 +42,28 @@ q8 later, but Claude may design people silhouettes instead of faces · q9 Claude
 t1 BACK TO SCROLL with fluid, clean scroll-linked animations (native scroll, no Lenis) · n1–n8 all yes.
 
 ## Round 3A — no backend
-1. [ ] t1 scroll tour, scrubbed + lerp-smoothed (screens slide inside the phone, captions crossfade, progress rail)
-2. [ ] q3 roleta: last 60 min full-screen countdown, shutter at 12:00
-3. [ ] n2 friend greeting (?src=share/izazov) · n3 Krigla knows the time of day · n4 tab-title timer in the last 24 h
-4. [ ] n5 Krigla hunt (5 hidden Krigle → secret line + wallpaper later)
-5. [ ] n1 „Spremi za Story“ 9:16 „Još N dana“ image (next/og) + share
-6. [ ] n7 /press page
-7. [ ] q8 silhouettes instead of blurred faces in screens
-8. [ ] q5 QR on desktop after launch (`qrcode` dep)
-9. [ ] q9 /privatnost sentence draft (vault + PLAN) · q7 Codex prompt folder · q4 Vercel Analytics via API
+1. [x] t1 scroll tour, scrubbed + lerp-smoothed (screens slide inside the phone, captions crossfade, progress rail)
+2. [x] q3 roleta: last 60 min full-screen countdown, shutter at 12:00
+3. [x] n2 friend greeting (?src=share/izazov) · n3 Krigla knows the time of day · n4 tab-title timer in the last 24 h
+4. [x] n5 Krigla hunt (5 hidden Krigle → secret line + wallpaper later)
+5. [x] n1 „Spremi za Story“ 9:16 „Još N dana“ image (next/og) + share
+6. [x] n7 /press page
+7. [x] q8 silhouettes instead of blurred faces in screens
+8. [x] q5 QR on desktop after launch (`qrcode` dep)
+9. [x] q9 /privatnost sentence draft (vault + PLAN) · q7 Codex prompt folder · q4 Vercel Analytics via API
 
 ## Round 3B — backend (Supabase PROD + Brevo)
 - SQL `docs/supabase-lista1.sql`: table + security-definer RPCs for anon (upis, potvrda, kvart ranking, fill %, ime slobodno, ref count)
 - Own double opt-in: token link mailed via Brevo transactional → /potvrdi?t= → confirmed in Supabase + contact into the Brevo list
 - w05 ticket + QR referral · w06 dovedi pajdaša · w07 kvartovski rat · w08 Napunite Kriglu · w09 rezerviraj ime · w28 presence
 - n6 wallpapers after Codex poses · n8 3D phone (Blender + r3f) last
+
+### Round 3B state (2026-10-05)
+Built behind flags (live site unchanged): `lib/lista.js`, `/api/lista` v2 (own double opt-in), `/potvrdi`, `/api/lista/ime`,
+`/api/ulaznica`, ticket on `/potvrdeno`, `KvartRat` section, form fields (grad, kvart, @ime) when `NEXT_PUBLIC_LISTA_PRO=1`.
+SQL `docs/supabase-lista1.sql` tested in PGlite (idempotent, view shows only kvarts with 3+, username check covers profiles + list).
+To switch on (Vercel env of lakat-web): SUPABASE_URL, SUPABASE_SECRET_KEY, BREVO_API_KEY, BREVO_SENDER, BREVO_LIST_ID,
+(BREVO_ATTRS=1 after creating PLATFORMA, IZVOR, GRAD, KVART), NEXT_PUBLIC_LISTA_PRO=1.
+Blocked: Brevo key is a Sensitive Vercel var (not readable) and not in ~/.config → Petar adds a key; Petar runs the SQL;
+OK to put the PROD service key into lakat-web. Not built yet: w08 Napunite Kriglu (needs thresholds + what unlocks),
+w28 presence (needs supabase-js + anon key), n6 wallpapers (Codex poses), n8 3D phone.
