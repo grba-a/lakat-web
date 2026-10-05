@@ -2,7 +2,7 @@ import { FeatureTour } from "@/components/feature-tour";
 import { Hero } from "@/components/hero";
 import { Faq, Film, Footer, Instagram, PlayGame, Privacy, Secret, WaitlistSection } from "@/components/sections";
 import { StickyCta } from "@/components/sticky-cta";
-import { isLive } from "@/lib/launch";
+import { APP_STORE, isLive } from "@/lib/launch";
 
 // Svaku minutu svjež HTML, da prvi prikaz timera i prelazak na store gumbe
 // u podne 1. 12. ne čekaju novi deploy.
@@ -19,7 +19,7 @@ export default function Home() {
         <PlayGame />
         <Film />
         <Privacy />
-        {!live && <WaitlistSection />}
+        {(!live || !APP_STORE) && <WaitlistSection />}
         <Instagram live={live} />
         <Faq live={live} />
       </main>

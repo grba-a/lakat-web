@@ -2,6 +2,7 @@ import { INSTAGRAM } from "@/lib/launch";
 import { KriglaSays, Punct } from "./brand";
 import { FaqChat } from "./faq-chat";
 import { Game } from "./game";
+import { SecretKrigla } from "./secret-krigla";
 import { Phone, Splash } from "./phone";
 import { PromoVideo } from "./promo-video";
 import { Waitlist } from "./waitlist";
@@ -35,7 +36,7 @@ export function Secret({ live = false }) {
     <section className="mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-24 text-center md:grid-cols-2 md:items-center md:text-left">
       <div className="grid justify-items-center gap-6 md:justify-items-start">
         <Eyebrow>I još nešto…</Eyebrow>
-        <KriglaSays size={64}>Ima još nešto, ali ako ti rečem, šef će me razbit.</KriglaSays>
+        <SecretKrigla />
         <H2>{live ? "Uskoro u aplikaciji." : "Vidimo se 1. 12."}</H2>
       </div>
       <div className="float">

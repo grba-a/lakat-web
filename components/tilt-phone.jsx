@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { play } from "@/lib/sfx";
 import { Phone, Splash } from "./phone";
+import { SplashPushes } from "./splash-pushes";
 
 const REST = { x: 7, y: -16, z: 2 };
 
@@ -95,7 +96,10 @@ export function TiltPhone({ width, live = false }) {
           {live ? (
             <img src="/img/scr-karta.webp" alt="" width={640} height={1317} className="absolute inset-0 h-full w-full object-cover object-top" />
           ) : (
-            <Splash />
+            <>
+              <Splash />
+              <SplashPushes />
+            </>
           )}
           {krigla && (
             <div className="absolute inset-x-0 bottom-0 z-[5] grid justify-items-center gap-2 pb-6">

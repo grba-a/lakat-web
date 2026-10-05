@@ -1,4 +1,5 @@
 import { Anton, Archivo } from "next/font/google";
+import { TabTitle } from "@/components/tab-title";
 import "./globals.css";
 
 const anton = Anton({
@@ -29,7 +30,10 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="hr" className={`${anton.variable} ${archivo.variable} antialiased`}>
-      <body className="min-h-dvh">{children}</body>
+      <body className="min-h-dvh">
+        {children}
+        <TabTitle />
+      </body>
     </html>
   );
 }

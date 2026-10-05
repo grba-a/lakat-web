@@ -1,7 +1,7 @@
 import { remaining } from "@/lib/launch";
 import { SoundToggle } from "./sound-toggle";
 import { StoreButtons } from "./store";
-import { Countdown } from "./countdown";
+import { TimerTalk } from "./timer-talk";
 import { TiltPhone } from "./tilt-phone";
 
 // Hero, varijanta B (Petar, 2026-10-04): naslov gore, mobitel, timer, a gumb
@@ -22,7 +22,7 @@ export function Hero({ live = false }) {
           LAKAT<span className="text-accent">.</span>
         </span>
         <div className="flex items-center gap-3">
-          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">iOS · 1. 12.</span>
+          <span className="font-mono text-[11px] tracking-[0.14em] text-muted">iOS · 1. 12.</span>
           <SoundToggle />
         </div>
       </header>
@@ -50,10 +50,10 @@ export function Hero({ live = false }) {
           {live ? (
             <StoreButtons />
           ) : (
-            <Countdown initial={initial} className="[--cw:34px] md:justify-start md:[--cw:46px]" />
+            <TimerTalk initial={initial} className="[--cw:34px] md:justify-start md:[--cw:46px]" />
           )}
           <p className="max-w-[34ch] text-[15px] text-soft text-pretty md:text-[17px]">
-            {live ? "Vidiš tko je vani, tko stiže i tko časti." : "1. 12. u podne na iPhoneu. Vidiš tko je vani, tko stiže i tko časti."}
+            {live ? "Vidiš tko je vani, tko stiže i tko časti." : "1. 12. u podne na iPhoneu, Android uskoro. Vidiš tko je vani, tko stiže i tko časti."}
           </p>
         </div>
       </div>

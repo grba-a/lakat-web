@@ -31,7 +31,7 @@ export function useTypewriter(text, run, armed = false) {
     }, 0);
     const t1 = setTimeout(() => {
       setPhase("typing");
-      const step = Math.max(12, Math.min(28, 1300 / text.length));
+      const step = Math.max(10, Math.min(22, 900 / text.length));
       typing = setInterval(() => {
         setN((k) => {
           if (k >= text.length) {
@@ -42,7 +42,7 @@ export function useTypewriter(text, run, armed = false) {
           return k + 1;
         });
       }, step);
-    }, 650 + Math.min(600, text.length * 6));
+    }, 380 + Math.min(300, text.length * 4));
     return () => {
       clearTimeout(t0);
       clearTimeout(t1);

@@ -177,6 +177,14 @@ body {
   50% { opacity: 1; transform: scale(1.06); }
 }
 
+/* Krigla se stisne na tap (tajna). */
+.squish { animation: squish 0.38s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes squish {
+  0% { transform: scale(1); }
+  35% { transform: scale(0.86, 0.94); }
+  100% { transform: scale(1); }
+}
+
 /* Chat u „Pitaš se?“: poruka uđe odozdo, Krigla tipka s tri točke. */
 .chat-in { animation: rise 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; }
 .typing-dot {

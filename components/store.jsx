@@ -7,7 +7,7 @@ export function StoreButtons({ className = "" }) {
   return (
     <div className={`grid justify-items-center gap-3 md:justify-items-start ${className}`}>
       <a
-        href={APP_STORE || "#"}
+        href={APP_STORE || "#lista"}
         className="inline-flex h-[54px] items-center gap-3 rounded-[12px] border border-[#a6a6a6] bg-black px-5 text-left text-white"
         aria-label="Preuzmi LAKAT na App Storeu"
       >
