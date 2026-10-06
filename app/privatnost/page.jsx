@@ -1,6 +1,6 @@
 import { PravnaStranica, Odjeljak, Popis, VODITELJ } from "../pravno";
 
-export const metadata = { title: "Pravila privatnosti — LAKAT." };
+export const metadata = { title: "Pravila privatnosti — LAKAT.", alternates: { canonical: "/privatnost" } };
 
 // GDPR čl. 13 + Apple 5.1.1(i). Činjenice su iz koda (inventura 3.10.2026.):
 // kad se promijeni tko dobiva podatke, mijenja se i ovo. Tekst pregledavaju

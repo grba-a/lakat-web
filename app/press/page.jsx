@@ -6,6 +6,7 @@ import { INSTAGRAM } from "@/lib/launch";
 export const metadata = {
   title: "Press. LAKAT",
   description: "LAKAT za medije: opis, ekrani, najava i kontakt.",
+  alternates: { canonical: "/press" },
 };
 
 // Press kit (Petar n7): sve što novinar ili influencer treba na jednom mjestu. Samo potvrđene činjenice.

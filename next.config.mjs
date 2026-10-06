@@ -24,7 +24,9 @@ const nextConfig = {
       fallback: [
         { source: "/_next/static/:path*", destination: `${API}/_next/static/:path*` },
         { source: "/_next/image", destination: `${API}/_next/image` },
-        { source: "/:file(icon-192\\.png|icon-512\\.png|icon-maskable-512\\.png|avatar-placeholder\\.png)", destination: `${API}/:file` },
+        { source: "/:file(icon-192\\.png|icon-512\\.png|icon-maskable-512\\.png|avatar-placeholder\\.png|manifest\\.webmanifest)", destination: `${API}/:file` },
+        // Vercel Analytics starog projekta na proxyjanim stranicama (njegov hash, ne dira analitiku ovog weba).
+        { source: "/dfcd78be713b0bc3/:path*", destination: `${API}/dfcd78be713b0bc3/:path*` },
       ],
     };
   },
@@ -36,7 +38,17 @@ const nextConfig = {
   },
   async headers() {
     // Novi service worker mora stići odmah, inače stari na instaliranim web appovima čeka 24 h.
-    return [{ source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }] }];
+    return [
+      { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }] },
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+        ],
+      },
+    ];
   },
 };
 

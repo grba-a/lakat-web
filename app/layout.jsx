@@ -24,6 +24,7 @@ export const metadata = {
   title: "LAKAT. Šank se otvara 1. 12.",
   description:
     "LAKAT stiže na iPhone 1. 12. u podne. Vidiš tko je vani, tko stiže i tko časti. Javi se i budi prvi za šankom.",
+  alternates: { canonical: "/" },
   openGraph: { locale: "hr_HR", type: "website", siteName: "LAKAT" },
   twitter: { card: "summary_large_image" },
 };
