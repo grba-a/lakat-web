@@ -1,6 +1,11 @@
+import { stranica } from "@/lib/seo";
 import { PravnaStranica, Odjeljak, Popis, VODITELJ } from "../pravno";
 
-export const metadata = { title: "Pravila privatnosti — LAKAT.", alternates: { canonical: "/privatnost" } };
+export const metadata = stranica({
+  naslov: "Pravila privatnosti · LAKAT",
+  opis: "Kako LAKAT čuva tvoje podatke: tko vidi tvoje runde i lokaciju, što spremamo, kome to šaljemo i kako obrisati račun.",
+  put: "/privatnost",
+});
 
 // GDPR čl. 13 + Apple 5.1.1(i). Činjenice su iz koda (inventura 3.10.2026.):
 // kad se promijeni tko dobiva podatke, mijenja se i ovo. Tekst pregledavaju
@@ -9,7 +14,7 @@ export default function PrivatnostPage() {
   return (
     <PravnaStranica
       naslov="Pravila privatnosti"
-      verzija="Verzija 2 · listopad 2026. (dodana lista čekanja)"
+      verzija="Verzija 3 · listopad 2026. (dodana ljestvica igre)"
       sazetak={[
         "Tvoje runde, slike i lokaciju vide samo tvoji prihvaćeni pajdaši. Iznimka je runda koju sam staviš „Javno u blizini”.",
         "Ne prodajemo ti podatke. Nema reklama, nema praćenja po drugim appovima.",
@@ -175,7 +180,12 @@ export default function PrivatnostPage() {
         </p>
         <p>
           <b>Na ovoj stranici:</b> posjete brojimo preko Vercel Web Analyticsa, bez kolačića i bez praćenja po drugim stranicama.
-          Postavke zvuka, rezultat igre i lov na Krigle pamti samo tvoj preglednik i ne šalju se nama.
+          Postavke zvuka, tvoj rekord u igri i lov na Krigle pamti samo tvoj preglednik i ne šalju se nama.
+        </p>
+        <p>
+          <b>Ljestvica igre:</b> ako se sam upišeš na ljestvicu dana, spremamo nadimak koji upišeš, rezultat i dan. Nadimak i
+          rezultat vide svi na stranici. Da nitko ne zatrpa ljestvicu, jedan dan čuvamo i šifrirani otisak tvoje IP adrese (ne samu
+          adresu). Osnova je tvoja privola (upis je dobrovoljan), a upis brišemo nakon 30 dana ili ranije, na zahtjev mailom.
         </p>
       </Odjeljak>
 
