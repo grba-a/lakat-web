@@ -49,7 +49,8 @@ function citaj(key) {
 const polje =
   "min-h-[48px] w-full rounded-2xl border bg-surface px-4 text-[16px] text-fg outline-none transition-colors placeholder:text-muted focus-visible:border-accent focus-visible:outline-none aria-invalid:border-[#f87171]";
 
-export function Waitlist({ prefix = "", android: androidLive = false, firstRef, velik = false, naslov = null }) {
+// `aktivan` = list odozdo je bio otvoren: do tada Krigle ne crtamo, da se šest slika ne skida uz prvi prikaz stranice.
+export function Waitlist({ prefix = "", android: androidLive = false, firstRef, velik = false, naslov = null, aktivan = true }) {
   const id = useId();
   const [status, setStatus] = useState("idle"); // idle | sending | ok | already | error | off
   const [poruka, setPoruka] = useState("");
@@ -377,7 +378,7 @@ export function Waitlist({ prefix = "", android: androidLive = false, firstRef, 
   const sadrzaj = (
     <div className="grid gap-5">
       {naslov}
-      {sImenom && (
+      {sImenom && aktivan && (
         <div className={velik ? "md:hidden" : ""}>
           <ImeUzivoMali ime={prikazIme} razina={razina} />
         </div>

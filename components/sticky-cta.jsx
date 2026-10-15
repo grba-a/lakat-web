@@ -26,6 +26,7 @@ export function StickyCta({ live: launched = false }) {
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const [signed, setSigned] = useState(false);
+  const [bioOtvoren, setBioOtvoren] = useState(false);
   const first = useRef(null);
   const sheetRoot = useRef(null);
   const dialog = useRef(null);
@@ -195,6 +196,7 @@ export function StickyCta({ live: launched = false }) {
     // Zatvoreni list je `inert` (ništa unutra ne prima fokus); skini to odmah, prije fokusa.
     if (sheetRoot.current) sheetRoot.current.inert = false;
     setOpen(true);
+    setBioOtvoren(true);
     // Fokus u istom tapu, inače iOS ne otvori tipkovnicu.
     first.current?.focus({ preventScroll: true });
   }
@@ -281,6 +283,7 @@ export function StickyCta({ live: launched = false }) {
             <Waitlist
               prefix="sheet-"
               firstRef={first}
+              aktivan={bioOtvoren}
               naslov={
                 <p id="sheet-naslov" className="font-display text-[34px] leading-none uppercase">
                   {PRO ? (

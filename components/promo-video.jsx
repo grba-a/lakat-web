@@ -12,6 +12,15 @@ export function PromoVideo() {
   useEffect(() => {
     const v = video.current;
     if (!v) return;
+    // Poster tek kad se film približi (mobilni-lcp): ne smije se skidati uz prvi prikaz stranice.
+    const blizu = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        v.poster = "/video/poster.jpg";
+        blizu.disconnect();
+      },
+      { rootMargin: "900px 0px" }
+    );
     const io = new IntersectionObserver(
       ([e]) => {
         if (e.isIntersecting) {
@@ -21,8 +30,12 @@ export function PromoVideo() {
       },
       { rootMargin: "200px 0px", threshold: 0.2 }
     );
+    blizu.observe(v);
     io.observe(v);
-    return () => io.disconnect();
+    return () => {
+      blizu.disconnect();
+      io.disconnect();
+    };
   }, []);
 
   function toggle() {
@@ -39,7 +52,6 @@ export function PromoVideo() {
         <video
           ref={video}
           src="/video/najava.mp4"
-          poster="/video/poster.jpg"
           muted
           loop
           playsInline
