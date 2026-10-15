@@ -38,7 +38,7 @@ export function Hero({ live = false }) {
             ali se ne vidi (Petar 16. 10.: „ružno mi je ovako“). Ista rečenica stoji vidljivo u „Laktarenje u tri koraka“. */}
         <div className="intro-1 grid justify-items-center md:col-start-1 md:row-start-1 md:self-end md:justify-items-start">
           <h1 className="sr-only">
-            LAKAT je hrvatska iPhone aplikacija za druženje s ekipom.{" "}
+            LAKAT je aplikacija za druženje s ekipom.{" "}
             <span className="text-fg">{live ? "Sad je vani." : "Stiže 1. 12. u podne."}</span>
           </h1>
           <p className="font-display text-[clamp(48px,14vw,62px)] leading-[0.93] uppercase text-balance md:text-[clamp(64px,7.4vw,112px)]">

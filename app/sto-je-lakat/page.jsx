@@ -10,7 +10,7 @@ export const revalidate = 3600;
 
 export const metadata = stranica({
   naslov: "Što je LAKAT · aplikacija za druženje s ekipom",
-  opis: "Što je LAKAT: hrvatska iPhone aplikacija za druženje i izlaske s ekipom. Funkcije, tko te vidi, kad izlazi i tko stoji iza.",
+  opis: "Što je LAKAT: aplikacija za druženje s ekipom. Funkcije, tko te vidi, kad izlazi i tko stoji iza.",
   put: "/sto-je-lakat",
 });
 
@@ -71,7 +71,7 @@ export default function StoJeLakat() {
       </Blok>
 
       <Blok naslov="Tko stoji iza">
-        <p>LAKAT radi Petar Grbić iz Hrvatske. Pitanja, prijave i mediji: <a href="mailto:support@laktarenje.com" className="text-accent underline underline-offset-4">support@laktarenje.com</a>.</p>
+        <p>LAKAT radi Petar Grbić. Pitanja, prijave i mediji: <a href="mailto:support@laktarenje.com" className="text-accent underline underline-offset-4">support@laktarenje.com</a>.</p>
         <p>
           Za novinare: <Link href="/press" className="text-accent underline underline-offset-4">press</Link>, s ekranima i najavom.
         </p>

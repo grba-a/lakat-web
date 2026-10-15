@@ -1,6 +1,6 @@
 import { faqZa } from "@/lib/faq";
 import { KRIGLA_KORACI } from "@/lib/krigla-slike";
-import { MREZE, ODLOMAK } from "@/lib/opis";
+import { MREZE } from "@/lib/opis";
 import { KriglaSays, Punct } from "./brand";
 import { FaqChat } from "./faq-chat";
 import { Game } from "./game";
@@ -226,7 +226,6 @@ export function Footer() {
           </a>
         </div>
         {/* Jedan opis LAKTA, isti kao u tražilicama i na mrežama (rijeci-namjere, entitet-mreze). */}
-        <p className="mt-6 max-w-[52ch] text-[14px] leading-relaxed text-muted text-pretty">{ODLOMAK.join(" ")}</p>
         <div className="mt-4 flex w-full max-w-sm flex-wrap items-center justify-between gap-y-2 border-t border-line pt-5 text-[13px] text-muted">
           <span className="font-display text-[18px] leading-none text-fg">
             LAKAT<span className="text-accent">.</span>

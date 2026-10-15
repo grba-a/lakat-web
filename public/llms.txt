@@ -1,8 +1,8 @@
 # LAKAT
 
-> LAKAT je hrvatska iPhone aplikacija za druženje i izlaske s ekipom. Na karti vidiš tko je od pajdaša vani i objaviš rundu, fotku s mjesta gdje se družite. Vide je samo pajdaši koje prihvatiš, a javno samo kad to sam upališ. Krigla, tvoj lik u aplikaciji, daje zadatke i pamti večeri.
+> LAKAT je aplikacija za druženje s ekipom. Na karti vidiš tko je od pajdaša vani i objaviš rundu, fotku s mjesta gdje se družite. Vide je samo pajdaši koje prihvatiš, a javno samo kad to sam upališ. Krigla, tvoj lik u aplikaciji, daje zadatke i pamti večeri.
 
-Izlazi 1. 12. 2026. u podne (Europe/Zagreb) na iPhoneu, iOS 26 ili noviji. Android stiže u siječnju 2027. LAKAT je besplatan i samo za punoljetne (18+). Radi ga Petar Grbić iz Hrvatske. Kontakt: support@laktarenje.com.
+Izlazi 1. 12. 2026. u podne (Europe/Zagreb) na iPhoneu, iOS 26 ili noviji. Android stiže u siječnju 2027. LAKAT je besplatan i samo za punoljetne (18+). Radi ga Petar Grbić. Kontakt: support@laktarenje.com.
 
 ## Stranice
 
