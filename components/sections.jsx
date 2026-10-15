@@ -7,6 +7,7 @@ import { Game } from "./game";
 import { HuntKrigla } from "./hunt";
 import { SecretKrigla } from "./secret-krigla";
 import { MrezaIkona } from "./mreze";
+import { KriglaListe } from "./napunite-kriglu";
 import { StoryButton } from "./story-button";
 import { PrivacyWords } from "./privacy-words";
 import { PromoVideo } from "./promo-video";
@@ -70,8 +71,13 @@ export function TriKoraka({ live = false }) {
 }
 
 // 4. Privatnost: „Vide te samo pajdaši.“ riječ po riječ (Petar w29, c-privatnost-pajdasi).
+// Vizual sekcije je Krigla koja se puni s listom (Petar 16. 10.), s pravim brojem s poslužitelja.
 export function Privacy() {
-  return <PrivacyWords />;
+  return (
+    <PrivacyWords>
+      <KriglaListe />
+    </PrivacyWords>
+  );
 }
 
 // 5. Rezerviraj @ime (j-lista-ranije, c-rezervacija-imena): obrazac je peta sekcija.

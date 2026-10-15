@@ -1,12 +1,35 @@
 import { stanje } from "@/lib/krigla-cilj";
+import { KRIGLA_RAZINE, razinaPostotka } from "@/lib/krigla-slike";
 import { dbReady, ukupno } from "@/lib/lista";
 import { KriglaSays } from "./brand";
 
-// Napunite Kriglu (Petar k1–k5), od 15. 10. samo na /potvrdeno (j-krigla-16): tu tjera na dijeljenje,
-// a na početnoj je pred obrascem govorila da nikoga nema. Bez tužne Krigle i bez postotka; traka ostaje.
+// Broj potvrđenih upisa (isti izvor za oba prikaza). null = baza nije spojena ili ne odgovara: tada se ništa ne crta.
+async function potvrdenih() {
+  if (!dbReady()) return null;
+  return ukupno().catch(() => null);
+}
+
+// Krigla u „Vide te samo pajdaši“ (Petar 16. 10.): puni se sa svakim potvrđenim upisom, slika po pravoj
+// napunjenosti, bez postotka i bez poruke o tome koliko fali. Bez baze ili bez ijednog upisa sekcija ostaje bez nje.
+export async function KriglaListe() {
+  const n = await potvrdenih();
+  if (!n) return null;
+  const razina = razinaPostotka(stanje(n).pct);
+  return (
+    <figure data-krigla-lista={razina} className="flex items-center gap-4 md:gap-5">
+      <img src={KRIGLA_RAZINE[razina]} alt="" width={360} height={360} loading="lazy" decoding="async" className="size-[104px] shrink-0 object-contain md:size-[148px]" />
+      <figcaption className="max-w-[22ch] text-[16px] leading-snug font-semibold text-fg text-pretty md:text-[18px]">
+        Svako novo ime na listi dolije malo u Kriglu.
+      </figcaption>
+    </figure>
+  );
+}
+
+// Napunite Kriglu (Petar k1–k5) na /potvrdeno: tu tjera na dijeljenje i otkriva tragove o sedmoj funkciji.
+// Bez tužne Krigle i bez postotka; traka ostaje.
 export async function NapuniteKriglu() {
-  if (!dbReady() || process.env.NEXT_PUBLIC_LISTA_PRO !== "1") return null;
-  const n = await ukupno().catch(() => null);
+  if (process.env.NEXT_PUBLIC_LISTA_PRO !== "1") return null;
+  const n = await potvrdenih();
   if (n === null) return null;
   const s = stanje(n);
   return (
