@@ -5,6 +5,7 @@ import { FEATURES } from "@/lib/features";
 import { Punct } from "./brand";
 import { KriglaTyping } from "./krigla-typing";
 import { Phone } from "./phone";
+import { ZvonoEkran } from "./zvono-ekran";
 
 // Kretanje mobitela, varijanta A „slalom“ (Petar, 2026-10-04; ako mu se ne svidi,
 // probamo B „okret“). Jedan mobitel ostaje na ekranu kroz svih šest funkcija:
@@ -92,19 +93,25 @@ export function FeatureTour() {
       <div className="pointer-events-none sticky top-0 z-0 grid h-[100svh] place-items-center" aria-hidden="true">
         <div ref={phone} className="will-change-transform">
           <Phone width={PHONE_W}>
-            {FEATURES.map((f, k) => (
-              <img
-                key={f.id}
-                ref={(n) => (screens.current[k] = n)}
-                src={`/img/scr-${f.id}.webp`}
-                alt=""
-                width={640}
-                height={1317}
-                loading={k === 0 ? "eager" : "lazy"}
-                className="absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-300"
-                style={{ opacity: k === 0 ? 1 : 0 }}
-              />
-            ))}
+            {FEATURES.map((f, k) =>
+              f.scr ? (
+                <img
+                  key={f.id}
+                  ref={(n) => (screens.current[k] = n)}
+                  src={`/img/scr-${f.id}.webp`}
+                  alt={f.alt}
+                  width={640}
+                  height={1317}
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-300"
+                  style={{ opacity: k === 0 ? 1 : 0 }}
+                />
+              ) : (
+                <div key={f.id} ref={(n) => (screens.current[k] = n)} className="absolute inset-0 transition-opacity duration-300" style={{ opacity: 0 }}>
+                  <ZvonoEkran on />
+                </div>
+              )
+            )}
           </Phone>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { storeLink } from "@/lib/launch";
 
-// Nakon lansiranja: App Store + „Android uskoro“ (Petar s6: iOS 1. 12., Android poslije).
+// Nakon lansiranja: App Store + Android u siječnju 2027. (Petar s6 + c-android-sijecanj).
 // TODO prije 1. 12.: zamijeniti službenim Appleovim badgeom (SVG s developer.apple.com),
 // „App Store“ se nikad ne prevodi, badge ne animiramo i ne naginjemo.
 export function StoreButtons({ className = "" }) {
@@ -19,7 +19,7 @@ export function StoreButtons({ className = "" }) {
           <span className="block text-[19px] font-semibold tracking-tight">App Store</span>
         </span>
       </a>
-      <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">Android uskoro</span>
+      <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">Android u siječnju 2027.</span>
     </div>
   );
 }

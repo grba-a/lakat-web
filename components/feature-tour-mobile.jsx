@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { FEATURES } from "@/lib/features";
 import { Punct } from "./brand";
 import { Phone } from "./phone";
+import { ZvonoEkran } from "./zvono-ekran";
 
 // Tura na mobitelu (Petar w02): velik mobitel u sredini, čitljivi ekrani, Krigla stiže
 // kao push u mobitelu, a naslov je ispod. Svaki ekran ima jedan živi sloj.
@@ -66,7 +67,8 @@ function Live({ id, on }) {
 // Tura na mobitelu (Petar, 2026-10-05): natrag na skrolanje, ali fluidno i čisto.
 // Skrol je nativni (bez Lenisa); animacija samo prati skrol i meko ga dostiže (lerp),
 // pa ekrani klize unutar mobitela točno uz prst, a naslovi se pretapaju.
-const STEP = 0.72; // visina jednog koraka u visinama ekrana
+// Skraćeno 15. 10. (j-tura-kraca): pet ekrana umjesto šest i kraći korak, tura traje oko 3,4 ekrana umjesto 4,6.
+const STEP = 0.6; // visina jednog koraka u visinama ekrana
 
 export function FeatureTourMobile() {
   const root = useRef(null);
@@ -158,21 +160,25 @@ export function FeatureTourMobile() {
           <Phone width={PHONE_W}>
             {FEATURES.map((x, k) => (
               <div key={x.id} ref={(node) => (screens.current[k] = node)} className="absolute inset-0 will-change-transform">
-                <div className="absolute top-0 left-1/2 h-full -translate-x-1/2" style={{ aspectRatio: "640 / 1317" }}>
-                  <img
-                    src={`/img/scr-${x.id}.webp`}
-                    alt=""
-                    width={640}
-                    height={1317}
-                    loading={k < 2 ? "eager" : "lazy"}
-                    draggable={false}
-                    className={`h-full w-full ${x.id === "film" ? `develop ${k === active ? "on" : ""}` : ""}`}
-                  />
-                  <Live id={x.id} on={k === active} />
-                </div>
+                {x.scr ? (
+                  <div className="absolute top-0 left-1/2 h-full -translate-x-1/2" style={{ aspectRatio: "640 / 1317" }}>
+                    <img
+                      src={`/img/scr-${x.id}.webp`}
+                      alt={x.alt}
+                      width={640}
+                      height={1317}
+                      loading="lazy"
+                      draggable={false}
+                      className={`h-full w-full ${x.id === "film" ? `develop ${k === active ? "on" : ""}` : ""}`}
+                    />
+                    <Live id={x.id} on={k === active} />
+                  </div>
+                ) : (
+                  <ZvonoEkran on={k === active} />
+                )}
               </div>
             ))}
-            {!["krigla", "ekipe"].includes(f.id) && (
+            {f.id !== "krigla" && (
               <div
                 key={active}
                 className="push-drop absolute inset-x-[5%] top-[7%] z-[4] grid grid-cols-[auto_1fr] items-center gap-2 rounded-[14px] border border-white/5 bg-[#26262c]/95 px-2.5 py-2 text-left shadow-lg"

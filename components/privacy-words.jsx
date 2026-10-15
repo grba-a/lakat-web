@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// „Vidi te samo tvoj pajdaš.“ se pali riječ po riječ dok skrolaš, a polje točkica se ugasi
+// „Vide te samo pajdaši.“ se pali riječ po riječ dok skrolaš, a polje točkica se ugasi
 // osim tebe i tri pajdaša (Petar w29). Bez JS-a i sa smanjenim kretanjem sve je upaljeno.
-const WORDS = ["Vidi", "te", "samo", "tvoj", "pajdaš"];
+// Obećanje je usklađeno s aplikacijom (c-privatnost-pajdasi): javna runda postoji, ali samo kad je sam upališ.
+const WORDS = ["Vide", "te", "samo", "pajdaši"];
 // Ti (bijela) i tri pajdaša, ispod teksta da ne padnu preko naslova.
 const FRIENDS = [
   ["50%", "88%", true],
@@ -67,8 +68,8 @@ export function PrivacyWords() {
             </span>
           ))}
         </h2>
-        <p className={`max-w-[40ch] text-[16px] text-soft text-pretty transition-opacity duration-500 md:text-[19px] ${done ? "opacity-100" : "opacity-40"}`}>
-          Javno objavljuješ samo kad ti to uključiš. „Vani sam“ se sam ugasi kad odeš.
+        <p className={`max-w-[42ch] text-[16px] text-soft text-pretty transition-opacity duration-500 md:text-[19px] ${done ? "opacity-100" : "opacity-40"}`}>
+          Runde, fotke i gdje si vide samo pajdaši koje prihvatiš. Iznimka je javna runda, i to samo kad je sam upališ: 24 sata je vide ljudi u krugu od 1 km.
         </p>
       </div>
     </section>

@@ -55,9 +55,13 @@ body {
   -webkit-mask: radial-gradient(circle, #000 1.2px, transparent 1.8px) 0 0 / 16px 16px;
   mask: radial-gradient(circle, #000 1.2px, transparent 1.8px) 0 0 / 16px 16px;
 }
-/* Obala od točkica (w27): gotova slika (točkice samo na kopnu), jer WebKit ne slaže dvije maske. */
+/* Obala od točkica (w27): gotova slika (točkice samo na kopnu), jer WebKit ne slaže dvije maske.
+   Slika je maska, a boju daje gradijent (zelena u sredini, jantar prema rubu, kao u slici). Maska nije
+   kandidat za LCP, pa najveći element prvog ekrana postaje naslov, a ne ukrasna obala (mobilni-lcp). */
 .land-dots {
-  background: url(/img/obala-tocke.png) center / 100% 100% no-repeat;
+  background: radial-gradient(ellipse 60% 55% at 40% 45%, #6beb87 0%, #a7d366 38%, #e4cf57 70%, #e5b84b 100%);
+  -webkit-mask: url(/img/obala-tocke.png) center / 100% 100% no-repeat;
+  mask: url(/img/obala-tocke.png) center / 100% 100% no-repeat;
   opacity: 0.3;
 }
 .city-dot {
@@ -285,6 +289,27 @@ body {
   0%, 100% { box-shadow: 0 0 0 0 rgb(74 222 128 / 0); }
   50% { box-shadow: 0 0 0 calc(var(--w) * 0.02) rgb(74 222 128 / 0.55), 0 0 calc(var(--w) * 0.12) rgb(74 222 128 / 0.5); }
 }
+
+/* „Sad ili nikad“ (primjer zvona u turi): kutovi tražila kamere, nacrtani gradijentima. */
+.zvono-okvir {
+  --c: rgb(244 244 245 / 0.75);
+  --l: calc(var(--w) * 0.1);
+  --t: calc(var(--w) * 0.012);
+  background:
+    linear-gradient(var(--c) 0 0) top left / var(--l) var(--t),
+    linear-gradient(var(--c) 0 0) top left / var(--t) var(--l),
+    linear-gradient(var(--c) 0 0) top right / var(--l) var(--t),
+    linear-gradient(var(--c) 0 0) top right / var(--t) var(--l),
+    linear-gradient(var(--c) 0 0) bottom left / var(--l) var(--t),
+    linear-gradient(var(--c) 0 0) bottom left / var(--t) var(--l),
+    linear-gradient(var(--c) 0 0) bottom right / var(--l) var(--t),
+    linear-gradient(var(--c) 0 0) bottom right / var(--t) var(--l);
+  background-repeat: no-repeat;
+}
+
+/* FAQ kao chat bez JS-a: <details> bez strelice preglednika. */
+.faq > summary::-webkit-details-marker { display: none; }
+.faq > summary::marker { content: ""; }
 
 /* Roleta šanka (q3): metalne lamele. */
 .roleta {
