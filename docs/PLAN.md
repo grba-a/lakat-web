@@ -54,3 +54,12 @@ Video: `public/video/najava.mp4` = „Cijeli Balkan (duga, 49 s)“ from the Des
 - Privacy section had no pick — built A (big sentence)
 - Recapture screens on DEV without real faces (film strip, rang) before the public deploy
 - FAQ „Gdje radi?“ — which countries
+
+## Pregledi 15. 10. (Codex, jasnoća, SEO/AI) — ugrađeno lokalno 15. 10.
+Petrove odluke iz artifacta: nova struktura od devet sekcija, obrazac samo @ime + mail (+ kvačica), kvart na /potvrdeno,
+Krigla po razinama kroz obrazac (`lib/krigla-slike.js`), JSON-LD, /sto-je-lakat, /llms.txt, noindex za stare i osobne rute,
+Android u siječnju 2027., prijelaz 1. 12. preko env `NEXT_PUBLIC_APP_STORE_URL` + redeploy. Izvještaj: `docs/izrada-2026-10-15/`.
+
+## Kasnije (Petar 15. 10., ne raditi bez njegove riječi)
+- **LAKAT novosti / blog**: Petar želi kasnije rubriku s novostima (SEO, AI citati). Kad krene: `/novosti` s člancima,
+  link u podnožju i u `public/llms.txt`, svaki članak u sitemapu s pravim `lastModified`.

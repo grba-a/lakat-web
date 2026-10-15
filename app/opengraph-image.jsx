@@ -1,19 +1,19 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { isLive, remaining } from "@/lib/launch";
+import { isLive } from "@/lib/launch";
 
-// Slika za dijeljenje koja se mijenja svaki dan: „Još 57 dana.“ (Petar d1).
-export const alt = "LAKAT. Šank se otvara 1. 12.";
+// Slika za dijeljenje. Bio je dnevni broj („Još 57 dana.“, Petar d1), ali mreže i CDN ga čuvaju danima pa
+// ista najava pokaže krive dane (og-odbrojavanje). Sad stoji stalan datum, a u podne 1. 12. prelazi na „otvoren“.
+export const alt = "LAKAT, aplikacija za druženje s ekipom. Na iPhoneu 1. 12. u podne.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const revalidate = 3600;
+export const revalidate = 600;
 
 export default async function Image() {
   const anton = await readFile(join(process.cwd(), "assets/Anton-Regular.ttf"));
   const live = isLive();
-  const d = remaining().d;
-  const big = live ? "Šank je otvoren" : d > 1 ? `Još ${d} dana` : d === 1 ? "Još 1 dan" : "Danas u podne";
+  const big = live ? "Šank je otvoren" : "Šank se otvara 1. 12";
 
   return new ImageResponse(
     (
@@ -34,12 +34,12 @@ export default async function Image() {
           LAKAT<span style={{ color: "#4ADE80" }}>.</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", fontSize: 150, lineHeight: 0.95, textTransform: "uppercase" }}>
+          <div style={{ display: "flex", fontSize: 128, lineHeight: 0.95, textTransform: "uppercase" }}>
             {big}
             <span style={{ color: "#4ADE80" }}>.</span>
           </div>
           <div style={{ display: "flex", fontSize: 40, color: "#8B8B94", marginTop: 18, textTransform: "uppercase" }}>
-            {live ? "Na iPhoneu. Android uskoro." : "1. 12. u podne na iPhoneu"}
+            {live ? "Na iPhoneu · Android u siječnju 2027." : "U podne · na iPhoneu · druženje s ekipom"}
           </div>
         </div>
       </div>

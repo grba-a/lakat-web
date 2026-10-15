@@ -1,7 +1,12 @@
 import Link from "next/link";
+import { stranica } from "@/lib/seo";
 import { PravnaStranica, Odjeljak, Popis, VODITELJ } from "../pravno";
 
-export const metadata = { title: "Uvjeti korištenja — LAKAT.", alternates: { canonical: "/uvjeti" } };
+export const metadata = stranica({
+  naslov: "Uvjeti korištenja · LAKAT",
+  opis: "Uvjeti korištenja LAKTA: tko smije, pravila ponašanja, prijave i blokade, tvoj sadržaj i brisanje računa.",
+  put: "/uvjeti",
+});
 
 // Apple 1.2 (nula tolerancije za uvredljiv sadržaj, prijava, blokada) + EU
 // Akt o digitalnim uslugama (pravila sadržaja, obrazloženje, žalba). Prihvaća

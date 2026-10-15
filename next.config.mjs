@@ -40,6 +40,18 @@ const nextConfig = {
     // Novi service worker mora stići odmah, inače stari na instaliranim web appovima čeka 24 h.
     return [
       { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }] },
+      // Stranice starog appa koje se prosljeđuju i osobne stranice ne idu u Google (SEO pregled 15. 10.).
+      // Zaglavlje, ne robots.txt, da Google noindex stvarno pročita. Linkovi iz mailova i aplikacije rade isto.
+      ...[...PROXIED.filter((s) => !s.startsWith("/api/")), "/potvrdeno", "/i/:path*"].map((source) => ({
+        source,
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+      })),
+      // Kopija na *.vercel.app (lakat-web.vercel.app) ostaje dostupna, ali ne ulazi u indeks (vercel-domena).
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "(?<sub>.+)\\.vercel\\.app" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+      },
       {
         source: "/:path*",
         headers: [

@@ -1,18 +1,21 @@
 import Link from "next/link";
 import { KriglaSays } from "@/components/brand";
-import { FEATURES } from "@/lib/features";
-import { INSTAGRAM } from "@/lib/launch";
+import { FEATURES, JOS } from "@/lib/features";
+import { mrvice } from "@/lib/jsonld";
+import { MREZE, ODLOMAK } from "@/lib/opis";
+import { jsonLd, stranica } from "@/lib/seo";
 
-export const metadata = {
-  title: "Press. LAKAT",
-  description: "LAKAT za medije: opis, ekrani, najava i kontakt.",
-  alternates: { canonical: "/press" },
-};
+export const metadata = stranica({
+  naslov: "Press · LAKAT",
+  opis: "LAKAT za medije: opis aplikacije, ekrani, najava, Krigla i kontakt.",
+  put: "/press",
+});
 
 // Press kit (Petar n7): sve što novinar ili influencer treba na jednom mjestu. Samo potvrđene činjenice.
 export default function Press() {
   return (
     <main className="mx-auto grid max-w-5xl gap-14 px-5 py-14 md:py-20">
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(mrvice("Press", "/press"))} />
       <header className="grid gap-5">
         <Link href="/" className="font-display text-[22px] leading-none">
           LAKAT<span className="text-accent">.</span>
@@ -26,21 +29,24 @@ export default function Press() {
       <section className="grid gap-4 md:grid-cols-[1fr_1.2fr] md:gap-10">
         <h2 className="font-display text-[34px] leading-none uppercase">Ukratko</h2>
         <div className="grid gap-3 text-[16px] text-soft">
+          <p>{ODLOMAK.join(" ")}</p>
+          <p>Izlazi 1. 12. 2026. u 12:00 na iPhoneu. Android stiže u siječnju 2027.</p>
           <p>
-            LAKAT je hrvatska društvena aplikacija za izlaske s ekipom. Na karti vidiš tko je od pajdaša vani, objaviš rundu, a Krigla,
-            tvoj lik u aplikaciji, daje zadatke i pamti večeri.
+            Sve činjenice na jednom mjestu:{" "}
+            <Link href="/sto-je-lakat" className="text-accent underline underline-offset-4">
+              Što je LAKAT
+            </Link>
+            .
           </p>
-          <p>Izlazi 1. 12. 2026. u 12:00 na iPhoneu. Android stiže poslije.</p>
-          <p>Tebe vide samo pajdaši koje prihvatiš. Javno objavljuješ samo kad ti to uključiš.</p>
         </div>
       </section>
 
       <section className="grid gap-5">
         <h2 className="font-display text-[34px] leading-none uppercase">Funkcije</h2>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-          {FEATURES.map((f) => (
+          {[...FEATURES, ...JOS].filter((f) => f.scr).map((f) => (
             <a key={f.id} href={`/img/scr-${f.id}.webp`} download className="grid content-start gap-2 rounded-2xl border border-line bg-surface p-3 transition-colors hover:border-[#3f3f46]">
-              <img src={`/img/scr-${f.id}.webp`} alt={f.name} width={640} height={1317} loading="lazy" className="aspect-[9/16] w-full rounded-xl object-cover object-top" />
+              <img src={`/img/scr-${f.id}.webp`} alt={f.alt} width={640} height={1317} loading="lazy" className="aspect-[9/16] w-full rounded-xl object-cover object-top" />
               <b className="font-display text-[20px] leading-none font-normal uppercase">{f.name}</b>
               <span className="text-[13px] text-muted">{f.line}</span>
             </a>
@@ -69,9 +75,11 @@ export default function Press() {
           <a href="mailto:support@laktarenje.com" className="inline-flex min-h-[48px] items-center rounded-full border border-line px-5 text-[15px] font-semibold">
             support@laktarenje.com
           </a>
-          <a href={INSTAGRAM} target="_blank" rel="noopener" className="ig-btn inline-flex min-h-[48px] items-center rounded-full px-5 text-[15px] font-bold text-white">
-            @lakat_app
-          </a>
+          {MREZE.map((m) => (
+            <a key={m.id} href={m.href} target="_blank" rel="noopener" className={`inline-flex min-h-[48px] items-center rounded-full px-5 text-[15px] font-bold ${m.id === "instagram" ? "ig-btn text-white" : "border border-line text-fg"}`}>
+              {m.ime}
+            </a>
+          ))}
         </div>
       </section>
     </main>

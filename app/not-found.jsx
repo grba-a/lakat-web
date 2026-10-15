@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { KriglaTyping } from "@/components/krigla-typing";
 
-export const metadata = { title: "Nema ničega. LAKAT" };
+export const metadata = { title: "Nema ničega · LAKAT", robots: { index: false, follow: true } };
 
 // 404 s Kriglom (Petar k8).
 export default function NotFound() {

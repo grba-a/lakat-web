@@ -7,10 +7,12 @@ export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
   const r = parseScore((await params).r);
-  if (r === null) return {};
+  // Izazovi su beskonačni i osobni: ne idu u indeks (SEO pregled osobne-stranice-noindex).
+  if (r === null) return { robots: { index: false, follow: false } };
   return {
-    title: `Pajdaš ima ${r}. Možeš li bolje? LAKAT`,
-    description: "Igra dana na LAKTU: ista staza za sve, jedan pokušaj. 1. 12. stiže cijela aplikacija.",
+    title: `Pajdaš ima ${r}. Možeš li bolje? · LAKAT`,
+    description: "Igra dana na LAKTU: ista staza za sve. 1. 12. stiže cijela aplikacija za druženje s ekipom.",
+    robots: { index: false, follow: true },
   };
 }
 
