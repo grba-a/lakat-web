@@ -3,11 +3,11 @@
 import { track } from "@vercel/analytics";
 import { useEffect, useState } from "react";
 
-// Krigla tapete za mobitel (Petar n6). Srednja, sretna Krigla, nagrada je iz lova na Krigle (Petar, 2026-10-05).
+// Krigla tapete za mobitel (Petar n6), od 15. 10. na /potvrdeno (j-nova-struktura). Srednja, sretna Krigla, nagrada je iz lova na Krigle (Petar, 2026-10-05).
 const LOV_KEY = "lakat-lov";
 const TAPETE = [
   { n: 2, ime: "Krigla maše" },
-  { n: 1, ime: "Sretna Krigla", nagrada: true },
+  { n: 1, ime: "Sretni Krigla", nagrada: true },
   { n: 3, ime: "Psst" },
 ];
 
@@ -38,9 +38,8 @@ export function Tapete() {
   }, []);
 
   return (
-    <section data-krigla="Stavi me na zaključani ekran." className="mx-auto grid max-w-3xl gap-6 px-5 py-20">
-      <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted">Pozadine za mobitel</span>
-      <h2 className="font-display text-[clamp(40px,11vw,52px)] leading-[0.95] uppercase text-balance">
+    <section className="grid gap-5">
+      <h2 className="font-display text-[clamp(36px,10vw,48px)] leading-[0.95] uppercase text-balance">
         Krigla na zaključanom ekranu<span className="text-accent">.</span>
       </h2>
       <div className="grid grid-cols-3 gap-3">

@@ -10,9 +10,15 @@ import { SAY } from "./hunt";
 import { SIGNED_KEY, Waitlist } from "./waitlist";
 
 export const OPEN_SHEET = "lakat-lista";
+const PRO = process.env.NEXT_PUBLIC_LISTA_PRO === "1";
+export const CTA_TEXT = PRO ? "Rezerviraj @ime" : "Javi mi prvi";
 
-// Donji gumb „Javi mi prvi“ (hero B). Tap otvara formu odozdo s već fokusiranim poljem,
-// pa nitko ne skače 9.000 px i ne gubi mjesto (Petar w18). Nakon prijave postaje „Pošalji ekipi“.
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([type="hidden"]):not([tabindex="-1"]), select, textarea, [tabindex]:not([tabindex="-1"])';
+// Što Kriglin balončić nikad ne smije prekriti (j-krigla-balon, Petar: „to mi je fora“, ostaje).
+const NE_PREKRIVAJ = "main h1, main h2, main h3, main summary, main a[href], main button, main input, main label, footer a[href], footer button, footer p.font-display";
+
+// Donji gumb „Rezerviraj @ime“ (hero B + c-rezervacija-imena). Tap otvara obrazac odozdo s već fokusiranim
+// poljem, pa nitko ne skače po stranici (Petar w18). Nakon potvrde maila postaje „Pošalji ekipi“.
 // position: fixed, ne sticky: sticky s negativnom marginom bježi (zamka iz vaulta).
 export function StickyCta({ live: launched = false }) {
   // Bez App Store linka i nakon lansiranja ostaje lista čekanja, nikad mrtvi „#“.
@@ -20,12 +26,15 @@ export function StickyCta({ live: launched = false }) {
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const [signed, setSigned] = useState(false);
-  const input = useRef(null);
+  const first = useRef(null);
   const sheetRoot = useRef(null);
+  const dialog = useRef(null);
+  const opener = useRef(null);
+  const balon = useRef(null);
   // Krigla uz gumb mijenja repliku po sekciji (Petar w26).
   const [line, setLine] = useState({ text: "", k: 0 });
   const [talk, setTalk] = useState(false);
-  // Krigla se puni dok skrolaš prema listi (Petar w26): prazna → pola → puna.
+  // Krigla se puni dok skrolaš prema obrascu (Petar w26): prazna → pola → puna.
   const [razina, setRazina] = useState("prazna");
 
   useEffect(() => {
@@ -128,19 +137,66 @@ export function StickyCta({ live: launched = false }) {
     };
   }, [live]);
 
+  // Dok Krigla priča, balončić se skloni čim bi prekrio naslov, gumb, polje ili link (provjera na svakom skrolu).
+  useEffect(() => {
+    if (!talk) return;
+    let raf = 0;
+    const check = () => {
+      raf = 0;
+      const b = balon.current?.getBoundingClientRect();
+      if (!b) return;
+      for (const el of document.querySelectorAll(NE_PREKRIVAJ)) {
+        const r = el.getBoundingClientRect();
+        if (r.width && r.bottom > b.top - 4 && r.top < b.bottom + 4 && r.right > b.left - 4 && r.left < b.right + 4) {
+          setTalk(false);
+          return;
+        }
+      }
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [talk, line.k]);
+
+  // Otvoren list: pozadina je inert (ni fokus ni tap ne bježe van), Tab kruži unutra, Escape zatvara,
+  // a fokus se vraća na gumb koji je list otvorio (fokus-obrasca).
   useEffect(() => {
     if (!open) return;
-    const esc = (e) => e.key === "Escape" && setOpen(false);
-    window.addEventListener("keydown", esc);
-    return () => window.removeEventListener("keydown", esc);
+    const pozadina = [...document.querySelectorAll("body > main, body > footer")];
+    pozadina.forEach((el) => (el.inert = true));
+    const onKey = (e) => {
+      if (e.key === "Escape") return setOpen(false);
+      if (e.key !== "Tab" || !dialog.current) return;
+      const f = [...dialog.current.querySelectorAll(FOCUSABLE)].filter((el) => el.offsetParent !== null || el === document.activeElement);
+      if (!f.length) return;
+      // Uvijek sami pomičemo fokus: WebKit bi Tabom inače skakao samo po poljima i izlazio iz lista.
+      e.preventDefault();
+      const i = f.indexOf(document.activeElement);
+      const next = i === -1 ? (e.shiftKey ? f.length - 1 : 0) : (i + (e.shiftKey ? -1 : 1) + f.length) % f.length;
+      f[next].focus();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      pozadina.forEach((el) => (el.inert = false));
+      const back = opener.current;
+      if (back && document.contains(back)) back.focus({ preventScroll: true });
+    };
   }, [open]);
 
   function openSheet() {
-    // Zatvoreni sheet je `inert` (ništa unutra ne prima fokus); skini to odmah, prije fokusa.
+    opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    // Zatvoreni list je `inert` (ništa unutra ne prima fokus); skini to odmah, prije fokusa.
     if (sheetRoot.current) sheetRoot.current.inert = false;
     setOpen(true);
     // Fokus u istom tapu, inače iOS ne otvori tipkovnicu.
-    input.current?.focus({ preventScroll: true });
+    first.current?.focus({ preventScroll: true });
   }
 
   function onTap(e) {
@@ -152,6 +208,8 @@ export function StickyCta({ live: launched = false }) {
     openSheet();
   }
 
+  const label = live ? "Skini LAKAT" : signed ? "Pošalji ekipi" : CTA_TEXT;
+
   return (
     <>
       <div
@@ -161,35 +219,36 @@ export function StickyCta({ live: launched = false }) {
         style={{ background: "linear-gradient(transparent, rgb(9 9 11 / 0.92) 45%)" }}
       >
         <div className="relative mx-auto flex max-w-sm items-center gap-2.5 md:max-w-xs">
-        {!live && (
-          <div className="pointer-events-none relative shrink-0">
-            <img
-              key={razina}
-              src={`/img/krigla/sm/${razina}.webp`}
-              alt=""
-              width={48}
-              height={48}
-              className="chat-in size-12 object-contain drop-shadow-[0_6px_14px_rgb(74_222_128/0.35)]"
-            />
-            {talk && line.text && (
-              <p
-                key={line.k}
-                className="chat-in absolute bottom-[110%] left-0 w-max max-w-[240px] rounded-[16px] rounded-bl-md border border-line bg-surface-2 px-3 py-2 text-[13px] leading-snug text-fg shadow-lg"
-              >
-                {line.text}
-              </p>
-            )}
-          </div>
-        )}
-        <a
-          href={live ? storeLink("web-sticky") : "#lista"}
-          onClick={onTap}
-          tabIndex={hidden || open ? -1 : 0}
-          aria-hidden={hidden || open}
-          className="pointer-events-auto flex min-h-[52px] w-full items-center justify-center rounded-full bg-accent text-[16px] font-bold text-[#052e16] shadow-[0_10px_30px_-10px_rgb(74_222_128/0.6)] active:scale-[0.98]"
-        >
-          {live ? "Skini LAKAT" : signed ? "Pošalji ekipi" : "Javi mi prvi"}
-        </a>
+          {!live && (
+            <div className="pointer-events-none relative shrink-0">
+              <img
+                key={razina}
+                src={`/img/krigla/sm/${razina}.webp`}
+                alt=""
+                width={48}
+                height={48}
+                className="chat-in size-12 object-contain drop-shadow-[0_6px_14px_rgb(74_222_128/0.35)]"
+              />
+              {talk && line.text && (
+                <p
+                  ref={balon}
+                  key={line.k}
+                  className="chat-in absolute bottom-[110%] left-0 w-max max-w-[min(220px,calc(100vw-80px))] rounded-[16px] rounded-bl-md border border-line bg-surface-2 px-3 py-2 text-[13px] leading-snug text-fg shadow-lg"
+                >
+                  {line.text}
+                </p>
+              )}
+            </div>
+          )}
+          <a
+            href={live ? storeLink("web-sticky") : "#lista"}
+            onClick={onTap}
+            tabIndex={hidden || open ? -1 : 0}
+            aria-hidden={hidden || open}
+            className="pointer-events-auto flex min-h-[52px] w-full items-center justify-center rounded-full bg-accent text-[16px] font-bold text-[#052e16] shadow-[0_10px_30px_-10px_rgb(74_222_128/0.6)] transition-[scale] duration-150 ease-out active:scale-[0.97]"
+          >
+            {label}
+          </a>
         </div>
       </div>
 
@@ -203,25 +262,39 @@ export function StickyCta({ live: launched = false }) {
             className={`absolute inset-0 bg-black/60 backdrop-blur-[2px] transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
           />
           <div
+            ref={dialog}
             role="dialog"
             aria-modal="true"
-            aria-label="Javi mi prvi"
-            className={`absolute inset-x-0 bottom-0 mx-auto max-h-[88svh] max-w-lg overflow-y-auto rounded-t-[28px] border-t border-line bg-[#141417] px-5 pt-3 pb-[max(24px,env(safe-area-inset-bottom))] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            aria-labelledby="sheet-naslov"
+            className={`absolute inset-x-0 bottom-0 mx-auto max-h-[92svh] max-w-lg overflow-y-auto overscroll-contain rounded-t-[28px] border-t border-line bg-[#141417] px-5 pt-3 pb-[max(24px,env(safe-area-inset-bottom))] transition-transform duration-[420ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${
               open ? "translate-y-0" : "translate-y-full"
             }`}
           >
             <div className="mb-3 flex items-center justify-between">
               <span className="mx-auto h-1.5 w-10 rounded-full bg-line" />
-              <button type="button" onClick={() => setOpen(false)} aria-label="Zatvori" className="absolute right-3 top-3 grid size-11 place-items-center rounded-full text-muted">
+              <button type="button" onClick={() => setOpen(false)} aria-label="Zatvori" className="absolute top-3 right-3 grid size-11 place-items-center rounded-full text-muted">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                   <path d="M6 6l12 12M18 6 6 18" />
                 </svg>
               </button>
             </div>
-            <p className="mb-4 font-display text-[34px] leading-none uppercase">
-              Javi mi prvi<span className="text-accent">.</span>
-            </p>
-            <Waitlist prefix="sheet-" inputRef={input} />
+            <Waitlist
+              prefix="sheet-"
+              firstRef={first}
+              naslov={
+                <p id="sheet-naslov" className="font-display text-[34px] leading-none uppercase">
+                  {PRO ? (
+                    <>
+                      Rezerviraj svoje @ime<span className="text-accent">.</span>
+                    </>
+                  ) : (
+                    <>
+                      Javi mi prvi<span className="text-accent">.</span>
+                    </>
+                  )}
+                </p>
+              }
+            />
           </div>
         </div>
       )}
@@ -229,20 +302,20 @@ export function StickyCta({ live: launched = false }) {
   );
 }
 
-// Gumb usred stranice (w21): otvara isti sheet.
-export function CatchPoint({ text = "Ovo je samo primjer. Ostalo stiže 1. 12." }) {
+// Gumb usred stranice (w21): otvara isti list.
+export function CatchPoint({ text = "" }) {
   return (
     <div className="grid justify-items-center gap-3 text-center md:justify-items-start md:text-left">
-      <p className="text-[14px] text-soft">{text}</p>
+      {text && <p className="text-[14px] text-soft">{text}</p>}
       <button
         type="button"
         onClick={() => {
           track("cta_tap", { gdje: "usred" });
           window.dispatchEvent(new Event(OPEN_SHEET));
         }}
-        className="inline-flex min-h-[48px] items-center rounded-full border border-accent/60 px-5 text-[15px] font-bold text-accent active:scale-[0.98]"
+        className="inline-flex min-h-[48px] items-center rounded-full border border-accent/60 px-5 text-[15px] font-bold text-accent transition-[scale] duration-150 ease-out active:scale-[0.97]"
       >
-        Javi mi prvi
+        {CTA_TEXT}
       </button>
     </div>
   );
