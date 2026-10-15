@@ -47,7 +47,7 @@ function citaj(key) {
 }
 
 const polje =
-  "min-h-[48px] w-full rounded-2xl border bg-surface px-4 text-[16px] text-fg outline-none transition-colors placeholder:text-muted focus-visible:border-accent focus-visible:outline-none aria-invalid:border-[#f87171]";
+  "min-h-[52px] w-full rounded-2xl border bg-bg px-4 text-[16px] text-fg outline-none transition-colors placeholder:text-muted focus-visible:border-accent focus-visible:outline-none aria-invalid:border-[#f87171]";
 
 // `aktivan` = list odozdo je bio otvoren: do tada Krigle ne crtamo, da se šest slika ne skida uz prvi prikaz stranice.
 export function Waitlist({ prefix = "", android: androidLive = false, firstRef, velik = false, naslov = null, aktivan = true }) {
@@ -197,7 +197,7 @@ export function Waitlist({ prefix = "", android: androidLive = false, firstRef, 
   const android = platform === "android";
 
   const obrazac = (
-    <form onSubmit={submit} noValidate className="grid gap-4">
+    <form onSubmit={submit} noValidate className="grid gap-5">
       {sImenom && (
         <div className="grid gap-1.5">
           <label htmlFor={`${prefix}ime`} className="text-[14px] font-semibold text-fg">
@@ -249,7 +249,7 @@ export function Waitlist({ prefix = "", android: androidLive = false, firstRef, 
 
       <div className="grid gap-1.5">
         <label htmlFor={`${prefix}email`} className="text-[14px] font-semibold text-fg">
-          {sImenom ? "Mail na koji ti stiže potvrda" : "Tvoj mail"}
+          {sImenom ? "Mail za potvrdu" : "Tvoj mail"}
         </label>
         <input
           ref={(n) => {
@@ -282,7 +282,7 @@ export function Waitlist({ prefix = "", android: androidLive = false, firstRef, 
       <input name="web" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
 
       <div className="grid gap-1.5">
-        <label className="flex items-start gap-3 text-left text-[13px] leading-snug text-soft">
+        <label className="flex min-h-[44px] cursor-pointer items-start gap-3 py-0.5 text-left text-[13px] leading-snug text-soft">
           <input
             ref={privolaRef}
             name="privola"
@@ -290,17 +290,17 @@ export function Waitlist({ prefix = "", android: androidLive = false, firstRef, 
             aria-invalid={Boolean(greske.privola)}
             aria-describedby={err("privola")}
             onChange={() => greske.privola && setGreske((g) => ({ ...g, privola: undefined }))}
-            className="mt-0.5 size-5 shrink-0 accent-[#4ade80]"
+            className="mt-px size-[22px] shrink-0 cursor-pointer accent-[#4ade80]"
           />
           <span>
             Imam 18+. Pošaljite mi potvrdu i jedan mail kad LAKAT izađe{android ? " za Android" : ""}. Ništa više.{" "}
-            <a href="/privatnost" className="relative underline underline-offset-2 after:absolute after:-inset-x-2 after:-inset-y-3">
+            <a href="/privatnost" className="relative underline underline-offset-2 after:absolute after:-inset-x-2 after:-inset-y-4">
               Privatnost
             </a>
           </span>
         </label>
         {greske.privola && (
-          <p id={err("privola")} className="pl-8 text-[13px] font-semibold text-[#f87171]">
+          <p id={err("privola")} className="pl-[34px] text-[13px] font-semibold text-[#f87171]">
             {greske.privola}
           </p>
         )}
@@ -309,7 +309,7 @@ export function Waitlist({ prefix = "", android: androidLive = false, firstRef, 
       <button
         type="submit"
         disabled={status === "sending"}
-        className="min-h-[54px] rounded-full bg-accent px-6 text-[17px] font-bold text-[#052e16] transition-[scale,opacity] duration-150 ease-out active:scale-[0.97] disabled:opacity-60"
+        className="min-h-[56px] w-full rounded-full bg-accent px-6 text-[17px] font-bold text-[#052e16] transition-[scale,opacity] duration-150 ease-out active:scale-[0.97] disabled:opacity-60"
       >
         {status === "sending" ? "Šaljem…" : sImenom ? (ime ? `Rezerviraj @${ime}` : "Rezerviraj @ime") : android ? "Javi mi za Android" : "Javi mi prvi"}
       </button>
@@ -320,19 +320,6 @@ export function Waitlist({ prefix = "", android: androidLive = false, firstRef, 
         </p>
       )}
 
-      {!androidLive && (
-        <p className="text-[13px] text-muted">
-          {android ? "Android stiže u siječnju 2027. Javim ti kad stigne. " : null}
-          <button
-            type="button"
-            aria-pressed={android}
-            onClick={() => setPlatform(android ? "iphone" : "android")}
-            className="relative font-semibold text-soft underline underline-offset-2 after:absolute after:-inset-x-2 after:-inset-y-3"
-          >
-            {android ? "Ipak imam iPhone" : "Imaš Android?"}
-          </button>
-        </p>
-      )}
     </form>
   );
 
@@ -375,26 +362,47 @@ export function Waitlist({ prefix = "", android: androidLive = false, firstRef, 
     </div>
   );
 
+  // Tihe napomene ispod obrasca: Android i postojeći korisnici. Sekundarne, bez okvira i crta.
+  const napomene = !androidLive && (
+    <div className="grid gap-2 text-[13px] leading-snug text-muted text-pretty">
+      {!gotovo && (
+        <p>
+          {android ? "Android stiže u siječnju 2027. Javim ti kad stigne. " : null}
+          <button
+            type="button"
+            aria-pressed={android}
+            onClick={() => setPlatform(android ? "iphone" : "android")}
+            className="-my-3 inline-flex min-h-[44px] items-center font-semibold text-soft underline decoration-soft/40 underline-offset-4 hover:decoration-soft"
+          >
+            {android ? "Ipak imam iPhone" : "Imaš Android?"}
+          </button>
+        </p>
+      )}
+      <p>
+        <b className="font-semibold text-soft">Već laktaš na webu?</b> Račun i ime ostaju tvoji. 1. 12. se samo prijaviš u aplikaciji.
+      </p>
+    </div>
+  );
+
+  // U sekciji su polja u jednoj mirnoj kartici; u listu odozdo list je sam kartica, pa okvira nema (bez kutije u kutiji).
   const sadrzaj = (
-    <div className="grid gap-5">
+    <div className={`grid ${velik ? "gap-8" : "gap-6"}`}>
       {naslov}
       {sImenom && aktivan && (
         <div className={velik ? "md:hidden" : ""}>
           <ImeUzivoMali ime={prikazIme} razina={razina} />
         </div>
       )}
-      <div aria-live="polite">{gotovo ? zavrseno : obrazac}</div>
-      {!androidLive && (
-        <p className="border-t border-line pt-4 text-[13px] text-muted text-pretty">
-          <b className="font-semibold text-soft">Već laktaš na webu?</b> Račun i ime ostaju tvoji. 1. 12. se samo prijaviš u aplikaciji.
-        </p>
-      )}
+      <div aria-live="polite" className={velik ? "rounded-[28px] border border-line bg-surface p-5 min-[400px]:p-6" : ""}>
+        {gotovo ? zavrseno : obrazac}
+      </div>
+      {napomene}
     </div>
   );
 
   if (!velik || !sImenom) return sadrzaj;
   return (
-    <div className="grid gap-10 md:grid-cols-[1fr_1.05fr] md:items-center">
+    <div className="grid gap-10 md:grid-cols-[1fr_1.05fr] md:items-center md:gap-16">
       <div className="hidden md:block">
         <ImeUzivoVeliki ime={prikazIme} razina={razina} />
       </div>

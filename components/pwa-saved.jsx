@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { remaining, storeLink } from "@/lib/launch";
-import { OPEN_SHEET } from "./sticky-cta";
+import { CTA_TEXT, OPEN_SHEET } from "./sticky-cta";
 
 // Ekran za ljude koji imaju staru web aplikaciju na početnom ekranu (Petar d4, 2026-10-05).
 // Prepozna se po načinu otvaranja (standalone). `?pwa=demo` ga pokaže u običnom pregledniku.
@@ -65,7 +65,7 @@ export function PwaSaved({ live = false }) {
           }}
           className="min-h-[52px] rounded-full bg-accent px-7 text-[16px] font-bold text-[#052e16]"
         >
-          {live ? "Skini LAKAT" : "Javi mi kad izađe"}
+          {live ? "Skini LAKAT" : CTA_TEXT}
         </button>
         <button type="button" onClick={() => setOn(false)} className="text-[14px] text-muted underline underline-offset-4">
           Pogledaj što stiže

@@ -60,7 +60,7 @@ export function TriKoraka({ live = false }) {
       <div className="grid gap-3 md:flex md:items-center md:justify-between">
         {!live && (
           <a href="#lista" className="text-[16px] font-bold text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent">
-            {PRO ? "Rezerviraj svoje @ime" : "Javi mi kad izađe"}
+            {PRO ? "Rezerviraj svoje @ime" : "Javi mi prvi"}
           </a>
         )}
         {/* j-dokaz-bez-brojki: jedino istinito, bez ijednog broja. */}
@@ -86,12 +86,12 @@ export function WaitlistSection({ live = false }) {
   const naslov = live ? (
     <div className="grid gap-3">
       <H2>Imaš Android?</H2>
-      <p className="max-w-[36ch] text-[16px] text-soft text-pretty">Android stiže u siječnju 2027. Ostavi mail i javim ti kad stigne.</p>
+      <p className="max-w-[36ch] text-[17px] leading-snug text-soft text-pretty md:text-[19px]">Android stiže u siječnju 2027. Ostavi mail i javim ti kad stigne.</p>
     </div>
   ) : (
     <div className="grid gap-3">
       <H2>{PRO ? "Rezerviraj svoje @ime." : "Javi mi prvi."}</H2>
-      <p className="max-w-[36ch] text-[16px] text-soft text-pretty">
+      <p className="max-w-[36ch] text-[17px] leading-snug text-soft text-pretty md:text-[19px]">
         {PRO ? "Jedno ime, jedan vlasnik. Tko ga prvi upiše, njegovo je." : "Potvrda sad, a 1. 12. u podne jedan mail s linkom. Ništa više."}
       </p>
     </div>

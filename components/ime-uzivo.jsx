@@ -4,16 +4,18 @@ import { Phone } from "./phone";
 // Tvoje @ime uživo u Kriglinom pushu (j-ime-uzivo) i jedna Krigla koja se puni kroz obrazac (obrazac A).
 // To je jedini veliki element stranice. Sve slike razina stoje jedna na drugoj i pretapaju se,
 // pa promjena razine nikad ne čeka mrežu.
-function Push({ ime, style }) {
+function Push({ ime, style, velik = false }) {
   return (
     <div
-      className="grid grid-cols-[auto_1fr] items-center gap-2.5 rounded-[16px] border border-white/5 bg-[#26262c]/95 px-3 py-2.5 text-left shadow-[0_12px_30px_-12px_rgb(0_0_0/0.8)]"
+      className={`grid grid-cols-[auto_1fr] items-center gap-3 rounded-[18px] border bg-[#26262c]/95 text-left transition-[border-color,box-shadow] duration-300 ${
+        velik ? "px-3.5 py-3" : "px-3 py-2.5"
+      } ${ime ? "border-accent/30 shadow-[0_14px_36px_-16px_rgb(74_222_128/0.45)]" : "border-white/5 shadow-[0_14px_32px_-14px_rgb(0_0_0/0.85)]"}`}
       style={style}
     >
-      <span className="grid size-9 place-items-center rounded-[22%] bg-bg font-display text-[13px] leading-none">
+      <span className={`grid place-items-center rounded-[22%] bg-bg font-display leading-none ${velik ? "size-10 text-[14px]" : "size-9 text-[13px]"}`}>
         L<span className="text-accent">.</span>
       </span>
-      <span className="min-w-0 text-[14px] leading-snug">
+      <span className={`min-w-0 leading-snug ${velik ? "text-[15px]" : "text-[14px]"}`}>
         <b className="flex justify-between font-semibold">
           KRIGLA <span className="font-normal text-muted">sada</span>
         </b>
@@ -47,16 +49,17 @@ function Krigla({ razina, className = "relative" }) {
   );
 }
 
-// Mali prikaz (mobitel i list odozdo): Krigla lijevo, push desno, uvijek blizu polja.
+// Mali prikaz (mobitel i list odozdo), jedini istaknuti element obrasca: Krigla stoji na pushu,
+// a opis je iznad pusha s lijeve strane, pa push s tvojim @imenom ostaje u sredini pažnje.
 export function ImeUzivoMali({ ime, razina }) {
   return (
-    <div className="grid grid-cols-[88px_1fr] items-end gap-2">
-      <Krigla razina={razina} className="relative w-[88px]" />
-      <div className="grid gap-1.5 pb-2">
-        <Push ime={ime} />
-        <p className="pl-1 text-[12px] text-muted">Ovo dobiju tvoji pajdaši kad izađeš.</p>
+    <figure className="grid">
+      <div className="flex items-end justify-between gap-3">
+        <figcaption className="max-w-[24ch] pb-5 text-[13px] leading-snug text-muted text-balance">Ovo dobiju tvoji pajdaši kad izađeš.</figcaption>
+        <Krigla razina={razina} className="relative z-[1] -mb-4 mr-2 w-[92px] shrink-0" />
       </div>
-    </div>
+      <Push ime={ime} velik />
+    </figure>
   );
 }
 
