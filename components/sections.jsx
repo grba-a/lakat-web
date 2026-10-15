@@ -37,7 +37,13 @@ export function TriKoraka({ live = false }) {
   return (
     <section aria-labelledby="koraci-naslov" className="relative mx-auto grid max-w-6xl gap-10 px-5 pt-16 pb-20 md:pt-24">
       <HuntKrigla id="tajna" size={20} className="top-4 right-3" />
-      <H2 id="koraci-naslov">Laktarenje u tri koraka.</H2>
+      <div className="grid gap-4">
+        <H2 id="koraci-naslov">Laktarenje u tri koraka.</H2>
+        {/* Rečenica koja je bila nad heroom (Petar 16. 10.): ovdje je tiši uvod, a H1 u heroju ju i dalje nosi za tražilice. */}
+        <p className="max-w-[38ch] text-[17px] leading-snug text-soft text-pretty md:text-[20px]">
+          LAKAT je aplikacija za druženje s ekipom, a cijela znanost stane u tri koraka.
+        </p>
+      </div>
       <ol className="grid gap-6 md:grid-cols-3 md:gap-8">
         {KORACI.map(([a, b], i) => (
           <li key={a} className="grid grid-cols-[88px_1fr] items-center gap-4 md:grid-cols-1 md:items-start">

@@ -34,9 +34,10 @@ export function Hero({ live = false }) {
       </header>
 
       <div className="mx-auto grid max-w-6xl justify-items-center gap-5 px-5 pt-3 pb-32 [@media(max-height:700px)]:gap-3 text-center md:grid-cols-[1.1fr_1fr] md:min-h-[calc(100svh-64px)] md:content-center md:items-center md:gap-x-10 md:gap-y-8 md:pt-4 md:pb-28 md:text-left">
-        {/* Što je LAKAT i kad stiže (c-hero-cta, s-h1-znacenje): H1 nosi ime i značenje, veliki natpis ostaje isti, samo kao <p>. */}
-        <div className="intro-1 grid justify-items-center gap-4 [@media(max-height:700px)]:gap-3 md:col-start-1 md:gap-6 md:row-start-1 md:self-end md:justify-items-start">
-          <h1 className="max-w-[30ch] text-[15px] leading-snug font-semibold text-soft text-balance md:max-w-[34ch] md:text-[19px]">
+        {/* Što je LAKAT i kad stiže (c-hero-cta, s-h1-znacenje): H1 nosi ime i značenje za tražilice i čitače,
+            ali se ne vidi (Petar 16. 10.: „ružno mi je ovako“). Ista rečenica stoji vidljivo u „Laktarenje u tri koraka“. */}
+        <div className="intro-1 grid justify-items-center md:col-start-1 md:row-start-1 md:self-end md:justify-items-start">
+          <h1 className="sr-only">
             LAKAT je hrvatska iPhone aplikacija za druženje s ekipom.{" "}
             <span className="text-fg">{live ? "Sad je vani." : "Stiže 1. 12. u podne."}</span>
           </h1>
