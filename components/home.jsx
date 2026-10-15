@@ -1,6 +1,7 @@
 import { FeatureTour } from "./feature-tour";
 import { FeatureTourMobile } from "./feature-tour-mobile";
 import { Hero } from "./hero";
+import { HuntNagrada } from "./hunt";
 import { Faq, Film, Footer, Mreze, PlayGame, Privacy, TriKoraka, WaitlistSection } from "./sections";
 import { LaunchTakeover } from "./launch-takeover";
 import { PwaSaved } from "./pwa-saved";
@@ -31,6 +32,7 @@ export function Home({ challenge = null }) {
       <StickyCta live={live} />
       <LaunchTakeover />
       <PwaSaved live={live} />
+      <HuntNagrada />
     </>
   );
 }
