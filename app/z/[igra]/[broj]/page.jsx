@@ -11,6 +11,7 @@ const IGRE = {
   sankerov_lakat: "Šankerov lakat",
   zlatni_tocionik: "Zlatni točionik",
   ravna_crta: "Ravna crta",
+  do_krigle: "Do Krigle",
   konobar: "Konobar",
 };
 
