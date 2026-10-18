@@ -13,6 +13,8 @@ const IGRE = {
   ravna_crta: "Ravna crta",
   do_krigle: "Do Krigle",
   konobar: "Konobar",
+  gajba: "Gajba",
+  gosti: "Gosti na vratima",
 };
 
 function procitaj(params, searchParams) {
