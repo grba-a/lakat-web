@@ -1,6 +1,6 @@
 "use client";
 
-import { track } from "@vercel/analytics";
+import { jednom, track } from "@/lib/korak";
 import { useEffect, useRef, useState } from "react";
 import { APP_STORE, storeLink } from "@/lib/launch";
 import { play } from "@/lib/sfx";
@@ -39,6 +39,8 @@ export function StickyCta({ live: launched = false }) {
   const [razina, setRazina] = useState("prazna");
 
   useEffect(() => {
+    // Vrh lijevka (web_koraci): jedan posjet početne po sesiji. Donji gumb živi samo na početnoj.
+    jednom("posjet");
     const sync = () => {
       try {
         setSigned(localStorage.getItem(SIGNED_KEY) === "1");

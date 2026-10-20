@@ -1,6 +1,6 @@
 "use client";
 
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/korak";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { todayKey } from "@/lib/daily";
 

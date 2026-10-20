@@ -1,6 +1,6 @@
 "use client";
 
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/korak";
 import { useEffect, useState } from "react";
 
 // Krigla tapete za mobitel (Petar n6), od 15. 10. na /potvrdeno (j-nova-struktura). Srednja, sretna Krigla, nagrada je iz lova na Krigle (Petar, 2026-10-05).

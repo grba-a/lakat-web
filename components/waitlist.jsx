@@ -1,6 +1,6 @@
 "use client";
 
-import { track } from "@vercel/analytics";
+import { jednom, track } from "@/lib/korak";
 import { useEffect, useId, useRef, useState } from "react";
 import { razinaObrasca } from "@/lib/krigla-slike";
 import { play } from "@/lib/sfx";
@@ -203,7 +203,7 @@ export function Waitlist({ prefix = "", android: androidLive = false, firstRef, 
   const android = platform === "android";
 
   const obrazac = (
-    <form onSubmit={submit} noValidate className="grid gap-5">
+    <form onSubmit={submit} onFocus={() => jednom("obrazac_start")} noValidate className="grid gap-5">
       {sImenom && (
         <div className="grid gap-1.5">
           <label htmlFor={`${prefix}ime`} className="text-[14px] font-semibold text-fg">

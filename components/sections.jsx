@@ -38,6 +38,19 @@ export function TriKoraka({ live = false }) {
   return (
     <section aria-labelledby="koraci-naslov" className="relative mx-auto grid max-w-6xl gap-10 px-5 pt-16 pb-20 md:pt-24">
       <HuntKrigla id="tajna" size={20} className="top-4 right-3" />
+      {/* Tri Krigle za šankom (Petar 20. 10., runda 2 „sank“: Codexova slika, svaka drži nešto drugo, kava se isto računa).
+          Rubovi slike već blijede u #09090b, pa nema okvira. Stupnjevi pokrivaju širinu × 2x (zamka srcset). */}
+      <img
+        src="/img/sank/krigle-720.webp"
+        srcSet="/img/sank/krigle-720.webp 720w, /img/sank/krigle-880.webp 880w, /img/sank/krigle-1100.webp 1100w, /img/sank/krigle-1586.webp 1586w"
+        sizes="(min-width: 1152px) 1104px, calc(100vw - 40px)"
+        alt="Tri Krigle za šankom: jedna s espressom, jedna s limunadom, jedna s malim pivom."
+        width={1586}
+        height={992}
+        loading="lazy"
+        decoding="async"
+        className="-mb-6 w-full md:-mb-10"
+      />
       <div className="grid gap-4">
         <H2 id="koraci-naslov">Laktarenje u tri koraka.</H2>
         {/* Rečenica koja je bila nad heroom (Petar 16. 10.): ovdje je tiši uvod, a H1 u heroju ju i dalje nosi za tražilice. */}

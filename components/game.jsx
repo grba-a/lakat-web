@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/korak";
 import { readDaily, saveDaily, seeded, todayKey } from "@/lib/daily";
 import { shareText } from "@/lib/share";
 import { pokreniTrkac, presuda } from "@/lib/trkac";

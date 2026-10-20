@@ -1,4 +1,4 @@
-import { potvrdi, uListu } from "@/lib/lista";
+import { korak, potvrdi, uListu } from "@/lib/lista";
 
 // Kolačić s tokenom iz maila: samo onaj tko je kliknuo potvrdu smije poslije upisati svoj kvart (/api/lista/kvart).
 const UPIS_COOKIE = "lakat_upis";
@@ -10,6 +10,8 @@ export async function GET(request) {
   const row = await potvrdi(token).catch(() => null);
   if (!row) return Response.redirect(new URL("/potvrdeno?greska=1", url), 302);
   await uListu(row).catch((e) => console.error("brevo lista", String(e).slice(0, 200)));
+  // Kraj lijevka (web_koraci): broji se samo prva potvrda, ne svaki ponovni klik na isti link.
+  if (row.novo) await korak("potvrda", row.izvor).catch((e) => console.error("korak", String(e).slice(0, 200)));
   const secure = url.protocol === "https:" ? "; Secure" : "";
   return new Response(null, {
     status: 302,

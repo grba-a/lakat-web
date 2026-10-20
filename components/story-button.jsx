@@ -1,6 +1,6 @@
 "use client";
 
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/korak";
 import { useState } from "react";
 
 // „Spremi za Story“ (Petar n1): slika 9:16 ide ravno u sistemsko dijeljenje (Instagram story),
