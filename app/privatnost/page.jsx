@@ -14,7 +14,7 @@ export default function PrivatnostPage() {
   return (
     <PravnaStranica
       naslov="Pravila privatnosti"
-      verzija="Verzija 3 · listopad 2026. (dodana ljestvica igre)"
+      verzija="Verzija 4 · listopad 2026. (ime, kako si čuo, oznaka uređaja za obavijesti na iPhoneu)"
       sazetak={[
         "Tvoje runde, slike i lokaciju vide samo tvoji prihvaćeni pajdaši. Iznimka je runda koju sam staviš „Javno u blizini”.",
         "Ne prodajemo ti podatke. Nema reklama, nema praćenja po drugim appovima.",
@@ -35,8 +35,9 @@ export default function PrivatnostPage() {
         <Popis
           stavke={[
             <>
-              <b>Račun</b>: e-mail, lozinka (ne spremamo je u čitljivom obliku), username i profilna. Bez toga nema računa
-              (čl. 6. st. 1. t. b GDPR-a, izvršenje ugovora).
+              <b>Račun</b>: e-mail, lozinka (ne spremamo je u čitljivom obliku), ime, username i profilna. Bez toga nema
+              računa (čl. 6. st. 1. t. b GDPR-a, izvršenje ugovora). Pri registraciji te pitamo i kako si čuo za LAKAT;
+              odgovor služi samo da znamo što radi (t. f).
             </>,
             <>
               <b>Runde</b>: fotke i video koje snimiš, tekst i naljepnice na njima, piće koje odabereš, vrijeme i
@@ -60,8 +61,9 @@ export default function PrivatnostPage() {
               prijetnji na našem poslužitelju. Tekst se ne šalje nikome drugome (t. f).
             </>,
             <>
-              <b>Obavijesti</b>: ako ih dopustiš na webu, preglednik nam da adresu za slanje obavijesti. Briše se
-              kad je preglednik odbije ili kad obrišeš račun (t. b).
+              <b>Obavijesti</b>: ako ih dopustiš na webu, preglednik nam da adresu za slanje obavijesti; na iPhoneu
+              Apple nam da oznaku uređaja (token) za slanje. Spremamo je uz tvoj račun samo za obavijesti. Briše se kad
+              ih odbiješ ili kad obrišeš račun (t. b).
             </>,
             <>
               <b>Web</b>: na laktarenje.com Vercel Analytics broji posjete stranicama, bez kolačića i bez
