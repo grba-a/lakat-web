@@ -393,3 +393,9 @@ body {
 @keyframes oz-skok { 0%, 100% { transform: none; } 20% { transform: scale(1.06, 0.9); } 50% { transform: translateY(-14px) scale(0.96, 1.05); } 75% { transform: scale(1.04, 0.95); } }
 @keyframes oz-slavi { 0% { transform: scale(0.6) rotate(-8deg); opacity: 0.4; } 55% { transform: scale(1.1) rotate(4deg); opacity: 1; } 75% { transform: scale(0.97) rotate(-2deg); } 100% { transform: none; } }
 @keyframes oz-mahni { 0%, 100% { transform: none; } 25% { transform: rotate(-8deg) translateY(-3px); } 75% { transform: rotate(8deg) translateY(-3px); } }
+
+/* Hero S6 (20. 10.): naslov se mijenja sa skrolom (blur + podizanje), a „Skrolaj ↓“ lagano poskakuje. */
+.swap-in { animation: swap-in 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
+@keyframes swap-in { from { opacity: 0; filter: blur(8px); transform: translateY(12px); } }
+.nudge { animation: nudge 1.4s ease-in-out infinite; }
+@keyframes nudge { 50% { transform: translateY(8px); } }

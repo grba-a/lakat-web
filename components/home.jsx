@@ -1,6 +1,6 @@
 import { FeatureTour } from "./feature-tour";
 import { FeatureTourMobile } from "./feature-tour-mobile";
-import { Hero } from "./hero";
+import { HeroS6 } from "./hero-s6";
 import { HuntNagrada } from "./hunt";
 import { Faq, Film, Footer, Mreze, PlayGame, Privacy, TriKoraka, WaitlistSection } from "./sections";
 import { LaunchTakeover } from "./launch-takeover";
@@ -19,7 +19,7 @@ export function Home({ challenge = null }) {
   return (
     <>
       <main className="overflow-x-clip">
-        <Hero live={live} />
+        <HeroS6 live={live} />
         <TriKoraka live={live} />
         <WaitlistSection live={live && Boolean(APP_STORE)} />
         <FeatureTourMobile />
