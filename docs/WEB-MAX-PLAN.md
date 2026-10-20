@@ -25,3 +25,19 @@ his word. Nothing pushed.
   Scroll-scrubbed video stutters on iOS unless all-intra; image sequence on canvas is the safe route. Tap-reactive Krigla =
   Rive; one-off reactions = dotLottie or tiny MP4. Higgsfield gives MP4 only (no alpha) → render Krigla on #09090b.
 - Who runs Higgsfield (MCP / Petar / Codex stills) — unanswered.
+
+## State 2026-10-20 ~12:30 (after rounds 2 and 3)
+Branch `web-max` rebased onto origin/main (the other session's 2 local „Privatnost v4“ commits are NOT in it).
+- `b40e94e` a2/a3/a4 · `d20f107` three Krigle at the bar + own counter `web_koraci` (PROD table + rpc, created 20. 10.)
+- `8f5d745` section Krigle animate on enter (CSS, 0 credits)
+**Push rule (Petar):** one push only after Codex is back, the Higgsfield question is settled and every agreed change is built.
+
+## Waiting for Codex (limit until 15:31; resume scheduled 15:37 if this session is still open)
+1. Finish Job 25: hero-c-end, sank-krigle-b, align hero-a-end with hero-a-start.
+2. **Four NEW scroll-driven hero examples** (round 3 S1–S4 are kept as examples: kauč→grad→šank, roleta, ulet u mobitel,
+   spust na grad). Petar picks one → that one is built with Higgsfield (MCP, he picked „spoji na Claudea“).
+3. **More film scenarios**; scenario B „Treći petak“ is saved (scripts: session scratchpad higgs-web/film/{a,b,c}.txt —
+   B: Petak, 22:40. Ekipa je vani bez tebe. / Treći petak zaredom. / „Ante je vani u Gružu.“ / Krigla skoči s kauča. /
+   Vrata. Stube. Grad se pali. / Ekipa za šankom. Kava, limunada, pivo. / 1. 12. u podne. / Idući petak kauč je prazan.)
+4. Then a1 (benefit pill) goes into the chosen hero; build hero + film; QA; one push.
+Artifacts: round 1 Fep2tavoCoQL7HaDM6xKUi (`webmax/`), round 2 VQoSh5GDkh442vdeSjHWSG (`runda2/`), round 3 Phfqeh7Qp9S4EdVSQENHcm (`runda3/`).
