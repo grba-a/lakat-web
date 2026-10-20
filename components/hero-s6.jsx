@@ -6,7 +6,7 @@ import { SoundToggle } from "./sound-toggle";
 
 // Hero S6 „Tri petka" (Petar, 20. 10., runda 5 → S6 + film L). Zamjenjuje hero B (hero.jsx ostaje kao rezerva).
 export function HeroS6({ live = false }) {
-  preload("/img/s6/000.webp", { as: "image", fetchPriority: "high" });
+  preload("/img/s6/petak-1.webp", { as: "image", fetchPriority: "high" });
   return (
     <section className="relative isolate">
       <h1 className="sr-only">
