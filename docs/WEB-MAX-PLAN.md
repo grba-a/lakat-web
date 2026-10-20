@@ -62,3 +62,7 @@ c3b phone→jumps up · c3c **v1 reserve** cut before he exits the frame · c5 h
 Build: `components/hero-s6.jsx` (client), canvas image sequence (webp, ~6 fps per clip, cross-blend neighbouring frames),
 poster `<img>` = first frame for LCP, sticky stage; mobile full-bleed, desktop text left + 9:16 panel right (no 16:9 clips —
 saves credits; revisit if Petar wants). Reduced motion: poster + text, no scroll track. Old `hero.jsx` kept.
+**Built 2026-10-21 `c33fa24`** (not pushed): `components/hero-s6.jsx` + `hero-s6-scroll.jsx`, frames `public/img/s6/` (159 webp,
+3.9 MB, loaded progressively after the poster). WebKit 360/390/1440 clean. Dev: `npx next dev -p 4410`.
+Polish list (assembly): waving Krigla in the door is tiny on mobile · c2 morph ~2 s (scroll passes fast) · c1 almost still ·
+bar frames: drinks vanish early in c4 · consider 2nd-Friday push timing · film L edit still to do · a1 benefit pill not added.
