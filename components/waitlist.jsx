@@ -26,6 +26,12 @@ function mailLink(email) {
   return "";
 }
 
+function mailNaziv(link) {
+  if (link.includes("google")) return "Otvori Gmail";
+  if (link.includes("outlook")) return "Otvori Outlook";
+  return "Otvori iCloud Mail";
+}
+
 // č → c, š → s… pa tek onda sve što nije dopušteno van: tko upiše „ivić“ dobije „ivic“, ne „ivi“.
 function cistoIme(v) {
   return v
@@ -326,7 +332,7 @@ export function Waitlist({ prefix = "", android: androidLive = false, firstRef, 
   const zavrseno = (
     <div className="grid gap-3">
       <p ref={statusRef} tabIndex={-1} className="font-display text-[30px] leading-none uppercase outline-none">
-        {status === "already" ? "Već si na listi" : "Provjeri mail"}
+        {status === "already" ? "Već si na listi" : "Još jedan klik"}
         <span className="text-accent">.</span>
       </p>
       <p className="text-[15px] text-soft text-pretty">
@@ -342,16 +348,21 @@ export function Waitlist({ prefix = "", android: androidLive = false, firstRef, 
           </button>
         </p>
       )}
+      {/* Dok mail nije potvrđen, potvrda je jedini glavni korak; ekipa i kalendar su tihi (a3, 20. 10.). */}
+      {status === "ok" && open && (
+        <a href={open} target="_blank" rel="noopener" className="flex min-h-[52px] items-center justify-center rounded-full bg-accent px-5 text-[16px] font-bold text-[#052e16] active:scale-[0.97]">
+          {mailNaziv(open)}
+        </a>
+      )}
       <div className="flex flex-wrap gap-2">
-        {open && (
-          <a href={open} target="_blank" rel="noopener" className="inline-flex min-h-[44px] items-center rounded-full border border-line px-4 text-[14px] font-semibold">
-            Otvori mail
-          </a>
-        )}
         <button
           type="button"
           onClick={async () => setShared(await shareLakat())}
-          className="inline-flex min-h-[44px] items-center rounded-full bg-accent px-4 text-[14px] font-bold text-[#052e16] active:scale-[0.97]"
+          className={
+            status === "ok"
+              ? "inline-flex min-h-[44px] items-center rounded-full border border-line px-4 text-[14px] font-semibold"
+              : "inline-flex min-h-[44px] items-center rounded-full bg-accent px-4 text-[14px] font-bold text-[#052e16] active:scale-[0.97]"
+          }
         >
           {shared === "copied" ? "Link kopiran" : "Pošalji ekipi"}
         </button>

@@ -58,11 +58,6 @@ export function TriKoraka({ live = false }) {
         ))}
       </ol>
       <div className="grid gap-3 md:flex md:items-center md:justify-between">
-        {!live && (
-          <a href="#lista" className="text-[16px] font-bold text-accent underline decoration-accent/40 underline-offset-4 hover:decoration-accent">
-            {PRO ? "Rezerviraj svoje @ime" : "Javi mi prvi"}
-          </a>
-        )}
         {/* j-dokaz-bez-brojki: jedino istinito, bez ijednog broja. */}
         <p className="text-[14px] text-muted">LAKAT je već živio na webu, sad seli na iPhone.</p>
       </div>
@@ -72,11 +67,19 @@ export function TriKoraka({ live = false }) {
 
 // 4. Privatnost: „Vide te samo pajdaši.“ riječ po riječ (Petar w29, c-privatnost-pajdasi).
 // Vizual sekcije je Krigla koja se puni s listom (Petar 16. 10.), s pravim brojem s poslužitelja.
-export function Privacy() {
+// Ispod privatnosti podsjetnik za one koji su obrazac preskočili (a2): isti list kao donji gumb.
+export function Privacy({ live = false }) {
   return (
-    <PrivacyWords>
-      <KriglaListe />
-    </PrivacyWords>
+    <>
+      <PrivacyWords>
+        <KriglaListe />
+      </PrivacyWords>
+      {!live && (
+        <div className="mx-auto grid max-w-6xl justify-items-center px-5 pb-16 md:justify-items-start">
+          <CatchPoint text="Još nisi zauzeo @ime? Traje deset sekundi." />
+        </div>
+      )}
+    </>
   );
 }
 
@@ -106,26 +109,26 @@ export function WaitlistSection({ live = false }) {
 }
 
 // 6. Film (A): u mobitelu. Druga prilika za neodlučne.
-export function Film() {
+export function Film({ live = false }) {
   return (
     <section className="relative mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-20 text-center md:grid-cols-2 md:items-center md:py-24 md:text-left">
       <HuntKrigla id="podne" size={20} className="top-4 left-3" />
       <div className="grid justify-items-center gap-4 md:order-2 md:justify-items-start" data-krigla="Ja sam glavni u filmu.">
         <H2>Pogledaj prije svih.</H2>
         <div className="hidden md:block">
-          <CatchPoint text="Svidjelo ti se? Budi prvi za šankom." />
+          <CatchPoint live={live} text={live ? "Svidjelo ti se? Sad je na App Storeu." : "Svidjelo ti se? Budi prvi za šankom."} />
         </div>
       </div>
       <PromoVideo />
       <div className="md:hidden">
-        <CatchPoint text="Svidjelo ti se? Budi prvi za šankom." />
+        <CatchPoint live={live} text={live ? "Svidjelo ti se? Sad je na App Storeu." : "Svidjelo ti se? Budi prvi za šankom."} />
       </div>
     </section>
   );
 }
 
 // 7. Igra (A): u mobitelu, bez imena igre. Zabava ostaje gdje je (j-igra-nagrada NE), s rekordom i ljestvicom.
-export function PlayGame({ challenge = null }) {
+export function PlayGame({ challenge = null, live = false }) {
   return (
     <section id="igra" data-krigla="Ajde, pobijedi me." className="mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-20 text-center md:grid-cols-2 md:items-center md:py-24 md:text-left">
       <div className="grid justify-items-center gap-4 md:justify-items-start">
@@ -134,12 +137,12 @@ export function PlayGame({ challenge = null }) {
           Igre u LAKTU nemaju kraja, samo rekord. Ovo je jedna od njih, ista staza za sve danas. Tap je skok, dulji tap viši skok.
         </p>
         <div className="hidden md:block">
-          <CatchPoint text="Ovo je samo primjer. Ostalo stiže 1. 12." />
+          <CatchPoint live={live} text={live ? "Ostale igre su u appu." : "Ovo je samo primjer. Ostalo stiže 1. 12."} />
         </div>
       </div>
       <Game challenge={challenge} />
       <div className="md:hidden">
-        <CatchPoint text="Ovo je samo primjer. Ostalo stiže 1. 12." />
+        <CatchPoint live={live} text={live ? "Ostale igre su u appu." : "Ovo je samo primjer. Ostalo stiže 1. 12."} />
       </div>
     </section>
   );

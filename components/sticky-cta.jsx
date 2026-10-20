@@ -305,21 +305,31 @@ export function StickyCta({ live: launched = false }) {
   );
 }
 
-// Gumb usred stranice (w21): otvara isti list.
-export function CatchPoint({ text = "" }) {
+// Gumb usred stranice (w21): otvara isti list. Nakon lansiranja lista (list) se više ne crta,
+// pa gumb vodi ravno na App Store umjesto da ne radi ništa (Codex/Claude 20. 10., a4).
+export function CatchPoint({ text = "", live: launched = false }) {
+  const live = launched && Boolean(APP_STORE);
+  const klasa =
+    "inline-flex min-h-[48px] items-center rounded-full border border-accent/60 px-5 text-[15px] font-bold text-accent transition-[scale] duration-150 ease-out active:scale-[0.97]";
   return (
     <div className="grid justify-items-center gap-3 text-center md:justify-items-start md:text-left">
       {text && <p className="text-[14px] text-soft">{text}</p>}
+      {live ? (
+        <a href={storeLink("web-usred")} onClick={() => track("cta_tap", { gdje: "usred" })} className={klasa}>
+          Skini LAKAT
+        </a>
+      ) : (
       <button
         type="button"
         onClick={() => {
           track("cta_tap", { gdje: "usred" });
           window.dispatchEvent(new Event(OPEN_SHEET));
         }}
-        className="inline-flex min-h-[48px] items-center rounded-full border border-accent/60 px-5 text-[15px] font-bold text-accent transition-[scale] duration-150 ease-out active:scale-[0.97]"
+        className={klasa}
       >
         {CTA_TEXT}
       </button>
+      )}
     </div>
   );
 }
