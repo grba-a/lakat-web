@@ -51,3 +51,14 @@ Codex Job 28 = frames for four „jaw-drop" heroes W1 Neon (your @ime in neon) �
 sign-up, 16 on 20. 10.) · W3 Diorama (4 depth layers) · W4 Kucni se (pick your drink, drag to clink). When it lands, ship
 **two artifacts**: (1) all **12 heroes** as live scroll prototypes (S1–S4 round 3, N1–N4 round 4, W1–W4), one pick;
 (2) all **scenarios** (A–F + new G–J for the W heroes), one pick. Petar then chooses; that hero is built with Higgsfield.
+
+## Hero S6 „Tri petka" — Petar's final pick (2026-10-20 evening)
+Round 5 artifact https://claude.ai/artifact/UHzJJrDg58VC8gX9TH1tGR (db `runda5/`): hero **S6**, film **L**. Clips by Codex in
+Higgsfield (Job 30), all in `~/vault/00-Inbox/codex-lakat/2026-10-20-higgsfield-s6/izlaz/` (Kling Omni Frames Pro, 1080×1920;
+66.25 credits total; polish list in its README „za poliranje"). Petar: no more generations, polish in assembly.
+Chain (scroll order): c1 petak-1→2 · c2 petak-2→3 (face-down) · c3a (trim first ~2 s) face-down→looks at phone ·
+c3b phone→jumps up · c3c **v1 reserve** cut before he exits the frame · c5 he waves in the open door · c4 three Krigle clink
+(16:9 with side margins, draw contain on #09090b) → „Šank se otvara za…" + timer.
+Build: `components/hero-s6.jsx` (client), canvas image sequence (webp, ~6 fps per clip, cross-blend neighbouring frames),
+poster `<img>` = first frame for LCP, sticky stage; mobile full-bleed, desktop text left + 9:16 panel right (no 16:9 clips —
+saves credits; revisit if Petar wants). Reduced motion: poster + text, no scroll track. Old `hero.jsx` kept.
