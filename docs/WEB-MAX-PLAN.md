@@ -66,3 +66,17 @@ saves credits; revisit if Petar wants). Reduced motion: poster + text, no scroll
 3.9 MB, loaded progressively after the poster). WebKit 360/390/1440 clean. Dev: `npx next dev -p 4410`.
 Polish list (assembly): waving Krigla in the door is tiny on mobile · c2 morph ~2 s (scroll passes fast) · c1 almost still ·
 bar frames: drinks vanish early in c4 · consider 2nd-Friday push timing · film L edit still to do · a1 benefit pill not added.
+
+## LIVE 2026-10-21 ~01:00 — `df85b7f` pushed to main (Petar: „pushaj")
+laktarenje.com runs hero S6 on real clips; WebKit 360/390/1440 checked live, no errors, privatnost = Verzija 4.
+
+## START HERE next session
+1. **Film L v1** (21 s, SFX only, 0 credits): `~/Desktop/LAKAT film L/lakat-film-L-tri-petka.mp4`, built by
+   `~/Projects/lakat-promo/film-l/build.py` (cards = scenarij L, sounds = lakat-promo/audio.py --no-music). Petar has not
+   reviewed it yet. Then: cutdowns (15 s, 4:5, cover) and maybe replace the old film in the Film section — his call.
+2. **Agent review leftovers, waiting on Petar:** (a1) no „what/when" on the first screen — proposed pill under the headline
+   „Aplikacija za izlaske s ekipom · 1. 12." · same three-Krigle bar image ends the hero and opens Tri koraka · Krigla's
+   bubble covers privacy body text at 360 · two display headings in the sheet after submit („JAVI MI PRVI." + „JOŠ JEDAN KLIK.").
+3. Polish list for S6: waving door shot dropped; c2 morph; bar scene has empty space around it on mobile.
+4. Higgsfield: 66.25 credits spent in total; nothing more needed. Rules for next time are in the vault inbox BRIEF Update 3.
+Dev: `npx next dev -p 4410` (port 4600 belongs to dubrovnik-eats-web).
