@@ -8,7 +8,7 @@ import { TimerTalk } from "./timer-talk";
 // Hero S6 „Tri petka" (Petar, 20. 10., runda 5): skrolom prolaze tri petka na kauču, četvrti Krigla skoči i ode,
 // a ekipa se kucne za šankom. Sličice su Higgsfield klipovi (Kling, Codex Job 30) izrezani na ~6 u sekundi;
 // canvas ih prelijeva jednu u drugu da skrol ne trza. Poster (prva sličica) je LCP i stoji sam dok se niz učitava.
-const COUNT = 159;
+const COUNT = 144;
 // Odsječci niza i koliki dio skrola dobiva svaki (zbroj 0.92, zadnjih 8 % je stanka na šanku s timerom).
 const SEGS = [
   { from: 0, to: 15, w: 0.12 }, // c1 prvi → drugi petak
@@ -16,8 +16,8 @@ const SEGS = [
   { from: 47, to: 65, w: 0.11 }, // c3a mobitel zazuji
   { from: 66, to: 96, w: 0.15 }, // c3b skok s kauča
   { from: 97, to: 111, w: 0.07 }, // c3c kreće prema vratima (rezerva, prekinuta prije ruba)
-  { from: 112, to: 127, w: 0.12 }, // c5 maše s vrata
-  { from: 128, to: 158, w: 0.19, wide: true }, // c4 tri Krigle se kucnu
+  { from: 112, to: 112, w: 0.08 }, // prazna soba, vrata otvorena (Petar 21. 10.: Krigla se na vratima ne vidi)
+  { from: 113, to: 143, w: 0.23, wide: true }, // c4 tri Krigle se kucnu
 ];
 const LAST = "end";
 const STEPS = [
@@ -26,7 +26,7 @@ const STEPS = [
   [0.2, "3. petak", ["Treći", "petak."]],
   [0.28, "4. petak", ["Četvrti", "petak."]],
   [0.54, "4. petak", ["Kauč je", "prazan."]],
-  [0.73, null, ["Ekipa je", "na okupu."]],
+  [0.67, null, ["Ekipa je", "na okupu."]],
   [0.86, null, LAST],
 ];
 const PUSHES = [
@@ -38,11 +38,18 @@ const PUSHES = [
 const src = (i) => `/img/s6/${String(i).padStart(3, "0")}.webp`;
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
 
-// Skrol (0–1) → mjesto u nizu (s razlomkom za prelijevanje).
+// Skrol (0–1) → mjesto u nizu (s razlomkom za prelijevanje). Svaki odsječak se na kraju prelije u prvu sličicu
+// idućeg, pa rezovi (c3c → prazna soba → šank) nisu tvrdi. Prazna soba stoji, a pretapa se tek u zadnjih 40 %.
 function frameAt(p) {
   let a = 0;
-  for (const s of SEGS) {
-    if (p < a + s.w) return s.from + ((p - a) / s.w) * (s.to - s.from);
+  for (let k = 0; k < SEGS.length; k++) {
+    const s = SEGS[k];
+    const u = (p - a) / s.w;
+    if (p < a + s.w) {
+      if (s.from === s.to) return s.from + Math.max(0, (u - 0.6) / 0.4);
+      const last = k === SEGS.length - 1;
+      return s.from + u * (s.to - s.from + (last ? 0 : 1));
+    }
     a += s.w;
   }
   return COUNT - 1;
