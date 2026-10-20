@@ -4,6 +4,7 @@ import { Hero } from "./hero";
 import { HuntNagrada } from "./hunt";
 import { Faq, Film, Footer, Mreze, PlayGame, Privacy, TriKoraka, WaitlistSection } from "./sections";
 import { LaunchTakeover } from "./launch-takeover";
+import { Ozivi } from "./ozivi";
 import { PwaSaved } from "./pwa-saved";
 import { StickyCta } from "./sticky-cta";
 import { APP_STORE, isLive } from "@/lib/launch";
@@ -34,6 +35,7 @@ export function Home({ challenge = null }) {
       <LaunchTakeover />
       <PwaSaved live={live} />
       <HuntNagrada />
+      <Ozivi />
     </>
   );
 }

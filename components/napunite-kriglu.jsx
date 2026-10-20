@@ -17,7 +17,7 @@ export async function KriglaListe() {
   const razina = razinaPostotka(stanje(n).pct);
   return (
     <figure data-krigla-lista={razina} className="flex items-center gap-4 md:gap-5">
-      <img src={KRIGLA_RAZINE[razina]} alt="" width={360} height={360} loading="lazy" decoding="async" className="size-[104px] shrink-0 object-contain md:size-[148px]" />
+      <img src={KRIGLA_RAZINE[razina]} data-ozivi="skok" alt="" width={360} height={360} loading="lazy" decoding="async" className="size-[104px] shrink-0 object-contain md:size-[148px]" />
       <figcaption className="max-w-[22ch] text-[16px] leading-snug font-semibold text-fg text-pretty md:text-[18px]">
         Svako novo ime na listi dolije malo u Kriglu.
       </figcaption>

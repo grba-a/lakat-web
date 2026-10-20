@@ -61,7 +61,7 @@ export function TriKoraka({ live = false }) {
       <ol className="grid gap-6 md:grid-cols-3 md:gap-8">
         {KORACI.map(([a, b], i) => (
           <li key={a} className="grid grid-cols-[88px_1fr] items-center gap-4 md:grid-cols-1 md:items-start">
-            <img src={KRIGLA_KORACI[i]} alt="" width={200} height={200} loading="lazy" className="size-[88px] object-contain md:size-[120px]" />
+            <img src={KRIGLA_KORACI[i]} data-ozivi={["nagib", "skok", "slavi"][i]} alt="" width={200} height={200} loading="lazy" className="size-[88px] object-contain md:size-[120px]" />
             <p className="grid gap-1">
               <span className="font-display text-[26px] leading-none text-accent">{i + 1}</span>
               <span className="text-[18px] leading-snug font-semibold text-fg text-pretty md:text-[20px]">{a}</span>
@@ -177,7 +177,7 @@ export function Mreze({ live }) {
   const [ig, ...ostale] = MREZE;
   return (
     <section data-krigla="Prati me, tamo sam svaki dan." aria-label="Prati LAKAT" className="mx-auto grid max-w-6xl justify-items-start gap-6 px-5 py-16">
-      <KriglaSays size={64}>{live ? "Sve novo prvo ide na mreže. Prati." : "Ne daš mail? Dobro. Onda me barem zaprati."}</KriglaSays>
+      <KriglaSays size={64} ozivi="mahni">{live ? "Sve novo prvo ide na mreže. Prati." : "Ne daš mail? Dobro. Onda me barem zaprati."}</KriglaSays>
       <div className="flex flex-wrap items-center gap-3">
         {/* Istaknuti gumb u Instagramovim bojama (Petar, 2026-10-05). */}
         <a
