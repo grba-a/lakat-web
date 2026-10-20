@@ -14,7 +14,7 @@ export default function PrivatnostPage() {
   return (
     <PravnaStranica
       naslov="Pravila privatnosti"
-      verzija="Verzija 4 · listopad 2026. (ime, kako si čuo, oznaka uređaja za obavijesti na iPhoneu)"
+      verzija="Verzija 4 · listopad 2026. (ime, kako si čuo, oznaka uređaja na iPhoneu, ekipe, link saziva)"
       sazetak={[
         "Tvoje runde, slike i lokaciju vide samo tvoji prihvaćeni pajdaši. Iznimka je runda koju sam staviš „Javno u blizini”.",
         "Ne prodajemo ti podatke. Nema reklama, nema praćenja po drugim appovima.",
@@ -78,7 +78,9 @@ export default function PrivatnostPage() {
         <Popis
           stavke={[
             "Runde, slike, pića, lokaciju i „Vani sam” vide samo pajdaši koje si prihvatio. To provodi baza, ne samo app.",
-            "Javnu rundu („Javno u blizini”, ugašeno dok ga sam ne upališ) 24 sata vide svi s LAKTOM u krugu od 1 km: fotku, tvoj username i profilnu. Mjesto vide zaokruženo na oko 100 m.",
+            "Javnu rundu („Javno u blizini”, ugašeno dok ga sam ne upališ) 24 sata vide svi s LAKTOM u krugu od 1 km: fotku, tvoj username i profilnu. Mjesto vide zaokruženo na oko 100 m. Blizinu javlja njihov mobitel. Tko je s tobom u blokadi, ne vidi je.",
+            "Ekipa: ime, grb, ligu, broj izlazaka ekipe i kvartove koje drži vide svi s LAKTOM. Članovi ekipe međusobno vide koliko je tko izlazio, od dana kad je ušao u ekipu, i ekipni Wrapped.",
+            "Link saziva koji sam pošalješ pokazuje tko zove, mjesto, vrijeme i koliko ljudi dolazi, bez imena. Nestaje 3 sata nakon početka.",
             "Username i profilnu vidi svatko tko te traži po točnom usernameu.",
             "Prijavljeni sadržaj vidi administrator, samo da bi odlučio o prijavi.",
             "Nikome ne prodajemo podatke i ne dijelimo ih za reklame.",
