@@ -41,3 +41,7 @@ Branch `web-max` rebased onto origin/main (the other session's 2 local „Privat
    Vrata. Stube. Grad se pali. / Ekipa za šankom. Kava, limunada, pivo. / 1. 12. u podne. / Idući petak kauč je prazan.)
 4. Then a1 (benefit pill) goes into the chosen hero; build hero + film; QA; one push.
 Artifacts: round 1 Fep2tavoCoQL7HaDM6xKUi (`webmax/`), round 2 VQoSh5GDkh442vdeSjHWSG (`runda2/`), round 3 Phfqeh7Qp9S4EdVSQENHcm (`runda3/`).
+
+## Film scripts (docs/film/, one on-screen card per line, timed with ig-reel beats.py, all loop back to the hook)
+A „Di ste?“ 16,4 s · B „Treći petak“ 16,4 s (**Petar saved it**) · C „Roleta“ 17,5 s · new: D „Zaključani ekran“ 17,5 s
+(pairs with hero N1) · E „Karta“ 13,4 s (N2) · F „Od 18 do 23“ 17,5 s (N4). Codex Job 27 = frames for the four new heroes N1–N4.
