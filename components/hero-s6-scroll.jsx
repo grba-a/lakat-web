@@ -56,6 +56,8 @@ function sceneAt(u) {
   const [, s, t] = KEYS[KEYS.length - 1];
   return { scene: s, t };
 }
+// Na uskom mobitelu kadar se reže sa strane, a vrata su na desnom rubu: dok Krigla ide prema njima, kadar klizne udesno.
+const panAt = (t) => 50 + 50 * Math.min(1, Math.max(0, (t - 20.6) / 2.2));
 const beatAt = (u) => BEATS.reduce((k, b, i) => (u >= b.u ? i : k), 0);
 const stillAt = (scene, t) =>
   STILLS[scene].reduce((best, s) => (Math.abs(s[0] - t) < Math.abs(best[0] - t) ? s : best))[1];
@@ -71,6 +73,7 @@ const getReduce = () => matchMedia(RM).matches;
 export function S6Scroll({ live, initial, children }) {
   const track = useRef(null);
   const vids = useRef({});
+  const kImg = useRef(null);
   const [beat, setBeat] = useState(0);
   const [scene, setScene] = useState("k");
   const [stillName, setStillName] = useState({ k: "petak-1", s: "sank-a" });
@@ -150,6 +153,11 @@ export function S6Scroll({ live, initial, children }) {
       if (Math.abs(target - cur) < 0.002) cur = target;
       const { scene: sc, t } = sceneAt(cur);
       const v = vids.current[sc];
+      if (sc === "k") {
+        const pos = `${panAt(t).toFixed(1)}% 100%`;
+        if (vids.current.k) vids.current.k.style.objectPosition = pos;
+        if (kImg.current) kImg.current.style.objectPosition = pos;
+      }
       if (v && v.readyState >= 1 && !v.seeking && Math.abs(v.currentTime - t) > 1 / 48) {
         try { v.currentTime = Math.min(t, (v.duration || t) - 0.02); } catch {}
       }
@@ -205,6 +213,7 @@ export function S6Scroll({ live, initial, children }) {
                 {/* Prva slika kauča je LCP i stoji odmah; ostale mirne slike samo dok video nije spreman. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
+                  ref={k === "k" ? kImg : undefined}
                   src={still(name)}
                   alt={k === "k" ? "Krigla petkom navečer sam na kauču s mobitelom u ruci" : "Tri Krigle se kucnu za šankom"}
                   fetchPriority={k === "k" ? "high" : undefined}
