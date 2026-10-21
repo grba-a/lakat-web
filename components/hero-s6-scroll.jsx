@@ -8,20 +8,20 @@ import { TimerTalk } from "./timer-talk";
 // Hero S6 „Tri petka" (Petar, 20. 10., runda 5): tri petka na kauču, četvrti Krigla skoči i ode, a ekipa se kucne za
 // šankom. Klipovi su Higgsfield (Kling, Codex Job 30), bez mahanja na vratima (c5, Petar 21. 10.).
 // Skrol vrti video naprijed i natrag (Petar 21. 10.: „napravi scrolling mehaniku"). Kauč je jedan spojeni video
-// (c1 · c2 · c3a · c3b · c3c · prazna soba), šank drugi; oba grade scripts/build-s6-scrub.sh. Videi se povuku cijeli
+// (c1 · c2 · c3a · c3b · c3c, svi cijeli: Krigla trči kroz vrata), šank drugi; oba grade scripts/build-s6-scrub.sh. Videi se povuku cijeli
 // (blob) tek nakon prve slike, da skok na bilo koju sličicu bude trenutan. Dok nisu tu (ili uz Save-Data) skrol mijenja
 // mirne slike. Uz smanjeno kretanje nema ni videa ni dugog skrola, samo završna scena s timerom.
 
 // Skrol u jedinicama → [scena, sekunda u videu]. Mirni dijelovi dobiju malo skrola, radnja više; c2 se izobliči
-// oko 6,9–8 s (Codex README) pa kroz to skrol prođe brzo, a šanku piće nestane oko 1,3–1,9 s isto tako.
+// oko 6,9–8 s (Codex README) pa kroz to skrol prođe brzo, prve 2 s c3a su mirne, a šanku piće nestane oko 1,3–1,9 s.
 const KEYS = [
   [0, "k", 0], [0.9, "k", 5.04],
   [1.3, "k", 6.5], [1.7, "k", 8.4], [2.2, "k", 10.08],
-  [3.0, "k", 13.12], [4.2, "k", 18.17], [5.0, "k", 21.08],
-  [5.3, "s", 0], [5.9, "s", 1.2], [6.05, "s", 1.9], [7.1, "s", 5.0],
+  [2.45, "k", 12.1], [3.1, "k", 15.13], [4.3, "k", 20.17], [5.3, "k", 25.2],
+  [5.6, "s", 0], [6.2, "s", 1.2], [6.35, "s", 1.9], [7.4, "s", 5.0],
 ];
-const UNITS = 7.6;
-const END_U = 7.1;
+const UNITS = 7.9;
+const END_U = 7.4;
 
 // Tekst ide uz dio priče, ne uz piksel skrola.
 const BEATS = [
@@ -30,13 +30,13 @@ const BEATS = [
   { u: 1.95, chip: "3. petak", lines: ["Treći", "petak."] },
   { u: 2.35, chip: "4. petak", lines: ["Četvrti", "petak."], who: "KRIGLA", text: "Svi su vani. Di si ti?" },
   { u: 3.3, chip: "4. petak", lines: ["Četvrti", "petak."] },
-  { u: 4.6, chip: "4. petak", lines: ["Kauč je", "prazan."] },
-  { u: 5.15, lines: ["Ekipa je", "na okupu."] },
+  { u: 4.9, chip: "4. petak", lines: ["Kauč je", "prazan."] },
+  { u: 5.45, lines: ["Ekipa je", "na okupu."] },
 ];
 
 // Mirne slike za trenutak prije nego stigne video: najbliža po vremenu.
 const STILLS = {
-  k: [[0, "petak-1"], [5.04, "petak-2"], [10.08, "petak-3"], [13.12, "mobitel"], [18.17, "skok"], [21.08, "prazan"]],
+  k: [[0, "petak-1"], [5.04, "petak-2"], [10.08, "petak-3"], [15.13, "mobitel"], [20.17, "skok"], [25.2, "prazan"]],
   s: [[0, "sank-a"], [5, "sank-b"]],
 };
 const SRC = { k: "/video/s6/kauc.mp4", s: "/video/s6/sank.mp4" };
@@ -192,7 +192,7 @@ export function S6Scroll({ live, initial, children }) {
   };
 
   return (
-    <div ref={track} className={reduce ? "relative h-[100svh]" : "relative h-[720svh]"}>
+    <div ref={track} className={reduce ? "relative h-[100svh]" : "relative h-[740svh]"}>
       <div className="sticky top-0 h-[100svh] overflow-hidden md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-10 md:mx-auto md:max-w-6xl md:px-5">
         {/* Scena: na mobitelu cijeli ekran, na računalu uspravni panel desno. */}
         <div className="absolute inset-0 bg-bg md:relative md:inset-auto md:col-start-2 md:h-[min(84svh,820px)] md:aspect-[3/4] md:overflow-hidden md:rounded-[28px] md:border md:border-line">

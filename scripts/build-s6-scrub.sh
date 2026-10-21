@@ -11,17 +11,16 @@ CRF="${CRF:-30}"
 mkdir -p "$OUT"
 X264=(-c:v libx264 -preset slow -crf "$CRF" -g 4 -keyint_min 1 -sc_threshold 0 -pix_fmt yuv420p -movflags +faststart -an)
 
-# Kauč: c1 · c2 · c3a bez prve 2 s mirovanja · c3b · c3c do izlaska iz kadra (2,42 s) · pretapanje u praznu sobu.
+# Kauč: c1 · c2 · c3a · c3b · c3c v1, svi cijeli (Petar 21. 10.: „ne moraš ovaj put rezati nijedan dio"; u c3c se vidi
+# kako Krigla trči kroz vrata i vrata se otvore na svjetlo).
 "$FF" -y -hide_banner -loglevel error \
   -i "$SRC/izlaz/c1-petak1-2.mp4" -i "$SRC/izlaz/c2-petak2-3.mp4" \
-  -ss 2.0 -i "$SRC/izlaz/c3a-v1-mobitel-kling-pro.mp4" -i "$SRC/izlaz/c3b-kling-omni-pro.mp4" \
-  -t 2.42 -i "$SRC/izlaz/c3c-skok-prazan-kling-pro-v1-rezerva.mp4" \
-  -loop 1 -t 1.0 -framerate 24 -i "$SRC/ulaz/s6-prazan.png" \
+  -i "$SRC/izlaz/c3a-v1-mobitel-kling-pro.mp4" -i "$SRC/izlaz/c3b-kling-omni-pro.mp4" \
+  -i "$SRC/izlaz/c3c-skok-prazan-kling-pro-v1-rezerva.mp4" \
   -filter_complex "\
 [0:v]fps=24,scale=1080:1920,setsar=1[a];[1:v]fps=24,scale=1080:1920,setsar=1[b];[2:v]fps=24,scale=1080:1920,setsar=1[c];\
-[3:v]fps=24,scale=1080:1920,setsar=1[d];[4:v]fps=24,scale=1080:1920,setsar=1[e];[5:v]fps=24,scale=1080:1920,format=yuv420p,setsar=1[f];\
-[a][b][c][d]concat=n=4:v=1[abcd];[e][f]xfade=transition=fade:duration=0.5:offset=1.92[ef];\
-[abcd][ef]concat=n=2:v=1,scale=720:1280:flags=lanczos[v]" \
+[3:v]fps=24,scale=1080:1920,setsar=1[d];[4:v]fps=24,scale=1080:1920,setsar=1[e];\
+[a][b][c][d][e]concat=n=5:v=1,scale=720:1280:flags=lanczos[v]" \
   -map "[v]" "${X264[@]}" "$OUT/kauc.mp4"
 
 # Šank: c4 bez bočnih traka (sredina 1728×1080 = 16:10, Codex README), 960×600.
