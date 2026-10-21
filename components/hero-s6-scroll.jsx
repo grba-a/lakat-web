@@ -5,40 +5,60 @@ import { StoreButtons } from "./store";
 import { StoreQR } from "./store-qr";
 import { TimerTalk } from "./timer-talk";
 
-// Hero S6 „Tri petka" (Petar, 20. 10., runda 5): skrolom prolaze tri petka na kauču, četvrti Krigla skoči i ode,
-// a ekipa se kucne za šankom. Klipovi su Higgsfield (Kling, Codex Job 30). Skrol bira korak, a klip korak odigra
-// sam u punih 24 fps (Petar 21. 10.: niz sličica je „šekao“ i bio mutan). Svaki korak ima mirnu sliku kraja:
-// ostaje kad klip završi, kad se skrola unatrag i u Low Power Modeu. Uz smanjeno kretanje nema ni klipova ni
-// dugog skrola, samo završna scena s timerom.
-//
-// Naslov, oznaka petka i poruka idu uz klip (početak/kraj), ne uz piksel skrola, da tekst ne bježi slici.
-const CLIPS = [
-  { at: 0, id: "c1", start: "petak-1", end: "petak-2",
-    on: ["1. petak", ["Prvi", "petak."], "LAKAT", "Ante je vani."],
-    off: ["2. petak", ["Drugi", "petak."], "LAKAT", "Ante i Iva su vani."] },
-  { at: 0.14, id: "c2", start: "petak-2", end: "petak-3",
-    on: ["2. petak", ["Drugi", "petak."]],
-    off: ["3. petak", ["Treći", "petak."]] },
-  { at: 0.28, id: "c3a", start: "petak-3", end: "mobitel",
-    on: ["4. petak", ["Četvrti", "petak."], "KRIGLA", "Svi su vani. Di si ti?"],
-    off: ["4. petak", ["Četvrti", "petak."], "KRIGLA", "Svi su vani. Di si ti?"] },
-  { at: 0.42, id: "c3b", start: "mobitel", end: "skok",
-    on: ["4. petak", ["Četvrti", "petak."]],
-    off: ["4. petak", ["Četvrti", "petak."]] },
-  // c3c je rezerva prekinuta prije nego Krigla izađe preko ruba; na kraju se pretopi u praznu sobu s otvorenim vratima.
-  { at: 0.54, id: "c3c", start: "skok", end: "prazan", endPos: "100% 100%",
-    on: ["4. petak", ["Četvrti", "petak."]],
-    off: ["4. petak", ["Kauč je", "prazan."]] },
-  { at: 0.68, id: "c4", start: "sank-a", end: "sank-b", wide: true,
-    on: [null, ["Ekipa je", "na okupu."]],
-    off: [null, ["Ekipa je", "na okupu."]] },
+// Hero S6 „Tri petka" (Petar, 20. 10., runda 5): tri petka na kauču, četvrti Krigla skoči i ode, a ekipa se kucne za
+// šankom. Klipovi su Higgsfield (Kling, Codex Job 30), bez mahanja na vratima (c5, Petar 21. 10.).
+// Skrol vrti video naprijed i natrag (Petar 21. 10.: „napravi scrolling mehaniku"). Kauč je jedan spojeni video
+// (c1 · c2 · c3a · c3b · c3c · prazna soba), šank drugi; oba grade scripts/build-s6-scrub.sh. Videi se povuku cijeli
+// (blob) tek nakon prve slike, da skok na bilo koju sličicu bude trenutan. Dok nisu tu (ili uz Save-Data) skrol mijenja
+// mirne slike. Uz smanjeno kretanje nema ni videa ni dugog skrola, samo završna scena s timerom.
+
+// Skrol u jedinicama → [scena, sekunda u videu]. Mirni dijelovi dobiju malo skrola, radnja više; c2 se izobliči
+// oko 6,9–8 s (Codex README) pa kroz to skrol prođe brzo, a šanku piće nestane oko 1,3–1,9 s isto tako.
+const KEYS = [
+  [0, "k", 0], [0.9, "k", 5.04],
+  [1.3, "k", 6.5], [1.7, "k", 8.4], [2.2, "k", 10.08],
+  [3.0, "k", 13.12], [4.2, "k", 18.17], [5.0, "k", 21.08],
+  [5.3, "s", 0], [5.9, "s", 1.2], [6.05, "s", 1.9], [7.1, "s", 5.0],
 ];
-const END_AT = 0.84;
+const UNITS = 7.6;
+const END_U = 7.1;
+
+// Tekst ide uz dio priče, ne uz piksel skrola.
+const BEATS = [
+  { u: 0, chip: "1. petak", lines: ["Prvi", "petak."], who: "LAKAT", text: "Ante je vani." },
+  { u: 0.75, chip: "2. petak", lines: ["Drugi", "petak."], who: "LAKAT", text: "Ante i Iva su vani." },
+  { u: 1.95, chip: "3. petak", lines: ["Treći", "petak."] },
+  { u: 2.35, chip: "4. petak", lines: ["Četvrti", "petak."], who: "KRIGLA", text: "Svi su vani. Di si ti?" },
+  { u: 3.3, chip: "4. petak", lines: ["Četvrti", "petak."] },
+  { u: 4.6, chip: "4. petak", lines: ["Kauč je", "prazan."] },
+  { u: 5.15, lines: ["Ekipa je", "na okupu."] },
+];
+
+// Mirne slike za trenutak prije nego stigne video: najbliža po vremenu.
+const STILLS = {
+  k: [[0, "petak-1"], [5.04, "petak-2"], [10.08, "petak-3"], [13.12, "mobitel"], [18.17, "skok"], [21.08, "prazan"]],
+  s: [[0, "sank-a"], [5, "sank-b"]],
+};
+const SRC = { k: "/video/s6/kauc.mp4", s: "/video/s6/sank.mp4" };
 
 const still = (n) => `/img/s6/${n}.webp`;
-const clip = (id) => `/video/s6/${id}.mp4`;
 const clamp01 = (x) => Math.min(1, Math.max(0, x));
-const clipAt = (p) => CLIPS.reduce((k, c, i) => (p >= c.at ? i : k), 0);
+
+function sceneAt(u) {
+  if (u <= KEYS[0][0]) return { scene: "k", t: 0 };
+  for (let i = 1; i < KEYS.length; i++) {
+    const [u1, s1, t1] = KEYS[i];
+    if (u > u1) continue;
+    const [u0, s0, t0] = KEYS[i - 1];
+    if (s0 !== s1) return u < (u0 + u1) / 2 ? { scene: s0, t: t0 } : { scene: s1, t: t1 };
+    return { scene: s0, t: t0 + ((u - u0) / (u1 - u0)) * (t1 - t0) };
+  }
+  const [, s, t] = KEYS[KEYS.length - 1];
+  return { scene: s, t };
+}
+const beatAt = (u) => BEATS.reduce((k, b, i) => (u >= b.u ? i : k), 0);
+const stillAt = (scene, t) =>
+  STILLS[scene].reduce((best, s) => (Math.abs(s[0] - t) < Math.abs(best[0] - t) ? s : best))[1];
 
 const RM = "(prefers-reduced-motion: reduce)";
 function subscribeReduce(cb) {
@@ -50,133 +70,173 @@ const getReduce = () => matchMedia(RM).matches;
 
 export function S6Scroll({ live, initial, children }) {
   const track = useRef(null);
-  const videos = useRef([]);
-  const prev = useRef(-1);
-  const [k, setK] = useState(0);
+  const vids = useRef({});
+  const [beat, setBeat] = useState(0);
+  const [scene, setScene] = useState("k");
+  const [stillName, setStillName] = useState({ k: "petak-1", s: "sank-a" });
+  const [ready, setReady] = useState({});
   const [nearEnd, setNearEnd] = useState(false);
   const [armed, setArmed] = useState(false);
-  const [done, setDone] = useState({});
-  const [started, setStarted] = useState(false);
   const reduce = useSyncExternalStore(subscribeReduce, getReduce, () => false);
 
-  // Skrol mijenja stanje samo kad se prijeđe granica koraka, ne na svaki piksel.
+  // Cijeli videi kao blob, jedan za drugim, kad stranica stane (ili na prvi skrol). Bez Save-Data.
+  useEffect(() => {
+    if (reduce || navigator.connection?.saveData) return;
+    let dead = false;
+    const urls = [];
+    const pull = async () => {
+      for (const k of ["k", "s"]) {
+        try {
+          const r = await fetch(SRC[k], { priority: "low" });
+          if (!r.ok) return;
+          const url = URL.createObjectURL(await r.blob());
+          urls.push(url);
+          if (dead) return;
+          const v = vids.current[k];
+          if (v) { v.src = url; v.load(); }
+        } catch { return; }
+      }
+    };
+    let started = false;
+    const go = () => {
+      if (started) return;
+      started = true;
+      removeEventListener("scroll", go);
+      pull();
+    };
+    addEventListener("scroll", go, { passive: true, once: true });
+    const idle = setTimeout(go, document.readyState === "complete" ? 1200 : 2500);
+    return () => {
+      dead = true;
+      clearTimeout(idle);
+      removeEventListener("scroll", go);
+      urls.forEach((u) => URL.revokeObjectURL(u));
+    };
+  }, [reduce]);
+
+  // iOS ne iscrta premotanu sličicu videa koji nikad nije krenuo: na prvi dodir ga kratko pokrene i zaustavi.
+  useEffect(() => {
+    if (reduce) return;
+    const wake = () => {
+      Object.values(vids.current).forEach((v) => {
+        if (!v?.src) return;
+        const t = v.currentTime;
+        v.play()?.then(() => { v.pause(); v.currentTime = t; }).catch(() => {});
+      });
+    };
+    addEventListener("touchstart", wake, { passive: true, once: true });
+    return () => removeEventListener("touchstart", wake);
+  }, [reduce]);
+
+  // Skrol → cilj; rAF ga glatko sustiže i premotava video. React stanje se mijenja samo na granicama.
   useEffect(() => {
     if (reduce) return;
     let raf = 0;
-    const run = () => {
-      raf = 0;
+    let target = 0;
+    let cur = -1;
+    let last = 0;
+    const read = () => {
       const el = track.current;
       if (!el) return;
       const r = el.getBoundingClientRect();
       const max = r.height - innerHeight;
-      const p = max > 0 ? clamp01(-r.top / max) : 0;
-      setK(clipAt(p));
-      setNearEnd(p >= END_AT);
+      target = (max > 0 ? clamp01(-r.top / max) : 0) * UNITS;
     };
-    const go = () => {
+    const frame = (now) => {
+      raf = 0;
+      const dt = Math.min(64, now - (last || now));
+      last = now;
+      cur = cur < 0 ? target : cur + (target - cur) * (1 - Math.pow(0.82, dt / 16.7));
+      if (Math.abs(target - cur) < 0.002) cur = target;
+      const { scene: sc, t } = sceneAt(cur);
+      const v = vids.current[sc];
+      if (v && v.readyState >= 1 && !v.seeking && Math.abs(v.currentTime - t) > 1 / 48) {
+        try { v.currentTime = Math.min(t, (v.duration || t) - 0.02); } catch {}
+      }
+      setScene(sc);
+      setBeat(beatAt(cur));
+      setNearEnd(cur >= END_U);
+      const sn = stillAt(sc, t);
+      setStillName((s) => (s[sc] === sn ? s : { ...s, [sc]: sn }));
+      if (cur !== target || (v && v.seeking)) raf = requestAnimationFrame(frame);
+      else last = 0;
+    };
+    const kick = () => {
+      read();
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
+    const onScroll = () => {
       setArmed(true);
-      if (!raf) raf = requestAnimationFrame(run);
+      kick();
     };
-    addEventListener("scroll", go, { passive: true });
-    addEventListener("resize", go);
-    run();
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", kick);
+    kick();
     return () => {
-      removeEventListener("scroll", go);
-      removeEventListener("resize", go);
+      removeEventListener("scroll", onScroll);
+      removeEventListener("resize", kick);
       cancelAnimationFrame(raf);
     };
   }, [reduce]);
 
-  // Ulaz u korak naprijed pusti njegov klip od početka; unatrag pokaže kraj.
-  useEffect(() => {
-    const all = videos.current;
-    if (getReduce()) {
-      all.forEach((v) => v?.pause());
-      return;
-    }
-    const from = prev.current;
-    prev.current = k;
-    all.forEach((v, i) => { if (v && i !== k) v.pause(); });
-    const v = all[k];
-    if (!v) return;
-    if (k < from) {
-      setDone((d) => ({ ...d, [k]: true }));
-      return;
-    }
-    setDone((d) => ({ ...d, [k]: false }));
-    if (v.preload !== "auto") { v.preload = "auto"; v.load(); }
-    try { v.currentTime = 0; } catch {}
-    const played = v.play();
-    // Samo stvarna zabrana (Low Power Mode) prebacuje na mirnu sliku; AbortError od vlastitog pause() se ignorira.
-    if (played) played.catch((e) => { if (e?.name === "NotAllowedError" && prev.current === k) setDone((d) => ({ ...d, [k]: true })); });
-  }, [k, reduce]);
+  const b = reduce ? BEATS[BEATS.length - 1] : BEATS[beat];
+  const sc = reduce ? "s" : scene;
+  const end = reduce || nearEnd;
+  const lines = end ? (live ? ["Šank je", "otvoren."] : ["Šank se", "otvara za…"]) : b.lines;
+  const atTop = !reduce && !armed && beat === 0;
 
-  // Idući klip se učitava tek kad posjetitelj krene skrolati ili kad prvi klip završi, ne odmah pri otvaranju.
-  useEffect(() => {
-    if (reduce || !(armed || done[0])) return;
-    const next = videos.current[k + 1];
-    if (next && next.preload !== "auto") { next.preload = "auto"; next.load(); }
-  }, [k, armed, done, reduce]);
-
-  const cur = reduce ? CLIPS.length - 1 : k;
-  const c = CLIPS[cur];
-  const isDone = reduce || done[cur];
-  const [chip, lines0, who, text] = isDone ? c.off : c.on;
-  const end = reduce || (cur === CLIPS.length - 1 && (nearEnd || done[cur]));
-  const lines = end ? (live ? ["Šank je", "otvoren."] : ["Šank se", "otvara za…"]) : lines0;
-  const atTop = !reduce && !armed && k === 0;
+  // Kauč puni ekran (scena je u donjem dijelu kadra); šank je 16:10, malo povećan da tamni rubovi odu, a sve tri Krigle ostanu.
+  const fit = {
+    k: "absolute inset-0 h-full w-full object-cover object-bottom",
+    s: "absolute left-1/2 top-[52%] h-auto w-[112%] max-w-none -translate-x-1/2 -translate-y-1/2",
+  };
 
   return (
-    <div ref={track} className={reduce ? "relative h-[100svh]" : "relative h-[560svh]"}>
+    <div ref={track} className={reduce ? "relative h-[100svh]" : "relative h-[720svh]"}>
       <div className="sticky top-0 h-[100svh] overflow-hidden md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-10 md:mx-auto md:max-w-6xl md:px-5">
         {/* Scena: na mobitelu cijeli ekran, na računalu uspravni panel desno. */}
         <div className="absolute inset-0 bg-bg md:relative md:inset-auto md:col-start-2 md:h-[min(84svh,820px)] md:aspect-[3/4] md:overflow-hidden md:rounded-[28px] md:border md:border-line">
-          {CLIPS.map((s, i) => {
-            // Samo dosadašnji koraci i idući imaju slike u stablu, da se ostale ne povuku pri otvaranju.
-            if (!reduce && i > k + 1) return null;
-            if (reduce && i !== cur) return null;
-            const on = i === cur;
-            const fit = s.wide
-              ? "absolute inset-x-0 top-[52%] h-auto w-full -translate-y-1/2"
-              : "absolute inset-0 h-full w-full object-cover object-bottom";
+          {["k", "s"].map((k) => {
+            if (reduce && k !== "s") return null;
+            const on = k === sc;
+            const name = reduce ? "sank-b" : stillName[k];
             return (
-              <div key={s.id} className={`absolute inset-0 transition-opacity duration-500 ${on ? "opacity-100" : "opacity-0"}`} aria-hidden={!on}>
+              <div key={k} className={`absolute inset-0 transition-opacity duration-500 ${on ? "opacity-100" : "opacity-0"}`} aria-hidden={!on}>
+                {/* Prva slika kauča je LCP i stoji odmah; ostale mirne slike samo dok video nije spreman. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={still(s.end)} alt="" className={fit} style={s.endPos ? { objectPosition: s.endPos } : undefined} />
+                <img
+                  src={still(name)}
+                  alt={k === "k" ? "Krigla petkom navečer sam na kauču s mobitelom u ruci" : "Tri Krigle se kucnu za šankom"}
+                  fetchPriority={k === "k" ? "high" : undefined}
+                  loading={k === "k" ? "eager" : "lazy"}
+                  className={fit[k]}
+                />
                 {!reduce && (
                   <video
-                    ref={(el) => { videos.current[i] = el; }}
-                    src={clip(s.id)}
-                    poster={still(s.start)}
+                    ref={(el) => { vids.current[k] = el; }}
                     muted
                     playsInline
-                    preload="none"
-                    onEnded={() => setDone((d) => ({ ...d, [i]: true }))}
-                    onPlaying={i === 0 ? () => setStarted(true) : undefined}
-                    className={`${fit} transition-opacity duration-500 ${done[i] ? "opacity-0" : "opacity-100"}`}
+                    preload="auto"
+                    disablePictureInPicture
+                    onLoadedData={() => setReady((r) => ({ ...r, [k]: true }))}
+                    className={`${fit[k]} transition-opacity duration-300 ${ready[k] ? "opacity-100" : "opacity-0"}`}
                   />
                 )}
               </div>
             );
           })}
-          {/* LCP: prva slika stoji odmah, prije nego se ijedan video učita; nestane kad krene prvi klip. */}
-          {!reduce && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={still("petak-1")} alt="Krigla petkom navečer sam na kauču s mobitelom u ruci" fetchPriority="high"
-              className={`pointer-events-none absolute inset-0 h-full w-full object-cover object-bottom transition-opacity duration-500 ${started || k > 0 || done[0] ? "opacity-0" : "opacity-100"}`} />
-          )}
-          {chip && (
+          {b.chip && !end && (
             <span className="absolute left-4 top-[33%] rounded-full border border-line bg-bg/75 px-3 py-1.5 font-display text-[18px] leading-none text-amber uppercase md:top-5">
-              {chip}
+              {b.chip}
             </span>
           )}
-          {text && (
-            <div key={text} className="swap-in absolute left-4 right-4 top-[41%] md:top-16 grid grid-cols-[34px_1fr_auto] items-center gap-2.5 rounded-[20px] bg-[rgba(38,38,44,.88)] p-3 backdrop-blur-md">
+          {b.text && !end && (
+            <div key={b.text} className="swap-in absolute left-4 right-4 top-[41%] md:top-16 grid grid-cols-[34px_1fr_auto] items-center gap-2.5 rounded-[20px] bg-[rgba(38,38,44,.88)] p-3 backdrop-blur-md">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/apple-icon.png" alt="" className="h-[34px] w-[34px] rounded-[9px]" />
               <div className="text-left leading-tight">
-                <b className="block text-[11px] tracking-[0.04em]">{who}</b>
-                <span className="block text-[14px]">{text}</span>
+                <b className="block text-[11px] tracking-[0.04em]">{b.who}</b>
+                <span className="block text-[14px]">{b.text}</span>
               </div>
               <em className="self-start text-[11px] not-italic text-muted">sada</em>
             </div>
