@@ -80,3 +80,16 @@ laktarenje.com runs hero S6 on real clips; WebKit 360/390/1440 checked live, no 
 3. Polish list for S6: waving door shot dropped; c2 morph; bar scene has empty space around it on mobile.
 4. Higgsfield: 66.25 credits spent in total; nothing more needed. Rules for next time are in the vault inbox BRIEF Update 3.
 Dev: `npx next dev -p 4410` (port 4600 belongs to dubrovnik-eats-web).
+
+## 2026-10-21 (later): hero S6 is a real scroll-scrub — LIVE `0bb3e5f` (Petar: „ako nema bugova pushaj")
+- `components/hero-s6-scroll.jsx`: scroll position maps to a time in one joined video (`public/video/s6/kauc.mp4` =
+  c1·c2·c3a·c3b·c3c, all uncut, Krigla runs out through the door; Petar: „ne moraš ovaj put rezati nijedan dio") and the
+  bar (`sank.mp4`, c4 without side strips). Waving door clip c5 dropped. Built by `scripts/build-s6-scrub.sh`
+  (keyframe every 4 frames, CRF 30; 5.3 + 1.5 MB, fetched as blob after first paint; stills while loading / Save-Data).
+- On narrow phones the frame pans right during c3c so the open door is visible.
+- WebKit 360/390/430/1440 checked locally (prod build) and live after the push: scrubs both ways, no console errors.
+  Not checked on a real iPhone.
+- Post-launch: the whole site gets a Duolingo-simple redesign when the timer runs out — vault
+  `45-LAKAT/50 Decisions/Decision — post-launch web is Duolingo-simple.md`.
+- Reel „Tri petka" from the same clips: `~/Projects/lakat-reel-tri-petka` (HyperFrames), v3 on Desktop
+  `LAKAT reel Tri petka/`.
