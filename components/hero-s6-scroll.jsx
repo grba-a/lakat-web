@@ -5,8 +5,8 @@ import { StoreButtons } from "./store";
 import { StoreQR } from "./store-qr";
 import { TimerTalk } from "./timer-talk";
 
-// Hero S6 „Tri petka" (Petar, 20. 10., runda 5): tri petka na kauču, četvrti Krigla skoči i ode, a ekipa se kucne za
-// šankom. Klipovi su Higgsfield (Kling, Codex Job 30), bez mahanja na vratima (c5, Petar 21. 10.).
+// Hero S6 (Petar, 20. 10., runda 5), od 21. 10. priča „Ima li koga?" (artifact ATyTy35YNNAkqVk3GJG4wP, priča A): Krigla
+// pita grupu, nitko ne odgovara, LAKAT javi tko je vani, on skoči i ode, a ekipa se kucne za šankom. Bez petka. Klipovi su Higgsfield (Kling, Codex Job 30), bez mahanja na vratima (c5, Petar 21. 10.).
 // Skrol vrti video naprijed i natrag (Petar 21. 10.: „napravi scrolling mehaniku"). Kauč je jedan spojeni video
 // (c1 · c2 · c3a · c3b · c3c, svi cijeli: Krigla trči kroz vrata), šank drugi; oba grade scripts/build-s6-scrub.sh. Videi se povuku cijeli
 // (blob) tek nakon prve slike, da skok na bilo koju sličicu bude trenutan. Dok nisu tu (ili uz Save-Data) skrol mijenja
@@ -23,14 +23,15 @@ const KEYS = [
 const UNITS = 7.9;
 const END_U = 7.4;
 
-// Tekst ide uz dio priče, ne uz piksel skrola.
+// Tekst ide uz dio priče, ne uz piksel skrola. Obavijesti su stvarne funkcije aplikacije (FOMO, Zovi narod), u pristojnoj
+// verziji koju je Petar odabrao, s „Grad" umjesto kvarta.
 const BEATS = [
-  { u: 0, chip: "1. petak", lines: ["Prvi", "petak."], who: "LAKAT", text: "Ante je vani." },
-  { u: 0.75, chip: "2. petak", lines: ["Drugi", "petak."], who: "LAKAT", text: "Ante i Iva su vani." },
-  { u: 1.95, chip: "3. petak", lines: ["Treći", "petak."] },
-  { u: 2.35, chip: "4. petak", lines: ["Četvrti", "petak."], who: "KRIGLA", text: "Svi su vani. Di si ti?" },
-  { u: 3.3, chip: "4. petak", lines: ["Četvrti", "petak."] },
-  { u: 4.9, chip: "4. petak", lines: ["Kauč je", "prazan."] },
+  { u: 0, chip: "20:14", lines: ["Ima li", "koga?"], who: "EKIPA · VIĐENO: 6", text: "Ima li koga večeras?" },
+  { u: 0.75, chip: "20:51", lines: ["Nitko."] },
+  { u: 1.95, chip: "21:02", lines: ["Nitko."] },
+  { u: 2.35, chip: "21:02", lines: ["LAKAT", "javi."], who: "LAKAT", text: "5 tvojih pajdaša je vani, a ti doma ko papuča." },
+  { u: 3.1, chip: "21:02", lines: ["LAKAT", "javi."], who: "LAKAT", text: "📣 Iva zove: Grad, 21:30. Stižeš?" },
+  { u: 4.3, lines: ["LAKAT", "javi."] },
   { u: 5.45, lines: ["Ekipa je", "na okupu."] },
 ];
 
@@ -215,7 +216,7 @@ export function S6Scroll({ live, initial, children }) {
                 <img
                   ref={k === "k" ? kImg : undefined}
                   src={still(name)}
-                  alt={k === "k" ? "Krigla petkom navečer sam na kauču s mobitelom u ruci" : "Tri Krigle se kucnu za šankom"}
+                  alt={k === "k" ? "Krigla navečer sam na kauču s mobitelom u ruci" : "Tri Krigle se kucnu za šankom"}
                   fetchPriority={k === "k" ? "high" : undefined}
                   loading={k === "k" ? "eager" : "lazy"}
                   className={fit[k]}
@@ -241,8 +242,13 @@ export function S6Scroll({ live, initial, children }) {
           )}
           {b.text && !end && (
             <div key={b.text} className="swap-in absolute left-4 right-4 top-[41%] md:top-16 grid grid-cols-[34px_1fr_auto] items-center gap-2.5 rounded-[20px] bg-[rgba(38,38,44,.88)] p-3 backdrop-blur-md">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/apple-icon.png" alt="" className="h-[34px] w-[34px] rounded-[9px]" />
+              {b.who === "LAKAT" ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src="/apple-icon.png" alt="" className="h-[34px] w-[34px] rounded-[9px]" />
+              ) : (
+                // Poruka iz grupnog chata, ne od LAKTA: avatar grupe umjesto ikone aplikacije.
+                <span className="grid h-[34px] w-[34px] place-items-center rounded-full bg-[#1f7a4a] text-[15px] font-extrabold">E</span>
+              )}
               <div className="text-left leading-tight">
                 <b className="block text-[11px] tracking-[0.04em]">{b.who}</b>
                 <span className="block text-[14px]">{b.text}</span>
@@ -261,7 +267,7 @@ export function S6Scroll({ live, initial, children }) {
               className="swap-in font-display text-[clamp(48px,14vw,62px)] leading-[0.93] uppercase md:text-[clamp(64px,7.4vw,112px)]">
               {lines.map((l) => (
                 <span key={l} className="block whitespace-nowrap">
-                  {l.endsWith("…") || l.endsWith(".") ? (
+                  {l.endsWith("…") || l.endsWith(".") || l.endsWith("?") ? (
                     <>
                       {l.slice(0, -1)}
                       <span className="text-accent">{l.slice(-1)}</span>
