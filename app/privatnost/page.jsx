@@ -14,7 +14,7 @@ export default function PrivatnostPage() {
   return (
     <PravnaStranica
       naslov="Pravila privatnosti"
-      verzija="Verzija 5 · studeni 2026. (lokacija za javne runde, prijava s Appleom, ekipe, komentari, Možda poznaješ, bez anketa)"
+      verzija="Verzija 5 · listopad 2026. (lokacija za javne runde, prijava s Appleom, ekipe, komentari, Možda poznaješ, bez anketa)"
       sazetak={[
         "Tvoje runde, slike i lokaciju vide samo tvoji prihvaćeni pajdaši. Iznimka je runda koju sam staviš „Javno u blizini”.",
         "Ne prodajemo ti podatke. Nema reklama, nema praćenja po drugim appovima.",
