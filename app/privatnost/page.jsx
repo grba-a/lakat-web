@@ -14,11 +14,11 @@ export default function PrivatnostPage() {
   return (
     <PravnaStranica
       naslov="Pravila privatnosti"
-      verzija="Verzija 4 · listopad 2026. (ime, kako si čuo, oznaka uređaja na iPhoneu, ekipe, link saziva)"
+      verzija="Verzija 5 · studeni 2026. (lokacija za javne runde, prijava s Appleom, ekipe, komentari, Možda poznaješ, bez anketa)"
       sazetak={[
         "Tvoje runde, slike i lokaciju vide samo tvoji prihvaćeni pajdaši. Iznimka je runda koju sam staviš „Javno u blizini”.",
         "Ne prodajemo ti podatke. Nema reklama, nema praćenja po drugim appovima.",
-        "Lokaciju šaljemo samo kad objaviš rundu ili upališ „Vani sam”.",
+        "Lokaciju šaljemo kad objaviš rundu ili upališ „Vani sam”. Dok je app otvoren, svake 2 minute šalje i lokaciju zaokruženu na oko 100 m, da ti pokaže javne runde u blizini. Tu lokaciju ne spremamo.",
         "Račun obrišeš kad hoćeš, u Profilu. S njim ide sve tvoje.",
         `Pitanja i zahtjevi: ${VODITELJ.mail}.`,
       ]}
@@ -37,7 +37,9 @@ export default function PrivatnostPage() {
             <>
               <b>Račun</b>: e-mail, lozinka (ne spremamo je u čitljivom obliku), ime, username i profilna. Bez toga nema
               računa (čl. 6. st. 1. t. b GDPR-a, izvršenje ugovora). Pri registraciji te pitamo i kako si čuo za LAKAT;
-              odgovor služi samo da znamo što radi (t. f).
+              odgovor služi samo da znamo što radi (t. f). Ako se prijaviš s Appleom, Apple nam da oznaku tvog Apple
+              računa i e-mail (može biti Appleova skrivena adresa), a ime samo ako ga sam podijeliš. Čuvamo i Appleov
+              token za tu prijavu, samo da je pri brisanju računa opozovemo.
             </>,
             <>
               <b>Runde</b>: fotke i video koje snimiš, tekst i naljepnice na njima, piće koje odabereš, vrijeme i
@@ -49,8 +51,17 @@ export default function PrivatnostPage() {
               postavkama telefona (čl. 6. st. 1. t. a, privola).
             </>,
             <>
-              <b>Druženje</b>: pajdaši, zahtjevi, komentari, reakcije, pozivi na laktanje, ekipe, ankete, aura i
-              rezultati igara (t. b).
+              <b>Javne runde u blizini</b>: dok je app otvoren i dopustio si lokaciju, mobitel svake 2 minute pošalje
+              lokaciju zaokruženu na oko 100 m, da ti pokažemo javne runde u krugu od oko 1 km. Ne spremamo je u bazu
+              i nitko je ne vidi. Ako to ne želiš, isključi lokaciju za LAKAT u postavkama telefona (t. b).
+            </>,
+            <>
+              <b>Kadar</b>: kad je pajdaš istog dana objavio rundu unutar oko 100 m od tvoje, poslužitelj vas označi
+              zajedno („u kadru”) i javi to pajdašima (t. b).
+            </>,
+            <>
+              <b>Druženje</b>: pajdaši, zahtjevi, komentari, reakcije, pozivi na laktanje, ekipe, aura i rezultati
+              igara (t. b).
             </>,
             <>
               <b>Prijave i blokade</b>: tko je koga prijavio ili blokirao, razlog i napomena. Treba za sigurnost
@@ -62,8 +73,8 @@ export default function PrivatnostPage() {
             </>,
             <>
               <b>Obavijesti</b>: ako ih dopustiš na webu, preglednik nam da adresu za slanje obavijesti; na iPhoneu
-              Apple nam da oznaku uređaja (token) za slanje. Spremamo je uz tvoj račun samo za obavijesti. Briše se kad
-              ih odbiješ ili kad obrišeš račun (t. b).
+              Apple nam da oznaku uređaja (token) za slanje. Spremamo je uz tvoj račun samo za obavijesti. Odvežemo je
+              od računa kad se odjaviš, a brišemo kad obavijesti odbiješ ili obrišeš račun (t. b).
             </>,
             <>
               <b>Web</b>: na laktarenje.com Vercel Analytics broji posjete stranicama, bez kolačića i bez
@@ -77,9 +88,11 @@ export default function PrivatnostPage() {
       <Odjeljak broj="3" naslov="Tko vidi što">
         <Popis
           stavke={[
-            "Runde, slike, pića, lokaciju i „Vani sam” vide samo pajdaši koje si prihvatio. To provodi baza, ne samo app.",
-            "Javnu rundu („Javno u blizini”, ugašeno dok ga sam ne upališ) 24 sata vide svi s LAKTOM u krugu od 1 km: fotku, tvoj username i profilnu. Mjesto vide zaokruženo na oko 100 m. Blizinu javlja njihov mobitel. Tko je s tobom u blokadi, ne vidi je.",
-            "Ekipa: ime, grb, ligu, broj izlazaka ekipe i kvartove koje drži vide svi s LAKTOM. Članovi ekipe međusobno vide koliko je tko izlazio, od dana kad je ušao u ekipu, i ekipni Wrapped.",
+            "Runde, slike, pića, lokaciju i „Vani sam” vide samo tvoji pajdaši: ljudi čiji si zahtjev prihvatio ili koji su u appu potvrdili tvoj pozivni link (jedan link vrijedi za najviše 20 ljudi). Pajdaša možeš maknuti kad hoćeš. To provodi baza, ne samo app.",
+            "Komentare i reakcije na pajdaševoj rundi vide svi njegovi pajdaši. Zato tvoj komentar, username i profilnu ispod njegove runde mogu vidjeti i ljudi koji nisu tvoji pajdaši.",
+            "Javnu rundu („Javno u blizini”, ugašeno dok ga sam ne upališ) 24 sata vide ljudi s LAKTOM u krugu od oko 1 km: fotku, tvoj username i profilnu. Mjesto vide zaokruženo na oko 100 m. Krug se računa iz lokacije koju javi njihov mobitel, pa javnu rundu smatraj javnom. Tko je s tobom u blokadi, ne vidi je.",
+            "„Možda poznaješ”: pajdašima tvojih pajdaša možemo te predložiti. Vide tvoj username, profilnu i imena do dvoje vaših zajedničkih pajdaša. Isključiš to u Profilu.",
+            "Ekipa: ime, grb, ligu, broj izlazaka ekipe i kvartove koje drži vide svi s LAKTOM. Tko je u ekipi, vide samo njezini članovi. Oni međusobno vide koliko je tko izlazio, od dana kad je ušao u ekipu, i ekipni Wrapped.",
             "Link saziva koji sam pošalješ pokazuje tko zove, mjesto, vrijeme i koliko ljudi dolazi, bez imena. Nestaje 3 sata nakon početka.",
             "Username i profilnu vidi svatko tko te traži po točnom usernameu.",
             "Prijavljeni sadržaj vidi administrator, samo da bi odlučio o prijavi.",
@@ -108,8 +121,9 @@ export default function PrivatnostPage() {
               kvarta. Šalje je naš poslužitelj, pa OSM ne vidi tko si.
             </>,
             <>
-              <b>Apple</b>: karta i traženje kafića oko runde rade kroz Appleove servise na tvom telefonu, po
-              Appleovim pravilima privatnosti.
+              <b>Apple</b>: prijava s Appleom (ako je odabereš) i slanje obavijesti na iPhone. Tekst obavijesti, npr.
+              ime pajdaša ili mjesto saziva, ide preko Appleovih poslužitelja. Karta i traženje kafića oko runde rade
+              kroz Appleove servise na tvom telefonu, po Appleovim pravilima privatnosti.
             </>,
           ]}
         />
@@ -123,6 +137,8 @@ export default function PrivatnostPage() {
             "„Vani sam” s lokacijom brišemo najkasnije dan nakon što istekne.",
             "Javna runda je javna 24 sata; nakon toga je vide samo pajdaši.",
             "Kad obrišeš račun (Profil → Obriši račun), brišemo profil, runde, fotke, profilnu i sve vezano uz tebe. Kopija fotke može kratko ostati u međuspremniku mreže dok ne istekne.",
+            "Kad obrišeš račun prijavljen s Appleom, prijavu opozivamo i kod Applea. Ako Apple tad ne odgovori, token čuvamo i pokušavamo ponovno jednom dnevno, najviše 30 dana, pa ga brišemo.",
+            "Ako si vođa ekipe i obrišeš račun, vodstvo prelazi na člana koji je najdulje u ekipi; ekipa ostaje.",
             `Današnju rundu obrišeš sam: ⋯ na rundi → Obriši rundu (nestaje i slika). Za stariju piši na ${VODITELJ.mail} i obrisat ćemo je.`,
           ]}
         />
