@@ -42,7 +42,7 @@ export default function UvjetiPage() {
         <Popis
           stavke={[
             "Moraš imati 18 godina ili više.",
-            "Jedan račun po osobi, s tvojim pravim e-mailom. Lozinku čuvaš ti.",
+            "Jedan račun po osobi. Lozinku, ako je imaš, čuvaš ti.",
             "Username ne smije vrijeđati, prijetiti ni glumiti nekog drugog.",
           ]}
         />
