@@ -11,10 +11,15 @@ export function PrvoZvono() {
   const live = isLive();
   const preorder = !live && isPreorder();
   return (
-    <section aria-labelledby="zvono-naslov" data-krigla="Petak. Zapamti. Ja zvonim." className="mx-auto grid max-w-6xl gap-8 px-5 py-20 md:grid-cols-2 md:items-center md:gap-16 md:py-28">
-      <div data-uzivo className="relative isolate mx-auto aspect-square w-full max-w-[420px] overflow-hidden rounded-[32px] border border-line bg-[radial-gradient(closest-side,#173d27_0%,#0d1f15_55%,#09090b_100%)] md:order-2">
-        {/* Mirni krugovi kao na slici događaja. */}
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[repeating-radial-gradient(circle_at_50%_50%,transparent_0_46px,rgb(74_222_128/0.12)_46px_48px)]" />
+    <section id="prvo-zvono" aria-labelledby="zvono-naslov" data-krigla="Petak. Zapamti. Ja zvonim." className="mx-auto grid max-w-6xl scroll-mt-4 gap-8 px-5 py-20 md:grid-cols-2 md:items-center md:gap-16 md:py-28">
+      {/* Bez okvira (Petar 5. 11.): Krigla i zvono stoje ravno na stranici. Sjaj i mirni krugovi blijede u pozadinu
+          maskom, pa nigdje nema ruba ni pravokutnika. */}
+      <div data-uzivo className="relative isolate mx-auto aspect-square w-full max-w-[420px] md:order-2">
+        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[radial-gradient(closest-side,rgb(23_61_39/0.95)_0%,rgb(13_31_21/0.6)_50%,transparent_100%)]" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-[repeating-radial-gradient(circle_at_50%_50%,transparent_0_46px,rgb(74_222_128/0.12)_46px_48px)] [mask-image:radial-gradient(closest-side,#000_45%,transparent_100%)] [-webkit-mask-image:radial-gradient(closest-side,#000_45%,transparent_100%)]"
+        />
         <div aria-hidden="true" className="absolute inset-0">
           <span className="zv-prsten" />
           <span className="zv-prsten" />

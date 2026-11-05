@@ -11,7 +11,7 @@ const EKRANI = [
 
 export function Jos11() {
   return (
-    <section aria-labelledby="jos11-naslov" data-krigla="Ima još. Puno još." className="mx-auto grid max-w-6xl gap-10 px-5 py-20 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-16 md:py-28">
+    <section id="novo" aria-labelledby="jos11-naslov" data-krigla="Ima još. Puno još." className="mx-auto grid max-w-6xl scroll-mt-4 gap-10 px-5 py-20 md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-16 md:py-28">
       <div className="grid gap-8">
         <h2 id="jos11-naslov" className="font-display text-[clamp(40px,11vw,52px)] leading-[0.95] uppercase md:text-[clamp(56px,5.6vw,84px)]">
           <Punct>Još u 1.1.</Punct>
