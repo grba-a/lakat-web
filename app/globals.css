@@ -490,3 +490,18 @@ body {
 
 /* Podmetač (gumbi, kao u appu 1.1): kapsula s dubinom ispod. */
 .podmetac { box-shadow: 0 5px 0 #27272a, 0 14px 30px -12px rgb(0 0 0 / 0.8); }
+
+/* Izbornik (components/meni.jsx): stavke uđu jedna za drugom kad se otvori. */
+.meni .meni-stavka {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  transition: opacity 0.35s ease-out, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.meni-on .meni-stavka {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(60ms + var(--i, 0) * 40ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .meni .meni-stavka { opacity: 1; transform: none; }
+}
