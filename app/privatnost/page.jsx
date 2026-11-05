@@ -14,7 +14,7 @@ export default function PrivatnostPage() {
   return (
     <PravnaStranica
       naslov="Pravila privatnosti"
-      verzija="Verzija 5 · listopad 2026. (lokacija za javne runde, prijava s Appleom, ekipe, komentari, Možda poznaješ, bez anketa)"
+      verzija="Verzija 6 · studeni 2026. (živa lokacija dok si vani, pogledi pina, lakat, Pokaži se, Stižem za)"
       sazetak={[
         "Tvoje runde, slike i lokaciju vide samo tvoji prihvaćeni pajdaši. Iznimka je runda koju sam staviš „Javno u blizini”.",
         "Ne prodajemo ti podatke. Nema reklama, nema praćenja po drugim appovima.",
@@ -46,9 +46,12 @@ export default function PrivatnostPage() {
               lokacija na kojoj je runda objavljena. To je sama svrha appa (t. b).
             </>,
             <>
-              <b>„Vani sam”</b>: lokacija u trenutku kad ga upališ. Ako dopustiš lokaciju „Uvijek”, telefon sam
-              pazi kad se udaljiš 300 m i tad ga ugasi; lokacija se pritom ne šalje. Dopuštenje možeš povući u
-              postavkama telefona (čl. 6. st. 1. t. a, privola).
+              <b>„Vani sam”</b>: dok je upaljen i ako na to pristaneš, tvoja zadnja lokacija i vrijeme kad je
+              poslana, i kad LAKAT nije u prvom planu (telefon to pokazuje oznakom). Čuva se samo zadnja točka,
+              bez traga kretanja. Na „Doma sam” se briše odmah; u 4:00 (upaljen kasno: 2 sata nakon paljenja) prestaje vrijediti i pajdaši je više ne vide,
+              a briše se u dnevnom čišćenju istog dana. Vide je samo pajdaši, osim onih od kojih se
+              skrivaš. Bez pristanka šalje se samo točka u trenutku paljenja. Pristanak i dopuštenje možeš povući
+              u postavkama telefona (čl. 6. st. 1. t. a, privola).
             </>,
             <>
               <b>Javne runde u blizini</b>: dok je app otvoren i dopustio si lokaciju, mobitel svake 2 minute pošalje
@@ -60,8 +63,19 @@ export default function PrivatnostPage() {
               zajedno („u kadru”) i javi to pajdašima (t. b).
             </>,
             <>
-              <b>Druženje</b>: pajdaši, zahtjevi, komentari, reakcije, pozivi na laktanje, ekipe, aura i rezultati
-              igara (t. b).
+              <b>Druženje</b>: pajdaši, zahtjevi, komentari, reakcije, pozivi na laktanje (i „Stižem za 10/20/30”),
+              ekipe, aura i rezultati igara (t. b).
+            </>,
+            <>
+              <b>Pogledi pina</b>: kad pajdaš otvori tvoj pin na karti, bilježimo tko je gledao i kad, jednom po danu.
+              Ti vidiš samo broj, nikad tko. Zapis čita samo baza (t. b).
+            </>,
+            <>
+              <b>Lakat i „Pokaži se”</b>: tko je kome poslao lakat ili zatražio sliku uživo, i kad (t. b).
+            </>,
+            <>
+              <b>„Daj lakat” uživo</b>: kad oboje stisnete, bilježimo da ste se taj dan laktali, bez koordinata. Ulazi
+              u bodove (t. b).
             </>,
             <>
               <b>Prijave i blokade</b>: tko je koga prijavio ili blokirao, razlog i napomena. Treba za sigurnost
@@ -135,6 +149,7 @@ export default function PrivatnostPage() {
           stavke={[
             "Račun i sve u njemu čuvamo dok imaš račun.",
             "„Vani sam” s lokacijom brišemo najkasnije dan nakon što istekne.",
+            "Poglede pina, poslane laktove i zahtjeve „Pokaži se” brišemo nakon 7 dana, u dnevnom čišćenju.",
             "Javna runda je javna 24 sata; nakon toga je vide samo pajdaši.",
             "Kad obrišeš račun (Profil → Obriši račun), brišemo profil, runde, fotke, profilnu i sve vezano uz tebe. Kopija fotke može kratko ostati u međuspremniku mreže dok ne istekne.",
             "Kad obrišeš račun prijavljen s Appleom, prijavu opozivamo i kod Applea. Ako Apple tad ne odgovori, token čuvamo i pokušavamo ponovno jednom dnevno, najviše 30 dana, pa ga brišemo.",
