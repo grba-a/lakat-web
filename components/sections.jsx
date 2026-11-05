@@ -11,7 +11,7 @@ import { MrezaIkona } from "./mreze";
 import { KriglaListe } from "./napunite-kriglu";
 import { AppStoreBadge } from "./app-store-badge";
 import { StoryButton } from "./story-button";
-import { PrivacyWords } from "./privacy-words";
+import { Istina, PrivacyWords } from "./privacy-words";
 import { PromoVideo } from "./promo-video";
 import { CatchPoint } from "./sticky-cta";
 import { Waitlist } from "./waitlist";
@@ -37,12 +37,12 @@ const KORACI = [
 ];
 
 // 1.1 (Petar 5. 11., kartica „koraci“): koraci 2 i 3 govore jezikom 1.1, uz Codexove Krigle iz ulaza.
-// Korak 3 ima drugu sliku nego u kartici (Petar: „ali druga slika za 3“): Krigla koja pokazuje i smije se
-// (lakat-hero/out/05-pokazuje) na tamnoj sceni, jer „Ili te barem zeza da si doma“.
+// Korak 3 ima drugu sliku nego u kartici (Petar: „ali druga slika za 3“, pa 5. 11. navečer „ne sviđa mi se treća
+// slika“): Krigla drži mobitel, a na ekranu je poruka pajdaša „Stižem za 20 minuta“ (lakat-hero/out/02-mobitel).
 const KORACI_11 = [
   ["Dodaš ekipu.", "Samo ljude koje prihvatiš.", "1-ekipa", "Krigla s mobitelom zove ekipu"],
   ["Vani si? Upališ „Vani sam“.", "Kava se isto računa.", "2-vani", "Krigla raširenih ruku pod reflektorom"],
-  ["Ekipa javi „Stižem za 20“.", "Ili te barem zeza da si doma.", "3-stizem", "Krigla pokazuje prstom i smije se"],
+  ["Ekipa javi „Stižem za 20“.", "Ili te barem zeza da si doma.", "3-stizem", "Krigla drži mobitel s porukom pajdaša: Stižem za 20 minuta"],
 ];
 
 function Koraci11() {
@@ -75,7 +75,7 @@ function Koraci11() {
 export function TriKoraka({ live = false }) {
   const preorder = !live && isPreorder();
   return (
-    <section aria-labelledby="koraci-naslov" className="relative mx-auto grid max-w-6xl gap-10 px-5 pt-16 pb-20 md:pt-24">
+    <section id="kako-radi" aria-labelledby="koraci-naslov" className="relative scroll-mt-4 mx-auto grid max-w-6xl gap-10 px-5 pt-16 pb-20 md:pt-24">
       <HuntKrigla id="tajna" size={20} className="top-4 right-3" />
       {/* Tri Krigle za šankom (Petar 20. 10., runda 2 „sank“: Codexova slika, svaka drži nešto drugo, kava se isto računa).
           Rubovi slike već blijede u #09090b, pa nema okvira. Stupnjevi pokrivaju širinu × 2x (zamka srcset). */}
@@ -132,11 +132,11 @@ export function TriKoraka({ live = false }) {
 // (tekst iz appa: Core/Vani.swift, KorisnikSheet.swift), s Kriglom kao duhom.
 function Privatnost11() {
   return (
-    <div className="grid max-w-[42ch] gap-4">
-      <p data-reveal className="text-[16px] text-soft text-pretty md:text-[19px]">
+    <>
+      <Istina oznaka="Vani sam" d={180}>
         Lokacija ide uživo samo dok je upaljen „Vani sam“. Kažeš „Doma sam“, ili dođe 4 ujutro, i gasi se.
-      </p>
-      <div data-reveal style={{ "--rv-d": "120ms" }} className="grid grid-cols-[48px_1fr] items-center gap-3 rounded-2xl border border-line bg-surface p-3.5">
+      </Istina>
+      <li data-reveal style={{ "--rv-d": "270ms" }} className="grid grid-cols-[48px_1fr] items-center gap-3 rounded-2xl border border-line bg-surface/80 p-4 md:p-5">
         <img
           src="/img/krigla/duh-96.webp"
           srcSet="/img/krigla/duh-96.webp 96w, /img/krigla/duh-192.webp 192w"
@@ -154,8 +154,8 @@ function Privatnost11() {
           </span>
           <span className="text-[13px] leading-snug text-muted text-pretty">Taj pajdaš ne vidi tvoj „Vani sam“, pozive ni današnje runde.</span>
         </div>
-      </div>
-    </div>
+      </li>
+    </>
   );
 }
 
@@ -196,16 +196,34 @@ export function WaitlistSection({ live = false }) {
   );
   return (
     <section id="lista" className="mx-auto max-w-6xl scroll-mt-6 px-5 py-20 md:py-28">
-      <div className="mx-auto max-w-md md:max-w-none">
+      {/* Prednarudžba na desktopu (Petar 5. 11.): dva stupca, Android obrazac lijevo, iPhone i App Store desno.
+          Mobitel ostaje jedan stupac: obrazac, pa ispod crte iPhone. */}
+      <div className={`mx-auto max-w-md md:max-w-none ${preorder ? "grid gap-8 md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] md:items-center md:gap-16" : ""}`}>
         <Waitlist android={android} velik naslov={naslov} />
         {preorder && (
-          <div data-reveal className="mt-8 grid gap-4 border-t border-line pt-6 md:max-w-md">
-            <p className="grid gap-1">
-              <b className="text-[17px] font-semibold text-fg">Na iPhoneu si?</b>
-              <span className="text-[15px] text-soft">Prednaruči, 1. 12. se sam skine.</span>
+          <aside
+            data-reveal
+            aria-label="Prednarudžba za iPhone"
+            className="relative grid gap-4 border-t border-line pt-6 md:isolate md:gap-5 md:overflow-hidden md:rounded-[28px] md:border md:bg-[radial-gradient(120%_90%_at_100%_0%,#123222_0%,#131316_55%)] md:p-10"
+          >
+            <img
+              src="/img/press/krigla-ulaznica-320.webp"
+              alt=""
+              width={320}
+              height={320}
+              loading="lazy"
+              decoding="async"
+              className="hidden md:block md:size-[180px] md:justify-self-end md:object-contain lg:size-[220px]"
+            />
+            <span className="hidden font-mono text-[12px] tracking-[0.16em] text-accent uppercase md:block">iPhone · prednarudžba</span>
+            <p className="grid gap-1 md:gap-3">
+              <b className="text-[17px] font-semibold text-fg md:font-display md:text-[clamp(40px,4.4vw,60px)] md:leading-[0.95] md:font-normal md:uppercase">
+                Na iPhoneu si<span className="md:text-accent">?</span>
+              </b>
+              <span className="text-[15px] text-soft md:text-[19px]">Prednaruči, 1. 12. se sam skine.</span>
             </p>
             <AppStoreBadge ct="web-lista" height={48} className="justify-self-start" />
-          </div>
+          </aside>
         )}
       </div>
     </section>
@@ -259,7 +277,7 @@ export function PlayGame({ challenge = null, live = false }) {
 // 8. FAQ (B): chat, odgovori su u HTML-u (faq-u-html).
 export function Faq({ live }) {
   return (
-    <section data-krigla="Pitaj što god hoćeš." aria-labelledby="faq-naslov" className="relative mx-auto grid max-w-2xl gap-6 px-5 py-20 md:py-24">
+    <section id="faq" data-krigla="Pitaj što god hoćeš." aria-labelledby="faq-naslov" className="relative scroll-mt-4 mx-auto grid max-w-2xl gap-6 px-5 py-20 md:py-24">
       <HuntKrigla id="faq" size={22} className="right-1 bottom-6" />
       <H2 id="faq-naslov">Pitaš se?</H2>
       <FaqChat items={faqZa(live)} />
