@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FEATURES } from "@/lib/features";
+import { TURA as FEATURES } from "@/lib/features";
 import { Punct } from "./brand";
 import { Phone } from "./phone";
 import { ZvonoEkran } from "./zvono-ekran";
@@ -26,6 +26,16 @@ function Live({ id, on }) {
         ))}
       </>
     );
+  // 1.1: pin s „Vani sam“ diše, a gumb „Stižem“ svijetli (položaji iz scr-vani / scr-stizem).
+  if (id === "vani")
+    return (
+      <>
+        <span className={`vani-ring ${on ? "on" : ""}`} style={{ left: "48.6%", top: "24.6%" }} />
+        <span className={`vani-ring ${on ? "on" : ""}`} style={{ left: "48.6%", top: "24.6%" }} />
+      </>
+    );
+  if (id === "stizem")
+    return <span className={`absolute rounded-full ${on ? "btn-glow" : ""}`} style={{ left: "54%", top: "30.6%", width: "36.5%", height: "5.2%" }} />;
   if (id === "runda")
     return (
       <img

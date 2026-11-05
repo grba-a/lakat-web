@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { FEATURES } from "@/lib/features";
+import { TURA as FEATURES } from "@/lib/features";
 import { Punct } from "./brand";
 import { KriglaTyping } from "./krigla-typing";
 import { Phone } from "./phone";
