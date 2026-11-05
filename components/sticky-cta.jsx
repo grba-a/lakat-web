@@ -59,10 +59,15 @@ export function StickyCta({ live: launched = false }) {
 
   useEffect(() => {
     if (live) return;
-    const target = document.getElementById("lista");
-    if (!target) return;
-    const io = new IntersectionObserver(([e]) => setHidden(e.isIntersecting), { rootMargin: "0px 0px -20% 0px" });
-    io.observe(target);
+    // Donji gumb se skriva dok je na ekranu obrazac liste ili hero za prednarudžbu (tamo je isti gumb).
+    const targets = ["lista", "hero-pre"].map((id) => document.getElementById(id)).filter(Boolean);
+    if (!targets.length) return;
+    const vidljivi = new Set();
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) e.isIntersecting ? vidljivi.add(e.target) : vidljivi.delete(e.target);
+      setHidden(vidljivi.size > 0);
+    }, { rootMargin: "0px 0px -20% 0px" });
+    targets.forEach((t) => io.observe(t));
     return () => io.disconnect();
   }, [live]);
 
