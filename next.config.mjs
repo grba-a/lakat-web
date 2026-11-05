@@ -34,12 +34,8 @@ const nextConfig = {
   // na početnu, gdje instalirani web app vidi „Račun ti je spremljen“. Privremeno (307), da ne zaglavi u cacheu.
   async redirects() {
     const stare = ["/login", "/register", "/welcome", "/uskoro", "/mapa", "/rang", "/igre", "/liga", "/upute", "/profil/:path*", "/profil", "/korisnik/:path*"];
-    return [
-      ...stare.map((source) => ({ source, destination: "/", permanent: false })),
-      // TestFlight 1.1 za testere (Petar 5. 11.): kratka adresa za WhatsApp i story. Appleov kod se ne da birati,
-      // pa se ovdje mijenja odredište ako Apple ikad da novi link. Privremeno (307), da se ne zaglavi u cacheu.
-      { source: "/test", destination: "https://testflight.apple.com/join/bePg6TGJ", permanent: false },
-    ];
+    // TestFlight link NIKAD na webu (Petar 6. 11.): testeri ga dobiju isključivo u WhatsApp grupi „LAKAT testeri".
+    return stare.map((source) => ({ source, destination: "/", permanent: false }));
   },
   async headers() {
     // Novi service worker mora stići odmah, inače stari na instaliranim web appovima čeka 24 h.
