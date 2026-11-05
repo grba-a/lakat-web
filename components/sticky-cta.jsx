@@ -306,13 +306,19 @@ export function StickyCta({ live: launched = false }) {
                 </svg>
               </button>
             </div>
+            {/* Prednarudžba (Petar 5. 11., „@ime: makni je"): list je Androidova lista, kao sekcija #lista. */}
             <Waitlist
               prefix="sheet-"
               firstRef={first}
               aktivan={bioOtvoren}
+              android={preorder}
               naslov={
                 <p id="sheet-naslov" className="font-display text-[34px] leading-none uppercase">
-                  {PRO ? (
+                  {preorder ? (
+                    <>
+                      Imaš Android<span className="text-accent">?</span>
+                    </>
+                  ) : PRO ? (
                     <>
                       Rezerviraj svoje @ime<span className="text-accent">.</span>
                     </>

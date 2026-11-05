@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { play } from "@/lib/sfx";
+import { isPreorder } from "@/lib/launch";
 
 // Lov na Krigle (Petar n5): pet malih Krigli skriveno je po stranici.
 // Kad nađeš svih pet, Krigla otkrije tajnu repliku. Napredak ostaje u pregledniku.
@@ -72,9 +73,12 @@ export function HuntNagrada() {
 
   useEffect(() => {
     const otvori = () => {
+      // Prednarudžba (Petar 5. 11., „@ime: makni je"): rezervacije imena nema, pa je tapeta otključana svima.
+      let u = isPreorder();
       try {
-        setUpisan(localStorage.getItem(UPISAN) === "1");
+        u = u || localStorage.getItem(UPISAN) === "1";
       } catch {}
+      setUpisan(u);
       setOn(true);
     };
     window.addEventListener(LOV_GOTOV, otvori);

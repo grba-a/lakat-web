@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { remaining, storeLink } from "@/lib/launch";
+import { isPreorder, remaining, storeLink } from "@/lib/launch";
 import { CTA_TEXT, OPEN_SHEET } from "./sticky-cta";
 
 // Ekran za ljude koji imaju staru web aplikaciju na početnom ekranu (Petar d4, 2026-10-05).
@@ -13,6 +13,9 @@ function pad(n) {
 export function PwaSaved({ live = false }) {
   const [on, setOn] = useState(false);
   const [t, setT] = useState(null);
+  // Prednarudžba (Petar 5. 11., „@ime: makni je"): iPhone ide na App Store, ostali na Android listu.
+  const preorder = !live && isPreorder();
+  const [iphone, setIphone] = useState(false);
 
   useEffect(() => {
     const standalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
@@ -20,6 +23,7 @@ export function PwaSaved({ live = false }) {
     const demo = !/laktarenje\.com$/.test(window.location.hostname) && new URLSearchParams(window.location.search).get("pwa") === "demo";
     if (!standalone && !demo) return;
     const t0 = setTimeout(() => {
+      setIphone(/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
       setOn(true);
       setT(remaining());
     }, 0);
@@ -59,13 +63,13 @@ export function PwaSaved({ live = false }) {
         <button
           type="button"
           onClick={() => {
-            if (live && storeLink("web-pwa")) return void (window.location.href = storeLink("web-pwa"));
+            if ((live || (preorder && iphone)) && storeLink("web-pwa")) return void (window.location.href = storeLink("web-pwa"));
             setOn(false);
             setTimeout(() => window.dispatchEvent(new Event(OPEN_SHEET)), 50);
           }}
           className="min-h-[52px] rounded-full bg-accent px-7 text-[16px] font-bold text-[#052e16]"
         >
-          {live ? "Skini LAKAT" : CTA_TEXT}
+          {live ? "Skini LAKAT" : preorder ? (iphone ? "Prednaruči na App Storeu" : "Javi mi za Android") : CTA_TEXT}
         </button>
         <button type="button" onClick={() => setOn(false)} className="text-[14px] text-muted underline underline-offset-4">
           Pogledaj što stiže
