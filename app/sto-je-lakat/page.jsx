@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { AppStoreBadge } from "@/components/app-store-badge";
 import { faqZa } from "@/lib/faq";
-import { FEATURES, JOS } from "@/lib/features";
+import { FEATURES, JOS, JOS_11, TURA_11 } from "@/lib/features";
 import { faqGraf, mrvice } from "@/lib/jsonld";
-import { isLive } from "@/lib/launch";
-import { KAD, MREZE, ODLOMAK } from "@/lib/opis";
+import { LAKAT_11, isLive, isPreorder } from "@/lib/launch";
+import { KAD, MREZE, ODLOMAK, kadSad } from "@/lib/opis";
 import { jsonLd, stranica } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -26,6 +27,8 @@ function Blok({ naslov, children }) {
 
 export default function StoJeLakat() {
   const live = isLive();
+  const preorder = !live && isPreorder();
+  const kad = KAD[kadSad(live, preorder)];
   const faq = faqZa(live);
   return (
     <main className="mx-auto grid max-w-4xl gap-12 px-5 py-14 md:py-20">
@@ -42,7 +45,7 @@ export default function StoJeLakat() {
           {ODLOMAK.map((p) => (
             <p key={p}>{p}</p>
           ))}
-          <p className="text-soft">{KAD[live ? "poslije" : "prije"]}</p>
+          <p className="text-soft">{kad}</p>
         </div>
       </header>
 
@@ -55,6 +58,22 @@ export default function StoJeLakat() {
             </div>
           ))}
         </dl>
+        {/* 1.1 (kartica „stojelakat“): novosti iz 1.1, samo kad je 1.1 upaljen. */}
+        {LAKAT_11 && (
+          <>
+            <h3 className="pt-4 font-display text-[22px] leading-none text-fg uppercase">
+              Novo u 1.1<span className="text-accent">.</span>
+            </h3>
+            <dl className="grid gap-4">
+              {[...TURA_11, ...JOS_11].map((f) => (
+                <div key={f.id} className="grid gap-1">
+                  <dt className="font-semibold text-fg">{f.name}</dt>
+                  <dd>{f.line}</dd>
+                </div>
+              ))}
+            </dl>
+          </>
+        )}
       </Blok>
 
       <Blok naslov="Tko te vidi">
@@ -66,7 +85,7 @@ export default function StoJeLakat() {
       </Blok>
 
       <Blok naslov="Kad i gdje">
-        <p>{KAD[live ? "poslije" : "prije"]}</p>
+        <p>{kad}</p>
         <p>LAKAT je besplatan i samo za punoljetne (18+). Treba iOS 26 ili noviji.</p>
       </Blok>
 
@@ -95,9 +114,17 @@ export default function StoJeLakat() {
         </dl>
       </Blok>
 
-      <Link href={live ? "/" : "/#lista"} className="inline-flex min-h-[52px] items-center justify-center justify-self-start rounded-full bg-accent px-6 text-[16px] font-bold text-[#052e16]">
-        {live ? "Natrag na LAKAT" : "Rezerviraj svoje @ime"}
-      </Link>
+      {/* Prednarudžba (kartica „stojelakat“ + ispravci): umjesto „Rezerviraj svoje @ime“ službeni App Store badge. */}
+      {preorder ? (
+        <div className="grid justify-items-start gap-3">
+          <p className="text-[16px] font-semibold text-fg">Prednaruči na App Storeu.</p>
+          <AppStoreBadge ct="web-sto-je-lakat" height={52} />
+        </div>
+      ) : (
+        <Link href={live ? "/" : "/#lista"} className="inline-flex min-h-[52px] items-center justify-center justify-self-start rounded-full bg-accent px-6 text-[16px] font-bold text-[#052e16]">
+          {live ? "Natrag na LAKAT" : "Rezerviraj svoje @ime"}
+        </Link>
+      )}
     </main>
   );
 }

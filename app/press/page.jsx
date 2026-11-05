@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { KriglaSays } from "@/components/brand";
-import { FEATURES, JOS } from "@/lib/features";
+import { FEATURES, JOS, TURA_11 } from "@/lib/features";
+import { LAKAT_11, isLive, isPreorder } from "@/lib/launch";
 import { mrvice } from "@/lib/jsonld";
-import { MREZE, ODLOMAK } from "@/lib/opis";
+import { KAD, MREZE, ODLOMAK, kadSad } from "@/lib/opis";
 import { jsonLd, stranica } from "@/lib/seo";
 
 export const metadata = stranica({
@@ -12,7 +13,21 @@ export const metadata = stranica({
 });
 
 // Press kit (Petar n7): sve što novinar ili influencer treba na jednom mjestu. Samo potvrđene činjenice.
+// Krigla u novim pozama, prozirna pozadina (kartica „stojelakat“: Press). Izvori: lakat-hero/out, lakat-krigla-poze-2/-3.
+const POZE = [
+  ["pokazuje", "Krigla pokazuje i smije se"],
+  ["zvono", "Krigla zvoni zvoncem"],
+  ["ulaznica", "Krigla drži ulaznicu"],
+  ["plese", "Krigla pleše"],
+  ["slavi", "Krigla slavi"],
+  ["duh", "Krigla kao duh"],
+];
+
+export const revalidate = 3600;
+
 export default function Press() {
+  const live = isLive();
+  const preorder = !live && isPreorder();
   return (
     <main className="mx-auto grid max-w-5xl gap-14 px-5 py-14 md:py-20">
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(mrvice("Press", "/press"))} />
@@ -30,7 +45,7 @@ export default function Press() {
         <h2 className="font-display text-[34px] leading-none uppercase">Ukratko</h2>
         <div className="grid gap-3 text-[16px] text-soft">
           <p>{ODLOMAK.join(" ")}</p>
-          <p>Izlazi 1. 12. 2026. u 12:00 na iPhoneu. Android stiže u siječnju 2027.</p>
+          <p>{KAD[kadSad(live, preorder)]}</p>
           <p>
             Sve činjenice na jednom mjestu:{" "}
             <Link href="/sto-je-lakat" className="text-accent underline underline-offset-4">
@@ -44,7 +59,7 @@ export default function Press() {
       <section className="grid gap-5">
         <h2 className="font-display text-[34px] leading-none uppercase">Funkcije</h2>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-          {[...FEATURES, ...JOS].filter((f) => f.scr).map((f) => (
+          {[...FEATURES, ...(LAKAT_11 ? TURA_11 : []), ...JOS].filter((f) => f.scr).map((f) => (
             <a key={f.id} href={`/img/scr-${f.id}.webp`} download className="grid content-start gap-2 rounded-2xl border border-line bg-surface p-3 transition-colors hover:border-[#3f3f46]">
               <img src={`/img/scr-${f.id}.webp`} alt={f.alt} width={640} height={1317} loading="lazy" className="aspect-[9/16] w-full rounded-xl object-cover object-top" />
               <b className="font-display text-[20px] leading-none font-normal uppercase">{f.name}</b>
@@ -52,7 +67,6 @@ export default function Press() {
             </a>
           ))}
         </div>
-        <p className="text-[13px] text-muted">Ekrani su iz verzije u izradi. Dizajn se do 1. 12. još može promijeniti.</p>
       </section>
 
       <section className="grid gap-4 md:grid-cols-2">
@@ -67,6 +81,18 @@ export default function Press() {
             <span className="text-[14px] text-muted">Maskota, WebP s prozirnom pozadinom.</span>
           </span>
         </a>
+      </section>
+
+      <section className="grid gap-5">
+        <h2 className="font-display text-[34px] leading-none uppercase">Krigla u pozama</h2>
+        <div className="grid grid-cols-2 gap-3 min-[560px]:grid-cols-3">
+          {POZE.map(([id, alt]) => (
+            <a key={id} href={`/img/press/krigla-${id}.webp`} download className="grid content-start gap-2 rounded-2xl border border-line bg-surface p-3 transition-colors hover:border-[#3f3f46]">
+              <img src={`/img/press/krigla-${id}-320.webp`} alt={alt} width={320} height={320} loading="lazy" className="aspect-square w-full object-contain" />
+              <span className="text-[13px] text-muted">{alt} · WebP 1024 px, prozirno</span>
+            </a>
+          ))}
+        </div>
       </section>
 
       <section className="grid gap-3">
