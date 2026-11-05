@@ -3,12 +3,15 @@ import { FeatureTourMobile } from "./feature-tour-mobile";
 import { HeroPre } from "./hero-pre";
 import { HeroS6 } from "./hero-s6";
 import { HuntNagrada } from "./hunt";
+import { Jos11 } from "./jos-11";
+import { PrvoZvono } from "./prvo-zvono";
+import { Reveal } from "./reveal";
 import { Faq, Film, Footer, Mreze, PlayGame, Privacy, TriKoraka, WaitlistSection } from "./sections";
 import { LaunchTakeover } from "./launch-takeover";
 import { Ozivi } from "./ozivi";
 import { PwaSaved } from "./pwa-saved";
 import { StickyCta } from "./sticky-cta";
-import { APP_STORE, isLive, isPreorder } from "@/lib/launch";
+import { APP_STORE, LAKAT_11, isLive, isPreorder, prvoZvonoDolazi } from "@/lib/launch";
 
 // Cijela stranica, nova struktura (Petar, 15. 10., j-nova-struktura): devet sekcija, svaka s jednim poslom.
 // 1 hero (što je i kad) · 2 tri koraka · 3 rezerviraj @ime · 4 tura · 5 privatnost + podsjetnik · 6 film · 7 igra · 8 FAQ · 9 mreže + podnožje.
@@ -27,6 +30,9 @@ export function Home({ challenge = null }) {
         <WaitlistSection live={live && Boolean(APP_STORE)} />
         <FeatureTourMobile />
         <FeatureTour />
+        {/* 1.1 (5. 11.): traka novosti ispod ture, pa Prvo zvono (pet 4. 12.) između ture i privatnosti. */}
+        {LAKAT_11 && <Jos11 />}
+        {prvoZvonoDolazi() && <PrvoZvono />}
         <Privacy live={live} />
         <Film live={live} />
         <PlayGame challenge={challenge} live={live} />
@@ -39,6 +45,7 @@ export function Home({ challenge = null }) {
       <PwaSaved live={live} />
       <HuntNagrada />
       <Ozivi />
+      <Reveal />
     </>
   );
 }
