@@ -2,7 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 
-// Izbornik (Petar 5. 11.): gumb gore desno (zatvoren ispod modala lova i lansiranja, z 45) na svakoj širini, ne dira „LAKAT.“ u heroju (hero-pre.jsx je lijevo).
+// Izbornik samo na mobitelu (Petar 5. 11.: „makni hamburger sa desktop verzije"; home.jsx ga omata u md:hidden).
+// Gumb gore desno (zatvoren ispod modala lova i lansiranja, z 45) na svakoj širini, ne dira „LAKAT.“ u heroju (hero-pre.jsx je lijevo).
 // Otvoren: cijeli ekran, Escape i tap na link zatvaraju, Tab kruži unutra, stranica ispod ne skrola i nije fokusabilna,
 // fokus se vraća na gumb. Ulaz linkova samo opacity/transform; smanjeno kretanje to gasi (globals.css).
 // `linkovi` = [href, tekst] samo za sekcije i stranice koje postoje (home.jsx), `dno` = npr. App Store badge.
@@ -11,6 +12,15 @@ export function Meni({ linkovi = [], dno = null }) {
   const btn = useRef(null);
   const panel = useRef(null);
   const id = useId();
+
+  // Ako se otvori na mobitelu pa prozor naraste do desktopa (md, 768 px), zatvori ga, da scroll ne ostane zaključan.
+  useEffect(() => {
+    if (!open) return;
+    const mq = window.matchMedia("(min-width: 768px)");
+    const zatvori = () => mq.matches && setOpen(false);
+    mq.addEventListener("change", zatvori);
+    return () => mq.removeEventListener("change", zatvori);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;

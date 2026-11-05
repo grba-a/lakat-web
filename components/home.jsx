@@ -64,7 +64,9 @@ export function Home({ challenge = null }) {
         <Mreze live={live} />
       </main>
       <Footer />
-      <Meni linkovi={linkovi} dno={dno} />
+      <div className="md:hidden">
+        <Meni linkovi={linkovi} dno={dno} />
+      </div>
       <StickyCta live={live} />
       <LaunchTakeover />
       <PwaSaved live={live} />
