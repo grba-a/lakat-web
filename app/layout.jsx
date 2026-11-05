@@ -1,8 +1,8 @@
 import { Anton, Archivo } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { TabTitle } from "@/components/tab-title";
-import { APP_STORE_ID, isLive } from "@/lib/launch";
-import { NASLOV, OPIS } from "@/lib/opis";
+import { APP_STORE_ID, isLive, isPreorder } from "@/lib/launch";
+import { NASLOV, OPIS, kadSad } from "@/lib/opis";
 import "./globals.css";
 
 const anton = Anton({
@@ -21,9 +21,11 @@ const archivo = Archivo({
 // Banner traži App Store link u envu, a NEXT_PUBLIC_ varijabla stiže tek s novim deployem.
 export function generateMetadata() {
   const live = isLive();
-  const kad = live ? "poslije" : "prije";
+  const preorder = !live && isPreorder();
+  const kad = kadSad(live, preorder);
   return {
-    ...(APP_STORE_ID && live ? { itunes: { appId: APP_STORE_ID } } : {}),
+    // Appleov banner na vrhu Safarija pali se već u prednarudžbi (kartica „meta“), ne tek 1. 12.
+    ...(APP_STORE_ID && (live || preorder) ? { itunes: { appId: APP_STORE_ID } } : {}),
     metadataBase: new URL(process.env.SITE_URL || "https://lakat-web.vercel.app"),
     title: NASLOV[kad],
     description: OPIS[kad],

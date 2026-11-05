@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { isLive } from "@/lib/launch";
+import { isLive, isPreorder } from "@/lib/launch";
 
 // Slika za dijeljenje. Bio je dnevni broj („Još 57 dana.“, Petar d1), ali mreže i CDN ga čuvaju danima pa
 // ista najava pokaže krive dane (og-odbrojavanje). Sad stoji stalan datum, a u podne 1. 12. prelazi na „otvoren“.
@@ -13,6 +13,7 @@ export const revalidate = 600;
 export default async function Image() {
   const anton = await readFile(join(process.cwd(), "assets/Anton-Regular.ttf"));
   const live = isLive();
+  const preorder = !live && isPreorder();
   const big = live ? "Šank je otvoren" : "Šank se otvara 1. 12";
 
   return new ImageResponse(
@@ -39,7 +40,7 @@ export default async function Image() {
             <span style={{ color: "#4ADE80" }}>.</span>
           </div>
           <div style={{ display: "flex", fontSize: 40, color: "#8B8B94", marginTop: 18, textTransform: "uppercase" }}>
-            {live ? "Na iPhoneu · Android u siječnju 2027." : "U podne · na iPhoneu · druženje s ekipom"}
+            {live ? "Na iPhoneu · Android u siječnju 2027." : preorder ? "Prednaruči na App Storeu · u podne · iPhone" : "U podne · na iPhoneu · druženje s ekipom"}
           </div>
         </div>
       </div>
