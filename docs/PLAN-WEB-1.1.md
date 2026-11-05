@@ -18,3 +18,10 @@ Pre-order items go live with the pre-order deploy. Everything about 1.1 features
 koraci · lista · tura · jos11 · zvono · privatnost · gumbi · faq · mreze · meta · stojelakat · ispravci — card texts and visuals are in
 the web artifact (read db `web/` and the artifact page source via the Artifact tool `read`). Petar's notes: koraci „ali druga slika za
 3"; tura „sve novo da"; zvono „animiraj ovo; … mora biti brz na mobitelu".
+
+## Done 5. 11. evening (local, branch prednarudzba, nothing pushed)
+Hero A `266d8c3`; cards `c7266a2 a9221a3 73f8a70 b7fd098 5b4d9d9 58e629a f0817bf`. 1.1 parts behind `NEXT_PUBLIC_LAKAT_11=1` (set in
+.env.local for preview). WebKit 360/390/430/1280 no horizontal scroll; next build OK (22/22).
+Open for Petar: clean 1.1 screenshots (DEV test names; Stižem 10/20/30), @ime reservation kept or dropped (hunt.jsx, pwa-saved.jsx
+still say „Rezerviraj @ime"), step-2 scene Krigla raises an empty glass (Apple 1.4.3?), privacy line omits „upaljen kasno: 2 sata".
+Deploy = his word + Vercel env NEXT_PUBLIC_APP_STORE_URL (+ NEXT_PUBLIC_LAKAT_11 only after Apple approves 1.1).
