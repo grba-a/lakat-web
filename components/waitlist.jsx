@@ -390,7 +390,7 @@ export function Waitlist({ prefix = "", android: androidLive = false, firstRef, 
         </p>
       )}
       <p>
-        <b className="font-semibold text-soft">Već laktaš na webu?</b> Račun i ime ostaju tvoji. 1. 12. se samo prijaviš u aplikaciji.
+        <b className="font-semibold text-soft">Već laktaš na webu?</b> Račun i ime ostaju tvoji. U appu se prijaviš istim @imenom i lozinkom.
       </p>
     </div>
   );
