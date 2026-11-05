@@ -15,7 +15,8 @@ const FRIENDS = [
 ];
 
 // `children` = Krigla koja se puni s listom (KriglaListe, server). Vizual sekcije, ne druga tema (Petar 16. 10.).
-export function PrivacyWords({ children = null }) {
+// `dodatak` = istine iz 1.1 ispod odlomka (sections.jsx, Privatnost11), samo kad je 1.1 upaljen.
+export function PrivacyWords({ children = null, dodatak = null }) {
   const ref = useRef(null);
   const [lit, setLit] = useState(WORDS.length);
 
@@ -70,9 +71,12 @@ export function PrivacyWords({ children = null }) {
           ))}
         </h2>
         <div className={`grid gap-8 transition-opacity duration-500 md:grid-cols-[minmax(0,42ch)_auto] md:items-center md:justify-between md:gap-12 ${done ? "opacity-100" : "opacity-40"}`}>
-          <p className="max-w-[42ch] text-[16px] text-soft text-pretty md:text-[19px]">
-            Runde, fotke i gdje si vide samo pajdaši koje prihvatiš. Iznimka je javna runda, i to samo kad je sam upališ: 24 sata je vide ljudi u krugu od 1 km.
-          </p>
+          <div className="grid gap-6">
+            <p className="max-w-[42ch] text-[16px] text-soft text-pretty md:text-[19px]">
+              Runde, fotke i gdje si vide samo pajdaši koje prihvatiš. Iznimka je javna runda, i to samo kad je sam upališ: 24 sata je vide ljudi u krugu od 1 km.
+            </p>
+            {dodatak}
+          </div>
           {children}
         </div>
       </div>

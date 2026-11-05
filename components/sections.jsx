@@ -1,4 +1,5 @@
 import { faqZa } from "@/lib/faq";
+import { LAKAT_11, isPreorder } from "@/lib/launch";
 import { KRIGLA_KORACI } from "@/lib/krigla-slike";
 import { MREZE } from "@/lib/opis";
 import { KriglaSays, Punct } from "./brand";
@@ -8,6 +9,7 @@ import { HuntKrigla } from "./hunt";
 import { SecretKrigla } from "./secret-krigla";
 import { MrezaIkona } from "./mreze";
 import { KriglaListe } from "./napunite-kriglu";
+import { AppStoreBadge } from "./app-store-badge";
 import { StoryButton } from "./story-button";
 import { PrivacyWords } from "./privacy-words";
 import { PromoVideo } from "./promo-video";
@@ -34,7 +36,44 @@ const KORACI = [
   ["Ekipa vidi gdje si i dođe.", "Ili te barem zeza da si doma."],
 ];
 
+// 1.1 (Petar 5. 11., kartica „koraci“): koraci 2 i 3 govore jezikom 1.1, uz Codexove Krigle iz ulaza.
+// Korak 3 ima drugu sliku nego u kartici (Petar: „ali druga slika za 3“): Krigla koja pokazuje i smije se
+// (lakat-hero/out/05-pokazuje) na tamnoj sceni, jer „Ili te barem zeza da si doma“.
+const KORACI_11 = [
+  ["Dodaš ekipu.", "Samo ljude koje prihvatiš.", "1-ekipa", "Krigla s mobitelom zove ekipu"],
+  ["Vani si? Upališ „Vani sam“.", "Kava se isto računa.", "2-vani", "Krigla raširenih ruku pod reflektorom"],
+  ["Ekipa javi „Stižem za 20“.", "Ili te barem zeza da si doma.", "3-stizem", "Krigla pokazuje prstom i smije se"],
+];
+
+function Koraci11() {
+  return (
+    <ol className="grid gap-5 md:grid-cols-3 md:gap-8">
+      {KORACI_11.map(([a, b, slika, alt], i) => (
+        <li key={a} data-reveal style={{ "--rv-d": `${i * 110}ms` }} className="grid grid-cols-[96px_1fr] items-center gap-4 md:grid-cols-1 md:items-start">
+          <img
+            src={`/img/koraci11/${slika}-240.webp`}
+            srcSet={`/img/koraci11/${slika}-240.webp 240w, /img/koraci11/${slika}-480.webp 480w`}
+            sizes="(min-width: 768px) 220px, 96px"
+            alt={alt}
+            width={480}
+            height={600}
+            loading="lazy"
+            decoding="async"
+            className="aspect-[4/5] w-[96px] rounded-2xl border border-line object-cover transition-transform duration-300 ease-out hover:-rotate-2 md:w-[220px]"
+          />
+          <p className="grid gap-1">
+            <span className="font-display text-[26px] leading-none text-accent">{i + 1}</span>
+            <span className="text-[18px] leading-snug font-semibold text-fg text-pretty md:text-[20px]">{a}</span>
+            <span className="text-[16px] leading-snug text-soft text-pretty">{b}</span>
+          </p>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 export function TriKoraka({ live = false }) {
+  const preorder = !live && isPreorder();
   return (
     <section aria-labelledby="koraci-naslov" className="relative mx-auto grid max-w-6xl gap-10 px-5 pt-16 pb-20 md:pt-24">
       <HuntKrigla id="tajna" size={20} className="top-4 right-3" />
@@ -58,6 +97,9 @@ export function TriKoraka({ live = false }) {
           LAKAT je aplikacija za druženje s ekipom, a cijela znanost stane u tri koraka.
         </p>
       </div>
+      {LAKAT_11 ? (
+        <Koraci11 />
+      ) : (
       <ol className="grid gap-6 md:grid-cols-3 md:gap-8">
         {KORACI.map(([a, b], i) => (
           <li key={a} className="grid grid-cols-[88px_1fr] items-center gap-4 md:grid-cols-1 md:items-start">
@@ -70,9 +112,14 @@ export function TriKoraka({ live = false }) {
           </li>
         ))}
       </ol>
+      )}
       <div className="grid gap-3 md:flex md:items-center md:justify-between">
-        {/* j-dokaz-bez-brojki: jedino istinito, bez ijednog broja. */}
-        <p className="text-[14px] text-muted">LAKAT je već živio na webu, sad seli na iPhone.</p>
+        {/* j-dokaz-bez-brojki: jedino istinito, bez ijednog broja. U prednarudžbi zadnji redak zove na App Store (kartica „koraci“). */}
+        {preorder ? (
+          <p className="text-[15px] font-semibold text-accent">Prednaruči sad, 1. 12. se sam skine.</p>
+        ) : (
+          <p className="text-[14px] text-muted">LAKAT je već živio na webu, sad seli na iPhone.</p>
+        )}
       </div>
     </section>
   );
@@ -81,15 +128,47 @@ export function TriKoraka({ live = false }) {
 // 4. Privatnost: „Vide te samo pajdaši.“ riječ po riječ (Petar w29, c-privatnost-pajdasi).
 // Vizual sekcije je Krigla koja se puni s listom (Petar 16. 10.), s pravim brojem s poslužitelja.
 // Ispod privatnosti podsjetnik za one koji su obrazac preskočili (a2): isti list kao donji gumb.
+// 1.1 (kartica „privatnost“): lokacija uživo samo dok je upaljen „Vani sam“ i prekidač „Sakrij da sam vani“
+// (tekst iz appa: Core/Vani.swift, KorisnikSheet.swift), s Kriglom kao duhom.
+function Privatnost11() {
+  return (
+    <div className="grid max-w-[42ch] gap-4">
+      <p data-reveal className="text-[16px] text-soft text-pretty md:text-[19px]">
+        Lokacija ide uživo samo dok je upaljen „Vani sam“. Kažeš „Doma sam“, ili dođe 4 ujutro, i gasi se.
+      </p>
+      <div data-reveal style={{ "--rv-d": "120ms" }} className="grid grid-cols-[48px_1fr] items-center gap-3 rounded-2xl border border-line bg-surface p-3.5">
+        <img
+          src="/img/krigla/duh-96.webp"
+          srcSet="/img/krigla/duh-96.webp 96w, /img/krigla/duh-192.webp 192w"
+          sizes="48px"
+          alt=""
+          width={96}
+          height={96}
+          loading="lazy"
+          className="sakrij-duh size-12 object-contain"
+        />
+        <div className="grid gap-1">
+          <span className="flex items-center justify-between gap-3 text-[15px] font-semibold text-fg">
+            Sakrij da sam vani
+            <span className="sakrij-sw" aria-hidden="true" />
+          </span>
+          <span className="text-[13px] leading-snug text-muted text-pretty">Taj pajdaš ne vidi tvoj „Vani sam“, pozive ni današnje runde.</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Privacy({ live = false }) {
+  const preorder = !live && isPreorder();
   return (
     <>
-      <PrivacyWords>
+      <PrivacyWords dodatak={LAKAT_11 ? <Privatnost11 /> : null}>
         <KriglaListe />
       </PrivacyWords>
       {!live && (
         <div className="mx-auto grid max-w-6xl justify-items-center px-5 pb-16 md:justify-items-start">
-          <CatchPoint text="Još nisi zauzeo @ime? Traje deset sekundi." />
+          <CatchPoint gdje="privatnost" text={preorder ? "Još nisi prednaručio? 1. 12. se sam skine." : "Još nisi zauzeo @ime? Traje deset sekundi."} />
         </div>
       )}
     </>
@@ -98,8 +177,11 @@ export function Privacy({ live = false }) {
 
 // 5. Rezerviraj @ime (j-lista-ranije, c-rezervacija-imena): obrazac je peta sekcija.
 // id="lista" skriva donji gumb kad je obrazac na ekranu. Nakon lansiranja ostaje za Android (w20).
+// Prednarudžba (kartica „lista“): lista postaje Androidova, a iPhone ljude ispod obrasca šalje na App Store.
 export function WaitlistSection({ live = false }) {
-  const naslov = live ? (
+  const preorder = !live && isPreorder();
+  const android = live || preorder;
+  const naslov = android ? (
     <div className="grid gap-3">
       <H2>Imaš Android?</H2>
       <p className="max-w-[36ch] text-[17px] leading-snug text-soft text-pretty md:text-[19px]">Android stiže u siječnju 2027. Ostavi mail i javim ti kad stigne.</p>
@@ -115,7 +197,16 @@ export function WaitlistSection({ live = false }) {
   return (
     <section id="lista" className="mx-auto max-w-6xl scroll-mt-6 px-5 py-20 md:py-28">
       <div className="mx-auto max-w-md md:max-w-none">
-        <Waitlist android={live} velik naslov={naslov} />
+        <Waitlist android={android} velik naslov={naslov} />
+        {preorder && (
+          <div data-reveal className="mt-8 grid gap-4 border-t border-line pt-6 md:max-w-md">
+            <p className="grid gap-1">
+              <b className="text-[17px] font-semibold text-fg">Na iPhoneu si?</b>
+              <span className="text-[15px] text-soft">Prednaruči, 1. 12. se sam skine.</span>
+            </p>
+            <AppStoreBadge ct="web-lista" height={48} className="justify-self-start" />
+          </div>
+        )}
       </div>
     </section>
   );
@@ -123,18 +214,20 @@ export function WaitlistSection({ live = false }) {
 
 // 6. Film (A): u mobitelu. Druga prilika za neodlučne.
 export function Film({ live = false }) {
+  const preorder = !live && isPreorder();
+  const text = live ? "Svidjelo ti se? Sad je na App Storeu." : preorder ? "Svidjelo ti se? Prednaruči." : "Svidjelo ti se? Budi prvi za šankom.";
   return (
     <section className="relative mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-20 text-center md:grid-cols-2 md:items-center md:py-24 md:text-left">
       <HuntKrigla id="podne" size={20} className="top-4 left-3" />
       <div className="grid justify-items-center gap-4 md:order-2 md:justify-items-start" data-krigla="Ja sam glavni u filmu.">
         <H2>Pogledaj prije svih.</H2>
         <div className="hidden md:block">
-          <CatchPoint live={live} text={live ? "Svidjelo ti se? Sad je na App Storeu." : "Svidjelo ti se? Budi prvi za šankom."} />
+          <CatchPoint gdje="film" live={live} text={text} />
         </div>
       </div>
       <PromoVideo />
       <div className="md:hidden">
-        <CatchPoint live={live} text={live ? "Svidjelo ti se? Sad je na App Storeu." : "Svidjelo ti se? Budi prvi za šankom."} />
+        <CatchPoint gdje="film" live={live} text={text} />
       </div>
     </section>
   );
@@ -142,6 +235,8 @@ export function Film({ live = false }) {
 
 // 7. Igra (A): u mobitelu, bez imena igre. Zabava ostaje gdje je (j-igra-nagrada NE), s rekordom i ljestvicom.
 export function PlayGame({ challenge = null, live = false }) {
+  const preorder = !live && isPreorder();
+  const text = live ? "Ostale igre su u appu." : preorder ? "Ovo je samo primjer. Ostale igre stižu 1. 12." : "Ovo je samo primjer. Ostalo stiže 1. 12.";
   return (
     <section id="igra" data-krigla="Ajde, pobijedi me." className="mx-auto grid max-w-6xl justify-items-center gap-8 px-5 py-20 text-center md:grid-cols-2 md:items-center md:py-24 md:text-left">
       <div className="grid justify-items-center gap-4 md:justify-items-start">
@@ -173,11 +268,13 @@ export function Faq({ live }) {
 }
 
 // 9a. Mreže (D): Krigla zove, Instagram istaknut, TikTok i Facebook uz njega (mreze, entitet-mreze).
+// Prednarudžba (kartica „mreže“): Krigla više ne pita za mail, nego nakon prednarudžbe zove na Instagram.
 export function Mreze({ live }) {
   const [ig, ...ostale] = MREZE;
+  const preorder = !live && isPreorder();
   return (
     <section data-krigla="Prati me, tamo sam svaki dan." aria-label="Prati LAKAT" className="mx-auto grid max-w-6xl justify-items-start gap-6 px-5 py-16">
-      <KriglaSays size={64} ozivi="mahni">{live ? "Sve novo prvo ide na mreže. Prati." : "Ne daš mail? Dobro. Onda me barem zaprati."}</KriglaSays>
+      <KriglaSays size={64} ozivi="mahni">{live ? "Sve novo prvo ide na mreže. Prati." : preorder ? "Prednaručio si? Sad me zaprati. Tamo prvo javim za Prvo zvono." : "Ne daš mail? Dobro. Onda me barem zaprati."}</KriglaSays>
       <div className="flex flex-wrap items-center gap-3">
         {/* Istaknuti gumb u Instagramovim bojama (Petar, 2026-10-05). */}
         <a

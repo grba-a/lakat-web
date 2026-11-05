@@ -6,6 +6,7 @@ import { APP_STORE, storeLink } from "@/lib/launch";
 import { play } from "@/lib/sfx";
 import { greeting, moodLine } from "@/lib/krigla-voice";
 import { shareLakat, source } from "@/lib/share";
+import { AppStoreBadge } from "./app-store-badge";
 import { SAY } from "./hunt";
 import { SIGNED_KEY, Waitlist } from "./waitlist";
 
@@ -218,7 +219,7 @@ export function StickyCta({ live: launched = false }) {
     openSheet();
   }
 
-  const label = live ? "Skini LAKAT" : preorder ? "Prednaruči LAKAT" : signed ? "Pošalji ekipi" : CTA_TEXT;
+  const label = live ? "Skini LAKAT" : signed ? "Pošalji ekipi" : CTA_TEXT;
 
   return (
     <>
@@ -250,8 +251,24 @@ export function StickyCta({ live: launched = false }) {
               )}
             </div>
           )}
+          {preorder ? (
+            // Prednarudžba (kartica „gumbi“): donji gumb je podmetač, kapsula s dubinom kao u appu 1.1,
+            // a sam gumb je službeni Appleov badge (nikad naš crtež, nikad animiran).
+            <div
+              inert={hidden || open}
+              aria-hidden={hidden || open}
+              onClickCapture={() => {
+                play("zvecka");
+                track("cta_tap", { gdje: "donji" });
+              }}
+              className="podmetac pointer-events-auto flex min-h-[58px] w-full items-center justify-between gap-2 rounded-full border border-line bg-surface py-1.5 pr-1.5 pl-4"
+            >
+              <span className="text-[14px] leading-tight font-bold text-fg">Prednaruči</span>
+              <AppStoreBadge ct="web-sticky-pre" height={44} />
+            </div>
+          ) : (
           <a
-            href={live ? storeLink("web-sticky") : preorder ? storeLink("web-sticky-pre") : "#lista"}
+            href={live ? storeLink("web-sticky") : "#lista"}
             onClick={onTap}
             tabIndex={hidden || open ? -1 : 0}
             aria-hidden={hidden || open}
@@ -259,6 +276,7 @@ export function StickyCta({ live: launched = false }) {
           >
             {label}
           </a>
+          )}
         </div>
       </div>
 
@@ -315,14 +333,20 @@ export function StickyCta({ live: launched = false }) {
 
 // Gumb usred stranice (w21): otvara isti list. Nakon lansiranja lista (list) se više ne crta,
 // pa gumb vodi ravno na App Store umjesto da ne radi ništa (Codex/Claude 20. 10., a4).
-export function CatchPoint({ text = "", live: launched = false }) {
+// Prednarudžba (kartica „gumbi“): tri gumba usred stranice vode na App Store kao donji, službenim badgeom.
+export function CatchPoint({ text = "", live: launched = false, gdje = "usred" }) {
   const live = launched && Boolean(APP_STORE);
+  const preorder = !launched && Boolean(APP_STORE);
   const klasa =
     "inline-flex min-h-[48px] items-center rounded-full border border-accent/60 px-5 text-[15px] font-bold text-accent transition-[scale] duration-150 ease-out active:scale-[0.97]";
   return (
     <div className="grid justify-items-center gap-3 text-center md:justify-items-start md:text-left">
       {text && <p className="text-[14px] text-soft">{text}</p>}
-      {live ? (
+      {preorder ? (
+        <div onClickCapture={() => track("cta_tap", { gdje: `usred-${gdje}` })}>
+          <AppStoreBadge ct={`web-usred-${gdje}`} height={48} />
+        </div>
+      ) : live ? (
         <a href={storeLink("web-usred")} onClick={() => track("cta_tap", { gdje: "usred" })} className={klasa}>
           Skini LAKAT
         </a>
