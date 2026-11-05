@@ -42,7 +42,7 @@ const KORACI = [
 const KORACI_11 = [
   ["Dodaš ekipu.", "Samo ljude koje prihvatiš.", "1-ekipa", "Krigla s mobitelom zove ekipu"],
   ["Vani si? Upališ „Vani sam“.", "Kava se isto računa.", "2-vani", "Krigla raširenih ruku pod reflektorom"],
-  ["Ekipa javi „Stižem za 20“.", "Ili te barem zeza da si doma.", "3-stizem", "Krigla drži mobitel s porukom pajdaša: Stižem za 20 minuta"],
+  ["Ekipa javi „Stižem za 20“.", "Ili te barem zeza da si doma.", "3-stizem", "Krigla žuri noćnom ulicom prema kafiću s mobitelom u ruci: stiže za 20"],
 ];
 
 function Koraci11() {
