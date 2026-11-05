@@ -71,7 +71,7 @@ function subscribeReduce(cb) {
 }
 const getReduce = () => matchMedia(RM).matches;
 
-export function S6Scroll({ live, initial, children }) {
+export function S6Scroll({ live, preorder = false, initial, children }) {
   const track = useRef(null);
   const vids = useRef({});
   const kImg = useRef(null);
@@ -287,7 +287,10 @@ export function S6Scroll({ live, initial, children }) {
               {live ? (
                 <div className="grid gap-4"><StoreButtons /><StoreQR /></div>
               ) : (
-                <TimerTalk initial={initial} className="md:justify-start md:[--cw:46px]" />
+                <div className="grid gap-5">
+                  <TimerTalk initial={initial} className="md:justify-start md:[--cw:46px]" />
+                  {preorder && <StoreButtons preorder />}
+                </div>
               )}
             </div>
           )}
@@ -297,7 +300,10 @@ export function S6Scroll({ live, initial, children }) {
             {live ? (
               <div className="grid gap-4"><StoreButtons /><StoreQR /></div>
             ) : (
-              <TimerTalk initial={initial} className="[--cw:38px] [@media(max-height:700px)]:[--cw:30px]" />
+              <div className="grid justify-items-center gap-4">
+                <TimerTalk initial={initial} className="[--cw:38px] [@media(max-height:700px)]:[--cw:30px]" />
+                {preorder && <StoreButtons preorder />}
+              </div>
             )}
           </div>
         )}

@@ -1,5 +1,5 @@
 import { preload } from "react-dom";
-import { remaining } from "@/lib/launch";
+import { isPreorder, remaining } from "@/lib/launch";
 import { S6Scroll } from "./hero-s6-scroll";
 import { HuntKrigla } from "./hunt";
 import { SoundToggle } from "./sound-toggle";
@@ -14,7 +14,7 @@ export function HeroS6({ live = false }) {
         LAKAT je aplikacija za druženje s ekipom.{" "}
         <span>{live ? "Sad je vani." : "Stiže 1. 12. u podne."}</span>
       </h1>
-      <S6Scroll live={live} initial={remaining()}>
+      <S6Scroll live={live} preorder={!live && isPreorder()} initial={remaining()}>
         <header className="absolute inset-x-0 top-0 z-20 mx-auto flex max-w-6xl items-center justify-between px-5 pt-[max(14px,env(safe-area-inset-top))] pb-2">
           <span className="font-display text-[22px] leading-none">
             LAKAT<span className="text-accent">.</span>

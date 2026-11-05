@@ -23,6 +23,7 @@ const NE_PREKRIVAJ = "main h1, main h2, main h3, main summary, main a[href], mai
 export function StickyCta({ live: launched = false }) {
   // Bez App Store linka i nakon lansiranja ostaje lista čekanja, nikad mrtvi „#“.
   const live = launched && Boolean(APP_STORE);
+  const preorder = !launched && Boolean(APP_STORE);
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const [signed, setSigned] = useState(false);
@@ -206,13 +207,13 @@ export function StickyCta({ live: launched = false }) {
   function onTap(e) {
     play("zvecka");
     track("cta_tap", { gdje: "donji" });
-    if (live) return;
+    if (live || preorder) return;
     e.preventDefault();
     if (signed) return void shareLakat();
     openSheet();
   }
 
-  const label = live ? "Skini LAKAT" : signed ? "Pošalji ekipi" : CTA_TEXT;
+  const label = live ? "Skini LAKAT" : preorder ? "Prednaruči LAKAT" : signed ? "Pošalji ekipi" : CTA_TEXT;
 
   return (
     <>
@@ -245,7 +246,7 @@ export function StickyCta({ live: launched = false }) {
             </div>
           )}
           <a
-            href={live ? storeLink("web-sticky") : "#lista"}
+            href={live ? storeLink("web-sticky") : preorder ? storeLink("web-sticky-pre") : "#lista"}
             onClick={onTap}
             tabIndex={hidden || open ? -1 : 0}
             aria-hidden={hidden || open}
