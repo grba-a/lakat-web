@@ -14,7 +14,7 @@ export default function PrivatnostPage() {
   return (
     <PravnaStranica
       naslov="Pravila privatnosti"
-      verzija="Verzija 6 · studeni 2026. (živa lokacija dok si vani, pogledi pina, lakat, Pokaži se, Stižem za)"
+      verzija="Verzija 7 · studeni 2026. (prvak igre vidljiv svima)"
       sazetak={[
         "Tvoje runde, slike i lokaciju vide samo tvoji prihvaćeni pajdaši. Iznimka je runda koju sam staviš „Javno u blizini”.",
         "Ne prodajemo ti podatke. Nema reklama, nema praćenja po drugim appovima.",
@@ -108,6 +108,7 @@ export default function PrivatnostPage() {
             "„Možda poznaješ”: pajdašima tvojih pajdaša možemo te predložiti. Vide tvoj username, profilnu i imena do dvoje vaših zajedničkih pajdaša. Isključiš to u Profilu.",
             "Ekipa: ime, grb, ligu, broj izlazaka ekipe i kvartove koje drži vide svi s LAKTOM. Tko je u ekipi, vide samo njezini članovi. Oni međusobno vide koliko je tko izlazio, od dana kad je ušao u ekipu, i ekipni Wrapped.",
             "Link saziva koji sam pošalješ pokazuje tko zove, mjesto, vrijeme i koliko ljudi dolazi, bez imena. Nestaje 3 sata nakon početka.",
+            "Prvak igre: ako imaš najveći rezultat u nekoj igri u appu, tvoj username, profilnu i taj rezultat vide svi s LAKTOM i mogu ti poslati zahtjev za pajdaša. Runde, lokacija i „Vani sam” i dalje ostaju samo za pajdaše. Tko je s tobom u blokadi, ne vidi te ni kao prvaka.",
             "Username i profilnu vidi svatko tko te traži po točnom usernameu.",
             "Prijavljeni sadržaj vidi administrator, samo da bi odlučio o prijavi.",
             "Nikome ne prodajemo podatke i ne dijelimo ih za reklame.",
