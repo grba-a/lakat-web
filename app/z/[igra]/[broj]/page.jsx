@@ -5,22 +5,27 @@ import { APP_STORE, storeLink } from "@/lib/launch";
 // Izazov iz igre u aplikaciji (lakat-ios val 5d, „Ruši me, pajdo"): /z/kula/26?od=petar.
 // Tko ima app, otvori ga (lakat://z/…) baš na toj igri s brojem na vrhu; ostali dobiju store ili
 // listu. Osobno i beskonačno, pa ne ide u indeks. Ime se ne sklanja (stoji u nominativu).
+// Nazivi i stropovi kao u aplikaciji (lakat-ios Igre.swift `sve`). Strop je PO IGRI: Spoji i Gajba idu do 99 999,
+// Galeb do 9 999 — izazov iznad 999 prije je davao 404 (Petar 8. 11.: „svaki drugi korisnik naleti na limit od 999").
 const IGRE = {
-  kula: "Kula od krigli",
-  burek_u_cetiri: "Burek u četiri",
-  sankerov_lakat: "Šankerov lakat",
-  zlatni_tocionik: "Zlatni točionik",
-  ravna_crta: "Ravna crta",
-  do_krigle: "Do Krigle",
-  konobar: "Konobar",
-  gajba: "Gajba",
-  gosti: "Gosti na vratima",
+  kula: { naziv: "Kula", max: 999 },
+  burek_u_cetiri: { naziv: "Pekara", max: 999 },
+  gajba: { naziv: "Gajba", max: 99999 },
+  galeb: { naziv: "Galeb", max: 9999 },
+  sankerov_lakat: { naziv: "Šanker", max: 200 },
+  zlatni_tocionik: { naziv: "Točionik", max: 999 },
+  do_krigle: { naziv: "Spoji", max: 99999 },
+  konobar: { naziv: "Konobar", max: 999 },
+  // Stare igre: linkovi iz ranijih buildova i dalje rade.
+  ravna_crta: { naziv: "Ravna crta", max: 999 },
+  gosti: { naziv: "Gosti na vratima", max: 999 },
 };
 
 function procitaj(params, searchParams) {
-  const naziv = IGRE[params.igra];
+  const igra = IGRE[params.igra];
+  const naziv = igra?.naziv;
   const broj = Number.parseInt(params.broj, 10);
-  if (!naziv || !Number.isInteger(broj) || broj < 0 || broj > 999 || String(broj) !== params.broj) return null;
+  if (!igra || !Number.isInteger(broj) || broj < 0 || broj > igra.max || String(broj) !== params.broj) return null;
   const od = (searchParams?.od ?? "").toString().trim().slice(0, 24) || "Pajdaš";
   return { igra: params.igra, naziv, broj, od };
 }
