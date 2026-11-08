@@ -18,7 +18,7 @@ const IGRE = {
   konobar: { naziv: "Konobar", max: 999 },
   // Stare igre: linkovi iz ranijih buildova i dalje rade.
   ravna_crta: { naziv: "Ravna crta", max: 999 },
-  gosti: { naziv: "Gosti na vratima", max: 999 },
+  gosti: { naziv: "Gosti na vratima", max: 9999 },
 };
 
 function procitaj(params, searchParams) {
