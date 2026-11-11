@@ -1,14 +1,15 @@
 // LAKAT /admin (Petar 11. 11.): App Store stanje i brojke aplikacije na jednom mjestu, pod šifrom.
 // SAMO ZBROJEVI: nijedno ime, slika ni lokacija (pravilo 3.0 vrijedi i za admina).
 import { notFound } from "next/navigation";
-import { adminUkljucen, baza as bazaZdravlje, dnevno, jesamLiAdmin, pregled } from "@/lib/admin";
+import { adminUkljucen, baza as bazaZdravlje, dnevno, igSnimka, jesamLiAdmin, pregled } from "@/lib/admin";
+import { instagram } from "@/lib/instagram";
 import { provjere } from "@/lib/upozorenja";
 import { ascPregled, ascReady } from "@/lib/asc";
 import { odjava } from "./actions";
 import { Prijava } from "./prijava";
 import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, Upozorenje, broj, datum, vrijeme } from "./ui";
 import { Izbornik, Osvjezi, Savjet, TraziGumb, Trazilica } from "./zivo";
-import { Angazman, Baza, IGRE, Igre, Kafici, ODJELJCI, PUSH, Pregled, Push, Rast, Sustav, Uzbune, odjeljak } from "./odjeljci";
+import { Angazman, Baza, IGRE, Igre, Instagram, Kafici, ODJELJCI, PUSH, Pregled, Push, Rast, Sustav, Uzbune, odjeljak } from "./odjeljci";
 
 export const metadata = {
   title: "Admin · LAKAT",
@@ -32,7 +33,7 @@ const STANJA = {
 };
 
 // Što tražilica zna: odjeljci, kartice, brojke, igre, push vrste, kafići, tablice baze.
-function indeks({ p, bz, asc }) {
+function indeks({ p, bz, asc, ig }) {
   const st = [];
   const dodaj = (t, o, id, d, vrsta = "stavka") => st.push({ t, o, id, d, vrsta });
   ODJELJCI.forEach(([id, ime]) => dodaj(ime, "odjeljak", id, null, "odjeljak"));
@@ -54,6 +55,11 @@ function indeks({ p, bz, asc }) {
     (p.kafici ?? []).forEach((x) => dodaj(x.kafic, "Kafići", "kafici-tablica", `${broj(x.runde)} rundi`));
   }
   (bz?.podaci?.tablice ?? []).forEach((t) => dodaj(`Tablica ${t.tablica}`, "Baza", "tablice-baze", `${broj(t.redaka)} redaka`));
+  if (ig?.profil) {
+    dodaj("Instagram pratitelji", "Instagram", "instagram", broj(ig.profil.pratitelji));
+    dodaj("Najbolja objava (Instagram)", "Instagram", "ig-najbolja");
+    dodaj("Instagram objave", "Instagram", "ig-objave", `${broj(ig.profil.objave)} objava`);
+  }
   if (asc?.prednarudzbe?.ok) dodaj("Prednarudžbe ukupno", "App Store", "app-store", broj(asc.prednarudzbe.ukupno - asc.prednarudzbe.otkazano));
   return st;
 }
@@ -80,7 +86,9 @@ export default async function AdminPage({ searchParams }) {
   // Današnji dan u Zagrebu (kao u SQL-u); niz 2n dana daje i duh prethodnog razdoblja.
   const danas = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Zagreb" }).format(new Date());
   const od2 = new Date(Date.parse(`${danas}T12:00:00Z`) - (2 * dana - 1) * 864e5).toISOString().slice(0, 10);
-  const [pr, asc, bz, nz] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas)]);
+  const [pr, asc, bz, nz, ig] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas), instagram()]);
+  // Instagram ne daje povijest pratitelja: svako otvaranje upiše današnju snimku i vrati niz.
+  const igNiz = ig?.profil ? await igSnimka(ig.profil.pratitelji, ig.profil.objave) : [];
   const uzbune = provjere({ pregled: pr, asc, baza: bz });
   const p = pr.podaci;
   // App Store odjeljak čita web korake i listu čekanja u starom obliku.
@@ -229,6 +237,7 @@ export default async function AdminPage({ searchParams }) {
               <Igre p={p} />
               <Push p={p} />
               <Kafici p={p} />
+              <Instagram ig={ig} niz={igNiz} />
               <Sustav p={p} />
               <Baza b={bz.podaci} greska={bz.greska} />
             </>
@@ -239,7 +248,7 @@ export default async function AdminPage({ searchParams }) {
         </div>
       </div>
       <Savjet />
-      <Trazilica stavke={indeks({ p, bz, asc })} />
+      <Trazilica stavke={indeks({ p, bz, asc, ig })} />
     </main>
   );
 }

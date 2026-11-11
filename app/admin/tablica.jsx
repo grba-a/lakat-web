@@ -81,7 +81,7 @@ export function Tablica({ stupci, redovi, naziv = "tablica" }) {
           </thead>
           <tbody>
             {poredani.map((r) => (
-              <tr key={tekst(r[0])} className="row border-b border-[color:var(--a-line)]">
+              <tr key={r.map(tekst).join("|")} className="row border-b border-[color:var(--a-line)]">
                 {r.map((c, i) => {
                   const h = c != null && typeof c === "object" ? c.h : undefined;
                   return (

@@ -17,6 +17,7 @@ export const ODJELJCI = [
   ["igre", "Igre", "[+]", "aktivnost"],
   ["push", "Push", ">>", "aktivnost"],
   ["kafici", "Kafići", "[_]", "aktivnost"],
+  ["instagram", "Instagram", "[@]", "aktivnost"],
   ["sustav", "Sustav", "</>", "tehnika"],
   ["baza", "Baza", "|||", "tehnika"],
   ["app-store", "App Store", "[A]", "tehnika"],
@@ -448,6 +449,78 @@ export function Baza({ b, greska }) {
           <Tablica naziv="pohrana" stupci={["Mjesto", "Veličina", "Datoteka"]} redovi={(b.pohrana ?? []).map((x) => [x.bucket, mb(Number(x.b)), broj(x.datoteka)])} />
         </Kartica>
       </div>
+    </Odjeljak>
+  );
+}
+
+// Instagram @lakat_app: brojke računa i zadnje objave (Graph API, samo čitanje) + dnevna snimka pratitelja u bazi.
+export function Instagram({ ig, niz }) {
+  if (!ig) {
+    return (
+      <Odjeljak id="instagram" naslov="Instagram." pod="Nije spojen (META_PAGE_TOKEN, IG_USER_ID).">
+        <p className="mono text-[11px] text-[color:var(--a-mute)]">—</p>
+      </Odjeljak>
+    );
+  }
+  if (ig.greska) {
+    return (
+      <Odjeljak id="instagram" naslov="Instagram." pod="@lakat_app">
+        <p className="mono text-[11px] down">{ig.greska}</p>
+      </Odjeljak>
+    );
+  }
+  const { profil, objave } = ig;
+  const zadnjih = objave.slice(0, 10);
+  const prosjek = (k) => (zadnjih.length ? Math.round((zadnjih.reduce((x, o) => x + o[k], 0) / zadnjih.length) * 10) / 10 : null);
+  const najbolja = [...objave].sort((a, b) => b.lajkovi + b.komentari - (a.lajkovi + a.komentari))[0];
+  const prvi = niz?.[0];
+  const rast = prvi && niz.length > 1 ? profil.pratitelji - prvi.pratitelji : null;
+  return (
+    <Odjeljak id="instagram" naslov="Instagram." pod={`@${profil.korisnik} · javni brojevi računa, uživo. Doseg i pregledi traže dodatnu Metinu dozvolu (nije uključena).`}>
+      <Plocice>
+        <Plocica
+          i={0}
+          oznaka="Pratitelji"
+          vrijednost={broj(profil.pratitelji)}
+          trend={niz && niz.length > 1 ? niz.map((d) => d.pratitelji) : null}
+          ispod={rast == null ? "rast se bilježi od 11. 11." : <Promjena sad={profil.pratitelji} prije={prvi.pratitelji} />}
+        />
+        <Plocica i={1} oznaka="Objave" vrijednost={broj(profil.objave)} ispod={`prati ${broj(profil.prati)}`} />
+        <Plocica i={2} oznaka="Lajkova / objava" vrijednost={zarez(prosjek("lajkovi") ?? "—")} ispod="prosjek zadnjih 10" />
+        <Plocica i={3} oznaka="Komentara / objava" vrijednost={zarez(prosjek("komentari") ?? "—")} ispod="prosjek zadnjih 10" />
+      </Plocice>
+      <div className="grid gap-3 xl:grid-cols-12">
+        <div className="min-w-0 xl:col-span-5">
+          <Kartica id="ig-najbolja" naslov="Najbolja objava" pod="Najviše lajkova i komentara od zadnjih 25.">
+            {najbolja ? (
+              <a href={najbolja.link} target="_blank" rel="noopener noreferrer" className="row flex flex-col gap-2 border border-[color:var(--a-line)] p-3">
+                <span className="lbl">{datum(najbolja.dan)} · {najbolja.vrsta} ↗</span>
+                <span className="mono text-[12px] normal-case leading-relaxed">{najbolja.opis || "bez opisa"}</span>
+                <span className="num up text-[2.2rem]">♥ {broj(najbolja.lajkovi)} <span className="text-[color:var(--a-mute)]">· {broj(najbolja.komentari)} kom.</span></span>
+              </a>
+            ) : (
+              <p className="mono text-[11px] text-[color:var(--a-mute)]">Još nema objava.</p>
+            )}
+          </Kartica>
+        </div>
+        <div className="min-w-0 xl:col-span-7">
+          <Kartica id="ig-lajkovi" naslov="Lajkovi po objavi" pod="Zadnjih 12 objava, najnovija gore.">
+            <Trake redovi={objave.slice(0, 12).map((o) => ({ k: `${datum(o.dan)} ${o.vrsta}`, v: o.lajkovi, n: `${o.komentari} kom.` }))} />
+          </Kartica>
+        </div>
+      </div>
+      {niz && niz.length > 1 && (
+        <Kartica id="ig-rast" naslov="Pratitelji po danu" pod="Jedna snimka dnevno, od 11. 11.">
+          <Stupci redovi={niz} polje="pratitelji" oznaka="Pratitelji" />
+        </Kartica>
+      )}
+      <Kartica id="ig-objave" naslov="Objave" pod="Zadnjih 25. Klik na zaglavlje sortira.">
+        <Tablica
+          naziv="instagram-objave"
+          stupci={["Dan", "Vrsta", "Opis", "Lajkovi", "Komentari"]}
+          redovi={objave.map((o) => [{ t: datum(o.dan), v: o.dan }, o.vrsta, { t: o.opis || "—", v: o.opis }, broj(o.lajkovi), broj(o.komentari)])}
+        />
+      </Kartica>
     </Odjeljak>
   );
 }

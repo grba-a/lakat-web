@@ -105,7 +105,7 @@ export function Trake({ redovi }) {
     <ul className="flex flex-col">
       {redovi.map((r, i) => (
         <li
-          key={r.k}
+          key={`${r.k}-${i}`}
           tabIndex={0}
           data-tip={`${r.k}: ${broj(r.v)}${r.n ? ` · ${r.n}` : ""}`}
           className="row grid grid-cols-[minmax(0,8.5rem)_1fr] items-center gap-3 border-b border-[color:var(--a-line)] py-1.5 outline-none last:border-0 focus-visible:bg-[#161a17]"
