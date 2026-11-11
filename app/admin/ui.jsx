@@ -79,7 +79,12 @@ export function Trake({ redovi }) {
   return (
     <ul className="flex flex-col">
       {redovi.map((r, i) => (
-        <li key={r.k} className="row grid grid-cols-[minmax(0,8.5rem)_1fr] items-center gap-3 border-b border-[color:var(--a-line)] py-1.5 last:border-0">
+        <li
+          key={r.k}
+          tabIndex={0}
+          data-tip={`${r.k}: ${broj(r.v)}${r.n ? ` · ${r.n}` : ""}`}
+          className="row grid grid-cols-[minmax(0,8.5rem)_1fr] items-center gap-3 border-b border-[color:var(--a-line)] py-1.5 outline-none last:border-0 focus-visible:bg-[#161a17]"
+        >
           <span className="mono truncate text-[11px] text-[color:var(--a-fg)] normal-case tracking-[0.03em]">{r.k}</span>
           <span className="flex min-w-0 items-center gap-2">
             <span className={`bar ${i ? "dim" : ""}`} style={{ width: `${Math.max(2, (r.v / max) * 68)}%`, "--i": i }} />
@@ -125,8 +130,18 @@ export function Stupci({ redovi, polje, oznaka }) {
               height={Math.max(0, H - B - y(r[polje]))}
               fill={zadnji ? "var(--a-live)" : "color-mix(in srgb, var(--a-live) 45%, transparent)"}
             >
-              <title>{`${datum(r.dan)}: ${r[polje]}`}</title>
             </rect>
+            <rect
+              x={L + i * sir}
+              width={sir}
+              y={8}
+              height={H - B - 8}
+              fill="transparent"
+              tabIndex={0}
+              data-tip={`${datum(r.dan)} · ${oznaka}: ${broj(r[polje])}`}
+              aria-label={`${datum(r.dan)}: ${r[polje]}`}
+              className="outline-none focus:fill-[color:var(--a-line)]"
+            />
             {(redovi.length - 1 - i) % 7 === 0 && (
               <text x={zadnji ? W : L + i * sir + sir / 2} y={H - 4} textAnchor={zadnji ? "end" : "middle"} fontSize="9" fill="var(--a-mute)">
                 {datum(r.dan)}

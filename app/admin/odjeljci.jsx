@@ -239,7 +239,8 @@ function Toplina({ celije }) {
               return (
                 <span
                   key={h}
-                  title={`${dan} ${h} h: ${n}`}
+                  tabIndex={0}
+                  data-tip={`${dan} ${String(h).padStart(2, "0")}–${String(h + 1).padStart(2, "0")} h: ${n} ${n === 1 ? "runda/partija" : "rundi i partija"}`}
                   className="cell h-[14px]"
                   style={{ background: n ? "var(--a-live)" : "var(--a-line)", opacity: n ? 0.2 + 0.8 * (n / max) : 0.5, "--i": i * 24 + h }}
                 />

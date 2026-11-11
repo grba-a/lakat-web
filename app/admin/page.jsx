@@ -6,7 +6,7 @@ import { ascPregled, ascReady } from "@/lib/asc";
 import { odjava } from "./actions";
 import { Prijava } from "./prijava";
 import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, Upozorenje, broj, datum, vrijeme } from "./ui";
-import { Izbornik, Osvjezi } from "./zivo";
+import { Izbornik, Osvjezi, Savjet } from "./zivo";
 import { Angazman, Igre, Kafici, ODJELJCI, Pregled, Push, Rast, Sustav } from "./odjeljci";
 
 export const metadata = {
@@ -153,6 +153,7 @@ export default async function AdminPage({ searchParams }) {
         <Upozorenje>{pr.greska}</Upozorenje>
       )}
       <AppStore asc={asc} s={s} />
+      <Savjet />
     </main>
   );
 }

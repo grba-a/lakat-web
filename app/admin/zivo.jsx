@@ -97,3 +97,64 @@ export function Izbornik({ odjeljci }) {
     </div>
   );
 }
+
+// Jedan tooltip za cijelu ploču: svaki element s data-tip pokaže vrijednost
+// na prelazak mišem, na dodir (mobitel) i na fokus tipkovnicom. Grafovi ostaju server komponente.
+export function Savjet() {
+  const [tip, setTip] = useState(null);
+  useEffect(() => {
+    const nadji = (el) => (el && el.closest ? el.closest("[data-tip]") : null);
+    const pokazi = (el, x, y) => {
+      const t = nadji(el);
+      if (!t) return false;
+      const r = t.getBoundingClientRect();
+      setTip({ text: t.getAttribute("data-tip"), x: x ?? r.left + r.width / 2, y: y ?? r.top });
+      return true;
+    };
+    const preko = (e) => {
+      if (e.pointerType === "touch") return;
+      if (!pokazi(e.target, e.clientX, e.clientY)) setTip(null);
+    };
+    const pomak = (e) => {
+      if (e.pointerType === "touch") return;
+      if (nadji(e.target)) setTip((s) => (s ? { ...s, x: e.clientX, y: e.clientY } : s));
+    };
+    const dodir = (e) => {
+      if (e.pointerType !== "touch") return;
+      const t = nadji(e.target);
+      if (t) {
+        const r = t.getBoundingClientRect();
+        pokazi(t, r.left + r.width / 2, r.top);
+      } else setTip(null);
+    };
+    const fokus = (e) => pokazi(e.target);
+    const van = () => setTip(null);
+    document.addEventListener("pointerover", preko);
+    document.addEventListener("pointermove", pomak, { passive: true });
+    document.addEventListener("pointerdown", dodir);
+    document.addEventListener("focusin", fokus);
+    document.addEventListener("focusout", van);
+    window.addEventListener("scroll", van, { passive: true });
+    return () => {
+      document.removeEventListener("pointerover", preko);
+      document.removeEventListener("pointermove", pomak);
+      document.removeEventListener("pointerdown", dodir);
+      document.removeEventListener("focusin", fokus);
+      document.removeEventListener("focusout", van);
+      window.removeEventListener("scroll", van);
+    };
+  }, []);
+  if (!tip) return null;
+  // Iznad pokazivača; uz rub ekrana se ne reže.
+  const sirina = typeof window !== "undefined" ? window.innerWidth : 400;
+  const x = Math.min(Math.max(tip.x, 90), sirina - 90);
+  return (
+    <div
+      role="status"
+      className="mono pointer-events-none fixed z-[60] max-w-[180px] -translate-x-1/2 -translate-y-full border border-[color:var(--a-live)] bg-[color:var(--a-panel)] px-2.5 py-1.5 text-[11px] normal-case tracking-[0.03em] text-[color:var(--a-fg)] shadow-[0_0_0_1px_#000]"
+      style={{ left: x, top: tip.y - 10 }}
+    >
+      {tip.text}
+    </div>
+  );
+}
