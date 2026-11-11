@@ -24,6 +24,12 @@ Analytics API (treba Vercel token od Petra, Sensitive). Brevo statistika mailova
 2FA (TOTP, Passwords na iPhoneu) + zapis prijava. Tek onda leadovi: tablica liste čekanja, tražilica, filteri, izvoz za
 mail o izlasku (samo ta svrha).
 
+## Runda 2 — GOTOVO lokalno `52d24c7` (čeka push)
+Artifact Gw9JmnJB3J1L9mE4KX3UQX (sve Da; identitet „oboje", bez previše boja) + Codex pregled dizajna:
+znak + obrisni broj + 3 boje skupina, bijeli filteri, lijevi izbornik / 12 stupaca, glavna brojka, tražilica,
+sortiranje + CSV, sparkline, graf s duhom + ladica dana (`supabase-admin6.sql`, PROD), dva lijevka, plava
+toplinska tablica povratka, TV način `/admin/tv`. Odbijeno od Codexa: gašenje animacija i trake (Petar želi pokret).
+
 ## Faza U — uzbune (Petar 11. 11.: mail + push na grbaa, tihi sati 00–08, sve vrste)
 - Lokalno gotovo: `lib/upozorenja.js` (kritično/važno/info) + traka na vrhu ploče + odjeljak Baza (`supabase-admin4.sql`, PROD).
 - Raspored: Vercel Hobby smije cron samo dnevno, zato Supabase `pg_cron` + `pg_net` (oba već na PROD) svakih 5 min
