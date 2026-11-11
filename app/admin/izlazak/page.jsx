@@ -7,11 +7,19 @@ import { instagram } from "@/lib/instagram";
 import { LAUNCH, isLive } from "@/lib/launch";
 import { provjere } from "@/lib/upozorenja";
 import { Uzbune } from "../odjeljci";
+import { Iskra } from "../ui";
 import { Broj, Najave, Odbrojavanje, Osvjezi, Radar } from "../zivo";
 
 export const metadata = { title: "Izlazak · LAKAT", robots: { index: false, follow: false } };
 
 const broj = (n) => (n == null ? "—" : new Intl.NumberFormat("hr-HR").format(n));
+
+// Razlika prema jučer: zelena gore, crvena dolje; bez jučerašnjeg broja ništa.
+function Razlika({ sad, jucer }) {
+  if (sad == null || jucer == null) return null;
+  const r = sad - jucer;
+  return <span className={`mono text-[clamp(11px,0.9vw,15px)] ${r >= 0 ? "up" : "down"}`}>{r >= 0 ? "▲ +" : "▼ −"}{broj(Math.abs(r))} od jučer</span>;
+}
 
 function Polje({ oznaka, v, ton, ispod, sirok, children }) {
   return (
@@ -34,7 +42,9 @@ export default async function IzlazakPage() {
   const igNiz = ig?.profil ? await igSnimka(ig.profil.pratitelji, ig.profil.objave) : [];
   const p = pr.podaci;
   const uzbune = provjere({ pregled: pr, asc, baza: bz });
-  const danas = p?.dnevno?.at(-1);
+  const dani = p?.dnevno ?? [];
+  const danas = dani.at(-1), jucer = dani.at(-2);
+  const niz = (polje) => dani.map((d) => d[polje]);
   const pn = asc?.prednarudzbe, pz = asc?.preuzimanja;
   const lansirano = isLive();
   const igJucer = igNiz.length > 1 ? igNiz.at(-2).pratitelji : null;
@@ -45,7 +55,7 @@ export default async function IzlazakPage() {
         <span className="lbl">[ LKT / IZLAZAK ] {"///"} 1. 12. 2026. 12:00</span>
         <div className="flex items-center gap-3">
           <Osvjezi sekundi={30} />
-          <a href="/admin" className="chip mono border border-[color:var(--a-line)] px-3 py-2 text-[11px] text-[color:var(--a-mute)]">
+          <a href="/admin" className="chip mono flex h-11 items-center rounded-[var(--r-sm)] border border-[color:var(--a-line)] px-3 py-2 text-[11px] text-[color:var(--a-mute)]">
             [ PLOČA ]
           </a>
         </div>
@@ -64,8 +74,12 @@ export default async function IzlazakPage() {
         ) : (
           <Polje oznaka="Prednarudžbe" v={pn?.ok ? broj(pn.ukupno - pn.otkazano) : "—"} ton="up" ispod={pn?.ok ? `${broj(pn.ukupno)} naručilo · Apple kasni 1 dan` : null} />
         )}
-        <Polje oznaka="Novi profili danas" v={broj(danas?.novi)} ispod={`${broj(p?.ukupno?.profili)} ukupno`} />
-        <Polje oznaka="Aktivni danas" v={broj(p?.ukupno?.aktivni_danas)} ton="up" ispod={`${broj(danas?.runde)} rundi danas`} />
+        <Polje oznaka="Novi profili danas" v={broj(danas?.novi)} ispod={`${broj(p?.ukupno?.profili)} ukupno`}>
+          <div className="flex flex-col items-end gap-1"><Iskra niz={niz("novi")} oznaka="Novi profili" /><Razlika sad={danas?.novi} jucer={jucer?.novi} /></div>
+        </Polje>
+        <Polje oznaka="Aktivni danas" v={broj(p?.ukupno?.aktivni_danas)} ton="up" ispod={`${broj(danas?.runde)} rundi danas`}>
+          <div className="flex flex-col items-end gap-1"><Iskra niz={niz("aktivni")} oznaka="Aktivni" /><Razlika sad={danas?.aktivni} jucer={jucer?.aktivni} /></div>
+        </Polje>
         <Polje oznaka="Vani sad" v={broj(p?.ukupno?.vani_sad)} ispod="„Vani sam“ upaljen">
           <Radar broj={p?.ukupno?.vani_sad} velicina={72} />
         </Polje>
@@ -78,6 +92,24 @@ export default async function IzlazakPage() {
         <Polje oznaka="Oglas" v="—" ispod="spaja se kad dodaš ads_read (od 1. 12.)" />
         <Polje oznaka="Sustav" v={uzbune.some((u) => u.razina === "kriticno") ? "PAŽNJA" : "OK"} ton={uzbune.some((u) => u.razina === "kriticno") ? "down" : "up"} ispod={`${uzbune.length} uzbuna`} />
       </div>
+
+      <section className="panel flex flex-col gap-2 p-[clamp(12px,1.6vw,24px)]" aria-label="Dnevnik zadnjih dana">
+        <div className="flex items-center justify-between gap-3">
+          <p className="lbl">Dnevnik {"///"} zadnjih {dani.length} dana</p>
+          <p className="lbl hidden sm:block">novi · aktivni · runde · partije</p>
+        </div>
+        <ul className="mono text-[clamp(11px,0.9vw,15px)] tabular-nums">
+          {[...dani].reverse().map((d, n) => (
+            <li key={d.dan} className={`grid grid-cols-[1fr_repeat(4,5ch)] gap-2 border-b border-[color:var(--a-line)] py-1.5 last:border-0 ${n ? "text-[color:var(--a-mute)]" : ""}`}>
+              <span>{n ? `${d.dan.slice(8, 10)}. ${d.dan.slice(5, 7)}.` : "> danas"}</span>
+              <span className="text-right">{d.novi}</span>
+              <span className={`text-right ${n ? "" : "up"}`}>{d.aktivni}</span>
+              <span className="text-right">{d.runde}</span>
+              <span className="text-right">{d.partije}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <Najave
         uzbune={uzbune}

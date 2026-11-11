@@ -168,7 +168,7 @@ function Lijevak({ koraci }) {
             <div
               tabIndex={0}
               data-tip={`${ime}: ${broj(n)}${prethodni ? ` · ${Math.round(((n ?? 0) / prethodni) * 100)} % od prethodnog koraka` : ""}`}
-              className="row flex items-center gap-3 border border-[color:var(--a-line)] px-3 py-2 outline-none focus-visible:border-[color:var(--a-fg)]"
+              className="row flex items-center gap-3 rounded-[var(--r-sm)] border border-[color:var(--a-line)] px-3 py-2 outline-none focus-visible:border-[color:var(--a-fg)]"
             >
               <span className="mono w-36 shrink-0 truncate text-[11.5px] normal-case">{ime}</span>
               <span className="flex min-w-0 flex-1 items-center gap-2">
@@ -385,7 +385,7 @@ export function Sustav({ p }) {
 export function Uzbune({ popis }) {
   if (!popis.length) {
     return (
-      <div className="boot flex items-center gap-3 border border-[color:var(--a-live)] px-3.5 py-3" style={{ "--i": 3 }}>
+      <div className="boot flex items-center gap-3 rounded-[var(--r-md)] border border-[color:var(--a-live)] px-3.5 py-3 shadow-[0_0_24px_-12px_var(--a-live)]" style={{ "--i": 3 }}>
         <span className="live-dot" aria-hidden="true" />
         <span className="mono text-[11px] up">[ SVE RADI ] 0 uzbuna</span>
       </div>
@@ -394,11 +394,11 @@ export function Uzbune({ popis }) {
   const boja = { kriticno: "var(--a-alarm)", vazno: "var(--a-warn)", info: "var(--a-mute)" };
   const oznaka = { kriticno: "KRITIČNO", vazno: "VAŽNO", info: "INFO" };
   return (
-    <ul className="boot flex flex-col" style={{ "--i": 3 }} aria-label="Uzbune">
+    <ul className="boot flex flex-col gap-1.5" style={{ "--i": 3 }} aria-label="Uzbune">
       {popis.map((x, i) => (
         <li
           key={x.kljuc}
-          className="-mt-px flex flex-wrap items-baseline gap-x-3 gap-y-0.5 border px-3.5 py-2.5"
+          className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 rounded-[var(--r-md)] border px-3.5 py-2.5"
           style={{ borderColor: boja[x.razina], "--i": i }}
         >
           <span className="mono text-[10.5px] font-bold" style={{ color: boja[x.razina] }}>
@@ -493,7 +493,7 @@ export function Instagram({ ig, niz }) {
         <div className="min-w-0 xl:col-span-5">
           <Kartica id="ig-najbolja" naslov="Najbolja objava" pod="Najviše lajkova i komentara od zadnjih 25.">
             {najbolja ? (
-              <a href={najbolja.link} target="_blank" rel="noopener noreferrer" className="row flex flex-col gap-2 border border-[color:var(--a-line)] p-3">
+              <a href={najbolja.link} target="_blank" rel="noopener noreferrer" className="row flex flex-col gap-2 rounded-[var(--r-md)] border border-[color:var(--a-line)] p-3">
                 <span className="lbl">{datum(najbolja.dan)} · {najbolja.vrsta} ↗</span>
                 <span className="mono text-[12px] normal-case leading-relaxed">{najbolja.opis || "bez opisa"}</span>
                 <span className="num up text-[2.2rem]">♥ {broj(najbolja.lajkovi)} <span className="text-[color:var(--a-mute)]">· {broj(najbolja.komentari)} kom.</span></span>

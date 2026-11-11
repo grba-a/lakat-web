@@ -8,7 +8,7 @@ import { ascPregled, ascReady } from "@/lib/asc";
 import { odjava } from "./actions";
 import { Prijava } from "./prijava";
 import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, Upozorenje, broj, datum, vrijeme } from "./ui";
-import { Izbornik, Najave, Osvjezi, Radar, Savjet, TraziGumb, Trazilica } from "./zivo";
+import { Izbornik, Najave, Orb, Osvjezi, Radar, Savjet, Trazilica } from "./zivo";
 import { Angazman, Baza, IGRE, Igre, Instagram, Kafici, ODJELJCI, PUSH, Pregled, Push, Rast, Sustav, Uzbune, odjeljak } from "./odjeljci";
 
 export const metadata = {
@@ -114,7 +114,7 @@ export default async function AdminPage({ searchParams }) {
 
   return (
     <main
-      className="mx-auto flex max-w-[1600px] flex-col gap-10 pb-20 pt-6 lg:px-8"
+      className="mx-auto flex max-w-[1600px] flex-col gap-10 pb-28 pt-6 lg:px-8"
       style={{ paddingLeft: "max(16px, env(safe-area-inset-left))", paddingRight: "max(16px, env(safe-area-inset-right))" }}
     >
       <header id="vrh" className="flex flex-col gap-4">
@@ -211,7 +211,6 @@ export default async function AdminPage({ searchParams }) {
             </a>
           ))}
           </div>
-          <TraziGumb />
         </div>
         <Izbornik odjeljci={ODJELJCI} />
       </nav>
@@ -219,7 +218,6 @@ export default async function AdminPage({ searchParams }) {
       <div className="flex flex-col gap-12 lg:grid lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-10">
         <aside className="hidden lg:block" aria-label="Izbornik">
           <div className="sticky top-6 flex flex-col gap-3">
-            <TraziGumb className="w-full justify-between" />
             <a href="/admin/tv" className="chip mono flex h-10 items-center justify-between border border-[color:var(--a-line)] px-3 text-[11px] text-[color:var(--a-mute)]">
               <span>[ TV NAČIN ]</span>
               <span aria-hidden="true">▶</span>
@@ -274,6 +272,7 @@ export default async function AdminPage({ searchParams }) {
           runde: p?.dnevno?.at(-1)?.runde ?? null,
         }}
       />
+      <Orb />
       <Trazilica stavke={indeks({ p, bz, asc, ig })} />
     </main>
   );

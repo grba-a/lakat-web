@@ -149,7 +149,7 @@ export function Vrijeme({ sad, prije, mjere, pocetna, igre, push }) {
         )}
         {tren && (
           <div
-            className="mono pointer-events-none absolute top-0 z-10 border border-[color:var(--a-fg)] bg-[color:var(--a-panel)] px-2.5 py-1.5 text-[11px] normal-case tracking-[0.02em]"
+            className="mono pointer-events-none absolute top-0 z-10 rounded-[var(--r-sm)] border border-[color:var(--a-fg)] bg-[color:var(--a-panel)] px-2.5 py-1.5 text-[11px] normal-case tracking-[0.02em]"
             style={{ left: Math.min(Math.max(x(i) - 80, 0), Math.max(0, w - 168)), width: 168 }}
           >
             <div className="text-[color:var(--a-fg)]">
@@ -191,7 +191,7 @@ function Ladica({ ladica, ucitava, igre, push, zatvori }) {
       <aside
         role="dialog"
         aria-label={`Detalji ${dm(ladica.dan)}`}
-        className="ladica flex max-h-[85dvh] w-full flex-col overflow-y-auto border-t border-[color:var(--a-fg)] bg-[color:var(--a-panel)] lg:max-h-none lg:w-[420px] lg:border-l lg:border-t-0"
+        className="ladica flex max-h-[85dvh] w-full flex-col overflow-y-auto rounded-t-[var(--r-lg)] border-t border-[color:var(--a-fg)] bg-[color:var(--a-panel)] lg:max-h-none lg:w-[420px] lg:rounded-l-[var(--r-lg)] lg:rounded-tr-none lg:border-l lg:border-t-0"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <header className="sticky top-0 flex items-center justify-between border-b border-[color:var(--a-line)] bg-[color:var(--a-panel)] px-4 py-3">

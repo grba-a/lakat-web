@@ -202,7 +202,7 @@ export function Savjet() {
   return (
     <div
       role="status"
-      className={`mono pointer-events-none fixed z-[80] max-w-[180px] -translate-x-1/2 ${ispod ? "" : "-translate-y-full"} border border-[color:var(--a-live)] bg-[color:var(--a-panel)] px-2.5 py-1.5 text-[11px] normal-case tracking-[0.03em] text-[color:var(--a-fg)] shadow-[0_0_0_1px_#000]`}
+      className={`mono pointer-events-none fixed z-[80] max-w-[180px] -translate-x-1/2 ${ispod ? "" : "-translate-y-full"} rounded-[var(--r-sm)] border border-[color:var(--a-live)] bg-[color:var(--a-panel)] px-2.5 py-1.5 text-[11px] normal-case tracking-[0.03em] text-[color:var(--a-fg)] shadow-[0_0_0_1px_#000]`}
       style={{ left: x, top: ispod ? tip.y + 18 : tip.y - 10 }}
     >
       {tip.text}
@@ -274,10 +274,14 @@ export function Trazilica({ stavke }) {
 
   if (!otvoreno) return null;
   return (
-    <div className="fixed inset-0 z-[70] flex items-start justify-center bg-black/70 px-4 pt-[12vh]" onPointerDown={(e) => e.target === e.currentTarget && setOtvoreno(false)}>
-      <div role="dialog" aria-label="Traži po ploči" className="trazi w-full max-w-xl border border-[color:var(--a-live)] bg-[color:var(--a-panel)]">
+    <div className="fixed inset-0 z-[78] flex items-start justify-center bg-black/70 px-4 pt-[12vh]" onPointerDown={(e) => e.target === e.currentTarget && setOtvoreno(false)}>
+      <div role="dialog" aria-label="Traži po ploči" className="trazi w-full max-w-xl overflow-hidden rounded-[var(--r-lg)] border border-[color:var(--a-live)] bg-[color:var(--a-panel)] shadow-[0_30px_80px_-20px_rgb(0_0_0/0.9),0_0_40px_-18px_var(--a-live)]">
+        <div className="flex items-center gap-2 border-b border-[color:var(--a-line)] px-3 pt-3">
+          <span className="orb-mala" aria-hidden="true" />
+          <span className="lbl">LKT AGENT {"///"} što te zanima?</span>
+        </div>
         <div className="flex items-center gap-2 border-b border-[color:var(--a-line)] px-3">
-          <span className="mono up text-[13px]">/</span>
+          <span className="mono up text-[13px]">&gt;</span>
           <input
             ref={ulaz}
             autoFocus
@@ -295,12 +299,22 @@ export function Trazilica({ stavke }) {
                 setOznacen((i) => Math.max(i - 1, 0));
               } else if (e.key === "Enter" && rezultati[oznacen]) idi(rezultati[oznacen]);
             }}
-            placeholder="igra, push, kafić, baza…"
+            placeholder="npr. konobar, pratitelji, baza, push…"
             aria-label="Traži"
             className="h-12 w-full bg-transparent font-[family-name:var(--a-mono)] text-[16px] text-[color:var(--a-fg)] outline-none placeholder:text-[color:var(--a-mute)]"
           />
           <kbd className="lbl">ESC</kbd>
         </div>
+        {upit.trim() && rezultati[0]?.d && (
+          <button type="button" onClick={() => idi(rezultati[0])} className="flex w-full items-center justify-between gap-3 border-b border-[color:var(--a-line)] bg-[#0f1a13] px-3 py-3 text-left">
+            <span>
+              <span className="lbl block">odgovor</span>
+              <span className="num up text-[1.6rem]">{rezultati[0].d}</span>
+              <span className="mono ml-2 text-[12px] normal-case text-[color:var(--a-fg)]">{rezultati[0].t}</span>
+            </span>
+            <span className="lbl">otvori ↵</span>
+          </button>
+        )}
         <ul className="max-h-[55vh] overflow-y-auto">
           {rezultati.length === 0 && <li className="mono px-3 py-3 text-[11px] normal-case text-[color:var(--a-mute)]">Ništa za „{upit}“.</li>}
           {rezultati.map((s, i) => (
@@ -412,7 +426,7 @@ export function Najave({ uzbune, brojke }) {
   const boja = poruka.vrsta === "HITNO" ? "var(--a-alarm)" : poruka.vrsta === "VAŽNO" ? "var(--a-warn)" : "var(--a-live)";
   return (
     <div role="alert" className="najava fixed inset-x-0 top-0 z-[75] flex justify-center px-4" style={{ paddingTop: "max(12px, env(safe-area-inset-top))" }}>
-      <div className="flex w-full max-w-xl items-start gap-3 border-2 bg-[color:var(--a-panel)] px-4 py-3" style={{ borderColor: boja }}>
+      <div className="flex w-full max-w-xl items-start gap-3 rounded-[var(--r-lg)] border-2 bg-[color:var(--a-panel)] px-4 py-3 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.9)]" style={{ borderColor: boja, boxShadow: `0 0 36px -14px ${boja}, 0 24px 60px -20px rgb(0 0 0 / 0.9)` }}>
         <span className="num glitch shrink-0 text-[2rem] leading-none" style={{ color: boja }} data-t={poruka.vrsta}>
           {poruka.vrsta}
         </span>
@@ -450,5 +464,69 @@ export function Odbrojavanje({ cilj, className }) {
     <span ref={ref} className={className}>
       —
     </span>
+  );
+}
+
+// Kiša znakova u pozadini (Petar 11. 11.: „top", ali sporije i bez jakog kontrasta da se vidi sadržaj).
+// Platno iza sadržaja, ~4 znaka u sekundi, 24 sličice u sekundi, pauza kad je kartica skrivena, ništa uz „smanji pokret".
+export function KisaZnakova({ jacina = 0.13 }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current;
+    if (!c || manjePokreta()) return;
+    const ctx = c.getContext("2d");
+    const VEL = 16;
+    const Z = "LAKAT.01ĆČŠŽĐ>/[]+";
+    let stupci = [];
+    let id = 0;
+    let zadnje = 0;
+    const mjeri = () => {
+      c.width = window.innerWidth;
+      c.height = window.innerHeight;
+      stupci = Array.from({ length: Math.ceil(c.width / VEL) }, () => Math.random() * -60);
+      ctx.fillStyle = "#0a0a0a";
+      ctx.fillRect(0, 0, c.width, c.height);
+    };
+    const korak = (t) => {
+      id = requestAnimationFrame(korak);
+      if (document.hidden || t - zadnje < 42) return;
+      zadnje = t;
+      ctx.fillStyle = "rgba(10,10,10,0.08)";
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.font = `${VEL - 2}px ui-monospace, monospace`;
+      for (let i = 0; i < stupci.length; i++) {
+        const y = stupci[i];
+        if (y > 0) {
+          ctx.fillStyle = Math.random() < 0.03 ? "rgba(210,255,225,0.9)" : "rgba(74,222,128,0.75)";
+          ctx.fillText(Z[(Math.random() * Z.length) | 0], i * VEL, y * VEL);
+        }
+        stupci[i] = y * VEL > c.height && Math.random() > 0.985 ? Math.random() * -20 : y + 0.17;
+      }
+    };
+    mjeri();
+    id = requestAnimationFrame(korak);
+    window.addEventListener("resize", mjeri);
+    return () => {
+      cancelAnimationFrame(id);
+      window.removeEventListener("resize", mjeri);
+    };
+  }, []);
+  return <canvas ref={ref} aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 h-full w-full" style={{ opacity: jacina }} />;
+}
+
+// Matrix orb dolje desno (Petar 11. 11.): agent umjesto gumba za tražilicu. Klik otvara tražilicu kao agenta.
+export function Orb() {
+  return (
+    <button
+      type="button"
+      onClick={() => window.dispatchEvent(new Event("adm-trazi"))}
+      aria-label="Agent: traži po ploči"
+      className="orb fixed z-[60] grid h-16 w-16 place-items-center rounded-full"
+      style={{ right: "max(16px, env(safe-area-inset-right))", bottom: "max(16px, env(safe-area-inset-bottom))" }}
+    >
+      <span className="orb-prsten" aria-hidden="true" />
+      <span className="orb-jezgra" aria-hidden="true" />
+      <span className="orb-kod mono" aria-hidden="true">LKT</span>
+    </button>
   );
 }
