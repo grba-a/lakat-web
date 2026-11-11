@@ -277,7 +277,7 @@ export function Trazilica({ stavke }) {
     <div className="fixed inset-0 z-[78] flex items-start justify-center bg-black/70 px-4 pt-[12vh]" onPointerDown={(e) => e.target === e.currentTarget && setOtvoreno(false)}>
       <div role="dialog" aria-label="Traži po ploči" className="trazi w-full max-w-xl overflow-hidden rounded-[var(--r-lg)] border border-[color:var(--a-live)] bg-[color:var(--a-panel)] shadow-[0_30px_80px_-20px_rgb(0_0_0/0.9),0_0_40px_-18px_var(--a-live)]">
         <div className="flex items-center gap-2 border-b border-[color:var(--a-line)] px-3 pt-3">
-          <span className="orb-mala" aria-hidden="true" />
+          <TockaKugla velicina={20} tocaka={70} />
           <span className="lbl">LKT AGENT {"///"} što te zanima?</span>
         </div>
         <div className="flex items-center gap-2 border-b border-[color:var(--a-line)] px-3">
@@ -514,19 +514,87 @@ export function KisaZnakova({ jacina = 0.13 }) {
   return <canvas ref={ref} aria-hidden="true" className="pointer-events-none fixed inset-0 z-0 h-full w-full" style={{ opacity: jacina }} />;
 }
 
-// Matrix orb dolje desno (Petar 11. 11.): agent umjesto gumba za tražilicu. Klik otvara tražilicu kao agenta.
+// Kugla od točkica (Petar 12. 11.: „orb mora biti na točkice i živ"): ~260 točaka na sferi koja se vrti,
+// diše i kroz koju prolazi val svjetla. Platno u veličini × devicePixelRatio, pauza kad je kartica skrivena,
+// uz „smanji pokret" jedna mirna sličica. Pod prstom/mišem se vrti brže.
+export function TockaKugla({ velicina = 64, tocaka = 260, brzo = false }) {
+  const ref = useRef(null);
+  const brzina = useRef(1);
+  useEffect(() => {
+    brzina.current = brzo ? 3 : 1;
+  }, [brzo]);
+  useEffect(() => {
+    const c = ref.current;
+    if (!c) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    c.width = velicina * dpr;
+    c.height = velicina * dpr;
+    const ctx = c.getContext("2d");
+    ctx.scale(dpr, dpr);
+    // Fibonaccijeva sfera: jednoliko raspoređene točke.
+    const zlatni = Math.PI * (3 - Math.sqrt(5));
+    const tocke = Array.from({ length: tocaka }, (_, k) => {
+      const y = 1 - (k / (tocaka - 1)) * 2;
+      const r = Math.sqrt(1 - y * y);
+      return [Math.cos(zlatni * k) * r, y, Math.sin(zlatni * k) * r];
+    });
+    const R0 = velicina * 0.4, cx = velicina / 2, cy = velicina / 2;
+    const tocka = Math.max(0.7, velicina / 60);
+    let kut = 0, t0 = performance.now(), id = 0;
+    const crtaj = (t) => {
+      const dt = Math.min(64, t - t0);
+      t0 = t;
+      kut += dt * 0.00045 * brzina.current;
+      const nagib = 0.38 + Math.sin(t / 3100) * 0.12;
+      const disanje = 1 + Math.sin(t / 900) * 0.035;
+      const val = ((t / 1600) % 2.6) - 1.3; // val svjetla koji putuje odozdo prema gore
+      const ca = Math.cos(kut), sa = Math.sin(kut), cn = Math.cos(nagib), sn = Math.sin(nagib);
+      ctx.clearRect(0, 0, velicina, velicina);
+      for (const [x0, y0, z0] of tocke) {
+        const x1 = x0 * ca + z0 * sa, z1 = -x0 * sa + z0 * ca;
+        const y2 = y0 * cn - z1 * sn, z2 = y0 * sn + z1 * cn;
+        const izboc = 1 + Math.sin(x0 * 5 + t / 500) * Math.sin(y0 * 4 - t / 700) * 0.04;
+        const R = R0 * disanje * izboc;
+        const dub = (z2 + 1) / 2; // 0 straga, 1 sprijeda
+        const blizu = Math.max(0, 1 - Math.abs(y0 - val) * 4);
+        const a = 0.12 + dub * 0.75 + blizu * 0.4;
+        ctx.fillStyle = blizu > 0.55 ? `rgba(217,255,230,${Math.min(1, a)})` : `rgba(74,222,128,${Math.min(1, a)})`;
+        const v = tocka * (0.55 + dub * 0.75 + blizu * 0.5);
+        ctx.fillRect(cx + x1 * R - v / 2, cy + y2 * R - v / 2, v, v);
+      }
+      if (!manjePokreta() && !document.hidden) id = requestAnimationFrame(crtaj);
+    };
+    const nastavi = () => {
+      cancelAnimationFrame(id);
+      if (!document.hidden) {
+        t0 = performance.now();
+        id = requestAnimationFrame(crtaj);
+      }
+    };
+    id = requestAnimationFrame(crtaj);
+    document.addEventListener("visibilitychange", nastavi);
+    return () => {
+      cancelAnimationFrame(id);
+      document.removeEventListener("visibilitychange", nastavi);
+    };
+  }, [velicina, tocaka]);
+  return <canvas ref={ref} aria-hidden="true" style={{ width: velicina, height: velicina }} className="block" />;
+}
+
+// Orb dolje desno (Petar 11. 11.): agent umjesto gumba za tražilicu. Klik otvara tražilicu kao agenta.
 export function Orb() {
+  const [iznad, setIznad] = useState(false);
   return (
     <button
       type="button"
       onClick={() => window.dispatchEvent(new Event("adm-trazi"))}
+      onPointerEnter={() => setIznad(true)}
+      onPointerLeave={() => setIznad(false)}
       aria-label="Agent: traži po ploči"
-      className="orb fixed z-[60] grid h-16 w-16 place-items-center rounded-full"
-      style={{ right: "max(16px, env(safe-area-inset-right))", bottom: "max(16px, env(safe-area-inset-bottom))" }}
+      className="orb fixed z-[60] grid h-[76px] w-[76px] place-items-center rounded-full"
+      style={{ right: "max(12px, env(safe-area-inset-right))", bottom: "max(12px, env(safe-area-inset-bottom))" }}
     >
-      <span className="orb-prsten" aria-hidden="true" />
-      <span className="orb-jezgra" aria-hidden="true" />
-      <span className="orb-kod mono" aria-hidden="true">LKT</span>
+      <TockaKugla velicina={68} brzo={iznad} />
     </button>
   );
 }
