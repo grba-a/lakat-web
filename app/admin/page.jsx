@@ -8,7 +8,7 @@ import { ascPregled, ascReady } from "@/lib/asc";
 import { odjava } from "./actions";
 import { Prijava } from "./prijava";
 import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, Upozorenje, broj, datum, vrijeme } from "./ui";
-import { Izbornik, Osvjezi, Savjet, TraziGumb, Trazilica } from "./zivo";
+import { Izbornik, Najave, Osvjezi, Radar, Savjet, TraziGumb, Trazilica } from "./zivo";
 import { Angazman, Baza, IGRE, Igre, Instagram, Kafici, ODJELJCI, PUSH, Pregled, Push, Rast, Sustav, Uzbune, odjeljak } from "./odjeljci";
 
 export const metadata = {
@@ -70,6 +70,13 @@ export default async function AdminPage({ searchParams }) {
   if (!(await jesamLiAdmin())) {
     return (
       <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-4 py-12">
+        <div className="mono mb-6 flex flex-col gap-1 text-[11px] text-[color:var(--a-mute)]" aria-hidden="true">
+          {["> SPAJANJE NA LKT/PROD …… OK", "> ŠIFRIRANI KANAL …… OK", "> PROVJERA OVLASTI …… ČEKAM"].map((l, i) => (
+            <span key={l} className="boot-linija" style={{ "--i": i }}>
+              {l}
+            </span>
+          ))}
+        </div>
         <p className="lbl boot">[ LKT / ADMIN ] {"///"} PRISTUP</p>
         <h1 className="macro boot mt-3" style={{ "--i": 1 }}>
           Admin
@@ -129,9 +136,12 @@ export default async function AdminPage({ searchParams }) {
                 </p>
                 <p className="num up text-[clamp(4rem,14vw,5.5rem)]">{broj(p.ukupno?.aktivni_danas)}</p>
               </div>
-              <div>
-                <p className="lbl">Vani sad</p>
-                <p className="num text-[clamp(2.6rem,9vw,3.5rem)]">{broj(p.ukupno?.vani_sad)}</p>
+              <div className="flex items-end gap-3">
+                <div>
+                  <p className="lbl">Vani sad</p>
+                  <p className="num text-[clamp(2.6rem,9vw,3.5rem)]">{broj(p.ukupno?.vani_sad)}</p>
+                </div>
+                <Radar broj={p.ukupno?.vani_sad} velicina={60} />
               </div>
             </div>
           )}
@@ -248,6 +258,15 @@ export default async function AdminPage({ searchParams }) {
         </div>
       </div>
       <Savjet />
+      <Najave
+        uzbune={uzbune}
+        brojke={{
+          profili: p?.ukupno?.profili ?? null,
+          prednarudzbe: asc?.prednarudzbe?.ok ? asc.prednarudzbe.ukupno : null,
+          pratitelji: ig?.profil?.pratitelji ?? null,
+          runde: p?.dnevno?.at(-1)?.runde ?? null,
+        }}
+      />
       <Trazilica stavke={indeks({ p, bz, asc, ig })} />
     </main>
   );

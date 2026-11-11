@@ -12,9 +12,30 @@ const manjePokreta = () => typeof window !== "undefined" && window.matchMedia("(
 export function Broj({ v, className }) {
   const tekst = String(v ?? "—");
   const ref = useRef(null);
+  const prije = useRef(null);
   useIsoLayout(() => {
     const el = ref.current;
+    const stari = prije.current;
+    prije.current = tekst;
     if (!el || manjePokreta()) return;
+    // Promjena pri osvježavanju: znamenke se „dekodiraju“ (nasumične pa prave) uz kratki bljesak.
+    if (stari != null && stari !== tekst) {
+      const kraj = performance.now() + 520;
+      let id;
+      el.classList.add("dekod");
+      const mijesaj = () => {
+        if (performance.now() >= kraj) {
+          el.textContent = tekst;
+          el.classList.remove("dekod");
+          return;
+        }
+        el.textContent = tekst.replace(/\d/g, () => String(Math.floor(Math.random() * 10)));
+        id = setTimeout(mijesaj, 45);
+      };
+      mijesaj();
+      return () => clearTimeout(id);
+    }
+    if (stari != null) return;
     if (!/^-?[\d.]+(,\d+)?$/.test(tekst)) return;
     const decimala = tekst.includes(",") ? tekst.split(",")[1].length : 0;
     const cilj = Number(tekst.replace(/\./g, "").replace(",", "."));
@@ -307,5 +328,94 @@ export function TraziGumb({ className = "" }) {
       <span className="up">/</span> TRAŽI
       <kbd className="hidden opacity-60 md:inline">⌘K</kbd>
     </button>
+  );
+}
+
+// Radar uz „Vani sad“: kazaljka kruži, točka po osobi vani (raspored izmišljen, broj pravi). Bez lokacija.
+export function Radar({ broj = 0, velicina = 64 }) {
+  const n = Math.min(Number(broj) || 0, 12);
+  const tocke = Array.from({ length: n }, (_, k) => {
+    const kut = (k * 137.5 * Math.PI) / 180;
+    const r = 0.3 + ((k * 0.37) % 0.6);
+    return [50 + Math.cos(kut) * 42 * r, 50 + Math.sin(kut) * 42 * r];
+  });
+  return (
+    <svg width={velicina} height={velicina} viewBox="0 0 100 100" className="radar shrink-0" aria-hidden="true">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="var(--a-live)" strokeOpacity="0.35" />
+      <circle cx="50" cy="50" r="28" fill="none" stroke="var(--a-live)" strokeOpacity="0.2" />
+      <line x1="4" y1="50" x2="96" y2="50" stroke="var(--a-live)" strokeOpacity="0.12" />
+      <line x1="50" y1="4" x2="50" y2="96" stroke="var(--a-live)" strokeOpacity="0.12" />
+      <g className="radar-kazaljka">
+        <path d="M50 50 L50 4 A46 46 0 0 1 82 17 Z" fill="var(--a-live)" fillOpacity="0.16" />
+        <line x1="50" y1="50" x2="50" y2="4" stroke="var(--a-live)" strokeWidth="1.5" />
+      </g>
+      {tocke.map(([x, y], k) => (
+        <rect key={k} x={x - 2.5} y={y - 2.5} width="5" height="5" fill="var(--a-live)" className="radar-tocka" style={{ "--i": k }} />
+      ))}
+    </svg>
+  );
+}
+
+// Skočni prozor: HITNO za nove kritične/važne uzbune, NOVOST kad nešto naraste od zadnjeg pogleda.
+// Pamti samo u ovom pregledniku (localStorage): ključeve viđenih uzbuna i zadnje brojeve. Bez zvuka (Petar 11. 11.).
+export function Najave({ uzbune, brojke }) {
+  const [poruka, setPoruka] = useState(null);
+  // Efekt reagira samo na stvarnu promjenu sadržaja (ne na novi objekt pri svakom renderu), a poruku postavlja
+  // odmah i ne poništava je: React u razvoju pokreće efekt dvaput, a drugi prolaz više ne vidi razliku.
+  const kljuc = JSON.stringify([uzbune.map((u) => u.kljuc), brojke]);
+  useEffect(() => {
+    const [kljucevi, b] = JSON.parse(kljuc);
+    let vidjene = [];
+    let zadnje = {};
+    try {
+      vidjene = JSON.parse(localStorage.getItem("adm-vidjene") || "[]");
+      zadnje = JSON.parse(localStorage.getItem("adm-brojke") || "{}");
+      localStorage.setItem("adm-vidjene", JSON.stringify(kljucevi));
+      localStorage.setItem("adm-brojke", JSON.stringify(b));
+    } catch {}
+    const nova = uzbune.find((u) => u.razina !== "info" && !vidjene.includes(u.kljuc));
+    const rast = Object.entries(b)
+      .filter(([k, v]) => v != null && zadnje[k] != null && Number(v) > Number(zadnje[k]))
+      .map(([k, v]) => ({ k, d: Number(v) - Number(zadnje[k]) }));
+    // Hrvatske množine: 1 / 2–4 / 5+ (11–14 kao 5+).
+    const oblik = (n, [jedan, dva, pet]) => (n % 10 === 1 && n % 100 !== 11 ? jedan : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? dva : pet);
+    const RIJEC = {
+      profili: ["novi profil", "nova profila", "novih profila"],
+      prednarudzbe: ["nova prednarudžba", "nove prednarudžbe", "novih prednarudžbi"],
+      pratitelji: ["novi pratitelj na Instagramu", "nova pratitelja na Instagramu", "novih pratitelja na Instagramu"],
+      runde: ["nova runda danas", "nove runde danas", "novih rundi danas"],
+    };
+    const IME = (k, d) => (RIJEC[k] ? oblik(d, RIJEC[k]) : k);
+    const p = nova
+      ? { vrsta: nova.razina === "kriticno" ? "HITNO" : "VAŽNO", naslov: nova.naslov, detalj: nova.detalj }
+      : rast.length
+        ? { vrsta: "NOVOST", naslov: rast.map((r) => `+${r.d} ${IME(r.k, r.d)}`).join(" · "), detalj: "od tvog zadnjeg pogleda" }
+        : null;
+    // Kratka odgoda bez poništavanja: drugi (razvojni) prolaz ne smije otkazati poruku prvoga.
+    if (p) setTimeout(() => setPoruka(p), 600);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kljuc]);
+  useEffect(() => {
+    if (!poruka) return;
+    const t = setTimeout(() => setPoruka(null), 9000);
+    return () => clearTimeout(t);
+  }, [poruka]);
+  if (!poruka) return null;
+  const boja = poruka.vrsta === "HITNO" ? "var(--a-alarm)" : poruka.vrsta === "VAŽNO" ? "var(--a-warn)" : "var(--a-live)";
+  return (
+    <div role="alert" className="najava fixed inset-x-0 top-0 z-[75] flex justify-center px-4" style={{ paddingTop: "max(12px, env(safe-area-inset-top))" }}>
+      <div className="flex w-full max-w-xl items-start gap-3 border-2 bg-[color:var(--a-panel)] px-4 py-3" style={{ borderColor: boja }}>
+        <span className="num glitch shrink-0 text-[2rem] leading-none" style={{ color: boja }} data-t={poruka.vrsta}>
+          {poruka.vrsta}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="mono text-[12.5px] normal-case tracking-[0.02em] text-[color:var(--a-fg)]">{poruka.naslov}</p>
+          <p className="mono text-[10.5px] normal-case text-[color:var(--a-mute)]">{poruka.detalj}</p>
+        </div>
+        <button type="button" onClick={() => setPoruka(null)} className="chip mono h-9 shrink-0 border border-[color:var(--a-line)] px-2.5 text-[11px] text-[color:var(--a-mute)]">
+          [ X ]
+        </button>
+      </div>
+    </div>
   );
 }
