@@ -1,12 +1,12 @@
 // LAKAT /admin (Petar 11. 11.): App Store stanje i brojke aplikacije na jednom mjestu, pod šifrom.
 // SAMO ZBROJEVI: nijedno ime, slika ni lokacija (pravilo 3.0 vrijedi i za admina).
 import { notFound } from "next/navigation";
-import { Punct } from "@/components/brand";
 import { adminUkljucen, jesamLiAdmin, pregled } from "@/lib/admin";
 import { ascPregled, ascReady } from "@/lib/asc";
 import { odjava } from "./actions";
 import { Prijava } from "./prijava";
-import { Kartica, Naslov, Plocica, Stupci, Trake, Upozorenje, broj, datum, vrijeme } from "./ui";
+import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, Upozorenje, broj, datum, vrijeme } from "./ui";
+import { Izbornik, Osvjezi } from "./zivo";
 import { Angazman, Igre, Kafici, ODJELJCI, Pregled, Push, Rast, Sustav } from "./odjeljci";
 
 export const metadata = {
@@ -36,8 +36,10 @@ export default async function AdminPage({ searchParams }) {
   if (!(await jesamLiAdmin())) {
     return (
       <main className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-4 py-12">
-        <h1 className="font-display text-5xl uppercase leading-none">
-          <Punct>Admin.</Punct>
+        <p className="lbl boot">[ LKT / ADMIN ] {"///"} PRISTUP</p>
+        <h1 className="macro boot mt-3" style={{ "--i": 1 }}>
+          Admin
+          <span className="cursor" aria-hidden="true" />
         </h1>
         <Prijava />
       </main>
@@ -65,48 +67,76 @@ export default async function AdminPage({ searchParams }) {
 
   return (
     <main
-      className="mx-auto flex max-w-5xl flex-col gap-12 pb-16 pt-8"
+      className="mx-auto flex max-w-5xl flex-col gap-10 pb-20 pt-6"
       style={{ paddingLeft: "max(16px, env(safe-area-inset-left))", paddingRight: "max(16px, env(safe-area-inset-right))" }}
     >
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-5xl uppercase leading-none">
-            LAKAT<span className="text-accent">.</span> Admin
-          </h1>
-          <p className="mt-2 text-sm text-muted">{p ? `Osvježeno ${vrijeme(p.generirano)}. Samo zbrojevi, uključeni i tvoji testni računi.` : " "}</p>
+      <header className="flex flex-col gap-4">
+        <div className="lbl boot flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+          <span>[ LKT / ADMIN ] {"///"} UNIT D-01 {"///"} REV 1.1</span>
+          <Osvjezi sekundi={60} />
         </div>
-        <form action={odjava}>
-          <button type="submit" className="h-11 rounded-xl border border-line px-4 text-sm text-muted hover:text-fg">
-            Odjava
-          </button>
-        </form>
+        <h1 className="macro boot" style={{ "--i": 1 }}>
+          LAKAT<span className="up">.</span>
+          <br />
+          Kontrola
+          <span className="cursor" aria-hidden="true" />
+        </h1>
+        <div className="boot flex flex-wrap items-end justify-between gap-3" style={{ "--i": 2 }}>
+          <p className="mono max-w-[52ch] text-[11px] normal-case leading-relaxed tracking-[0.04em] text-[color:var(--a-mute)]">
+            {p ? `Stanje ${vrijeme(p.generirano)}. Samo zbrojevi; uključeni i tvoji testni računi.` : " "}
+          </p>
+          <form action={odjava}>
+            <button type="submit" className="chip mono h-11 border border-[color:var(--a-line)] px-4 text-[11px] text-[color:var(--a-mute)]">
+              [ ODJAVA ]
+            </button>
+          </form>
+        </div>
       </header>
+
+      {p && (
+        <div className="ticker -mx-4 boot" aria-hidden="true" style={{ "--i": 3 }}>
+          <div className="ticker-track">
+            {[0, 1].map((kopija) => (
+              <div key={kopija} className="flex">
+                {[
+                  ["AKTIVNI DANAS", broj(p.ukupno?.aktivni_danas)],
+                  ["VANI SAD", broj(p.ukupno?.vani_sad)],
+                  [`RUNDE ${dana}D`, broj(p.kpi?.runde?.sad)],
+                  [`PARTIJE ${dana}D`, broj(p.kpi?.partije?.sad)],
+                  ["PAJDAŠTVA", broj(p.ukupno?.pajdastva)],
+                  ["PROFILI", broj(p.ukupno?.profili)],
+                  ["iOS PUSH", broj(p.ukupno?.ios_push)],
+                  ["PRIJAVE ČEKAJU", broj(p.moderacija?.cekaju)],
+                ].map(([oz, v]) => (
+                  <span key={oz} className="ticker-item mono text-[11px] text-[color:var(--a-mute)]">
+                    {oz} <span className="text-[color:var(--a-fg)]">{v}</span>
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <nav
         aria-label="Odjeljci"
-        className="sticky top-0 z-10 -mx-4 -mb-6 flex flex-col gap-2 border-b border-line bg-bg/95 px-4 py-3 backdrop-blur"
+        className="sticky z-20 -mx-4 -mb-6 flex flex-col gap-2 border-b border-[color:var(--a-line)] bg-[color:var(--a-bg)] px-4 py-2.5"
         style={{ top: "env(safe-area-inset-top, 0px)" }}
       >
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center">
           {[7, 30, 90].map((n) => (
             <a
               key={n}
               href={`?d=${n}&m=${mjera}`}
               aria-current={n === dana ? "page" : undefined}
-              className={`flex h-9 items-center rounded-full border px-3.5 text-sm ${n === dana ? "border-accent bg-accent font-bold text-[#052e16]" : "border-line text-soft"}`}
+              className="chip mono -ml-px flex h-10 items-center border border-[color:var(--a-line)] px-3.5 text-[11px] text-[color:var(--a-mute)] first:ml-0"
             >
-              {n} d
+              {n}D
             </a>
           ))}
-          <span className="ml-1 text-xs text-muted">prema {dana} d prije</span>
+          <span className="lbl ml-3">vs {dana}D prije</span>
         </div>
-        <div className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-0.5 [scrollbar-width:none]">
-          {ODJELJCI.map(([id, ime]) => (
-            <a key={id} href={`#${id}`} className="flex h-9 shrink-0 items-center rounded-full bg-surface px-3.5 text-sm text-soft hover:text-fg">
-              {ime}
-            </a>
-          ))}
-        </div>
+        <Izbornik odjeljci={ODJELJCI} />
       </nav>
 
       {p ? (
@@ -133,27 +163,29 @@ function AppStore({ asc, s }) {
   const v = asc?.verzija, b = asc?.build, t = asc?.testeri, r = asc?.recenzije;
   const pn = asc?.prednarudzbe, pz = asc?.preuzimanja;
   return (
-    <section id="app-store" className="flex scroll-mt-28 flex-col gap-4">
-      <Naslov pod="Izlazak 1. 12. 2026.">App Store.</Naslov>
+    <section id="app-store" className="flex scroll-mt-32 flex-col gap-3">
+      <Naslov pod="Izlazak 1. 12. 2026." broj={String(ODJELJCI.length).padStart(2, "0")}>
+        App Store.
+      </Naslov>
       {!ascReady() && <Upozorenje>Appleov ključ nije spojen (ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8_B64).</Upozorenje>}
       {asc?.greska && <Upozorenje>{asc.greska}</Upozorenje>}
       {asc && !asc.greska && (
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+        <Plocice>
           {pn && (
             <Plocica
               oznaka="Prednarudžbe"
               vrijednost={pn.ok ? broj(pn.ukupno - pn.otkazano) : "—"}
-              ton="text-accent"
+              ton="up"
               ispod={pn.ok ? `${broj(pn.ukupno)} naručilo · ${broj(pn.otkazano)} otkazalo` : pn.greska}
             />
           )}
           {pz?.ok && !pz.nijePocelo && (
-            <Plocica oznaka="Preuzimanja" vrijednost={broj(pz.ukupno)} ton="text-accent" ispod="prva preuzimanja, do jučer" />
+            <Plocica oznaka="Preuzimanja" vrijednost={broj(pz.ukupno)} ton="up" ispod="prva preuzimanja, do jučer" />
           )}
           <Plocica
             oznaka={`Verzija ${v?.verzija ?? ""}`}
             vrijednost={v?.ok ? STANJA[v.stanje] ?? v.stanje ?? "—" : "—"}
-            ton="text-accent"
+            ton="up"
             mala
             ispod={v?.ok ? null : v?.greska}
           />
@@ -171,7 +203,7 @@ function AppStore({ asc, s }) {
             vrijednost={r?.ok ? broj(r.ukupno) : "—"}
             ispod={r?.ok ? (r.prosjek ? `prosjek ${String(Math.round(r.prosjek * 10) / 10).replace(".", ",")} ★` : "stižu nakon izlaska") : r?.greska}
           />
-        </div>
+        </Plocice>
       )}
       {pn?.ok && pn.dani.length > 0 && (
         <Kartica naslov="Prednarudžbe po danu" pod="Appleov izvještaj stiže dan kasnije. Otkazane nisu oduzete.">
@@ -183,7 +215,7 @@ function AppStore({ asc, s }) {
           <Stupci redovi={pz.dani} polje="narudzbe" oznaka="Preuzimanja" />
         </Kartica>
       )}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3 md:grid-cols-2">
         <Kartica
           naslov="laktarenje.com, lista čekanja"
           pod={lista ? `Na listi ${broj(lista.ukupno)} (iPhone ${broj(lista.iphone)}, Android ${broj(lista.android)}), potvrdilo ${broj(lista.potvrdeno)}.` : null}
@@ -191,21 +223,21 @@ function AppStore({ asc, s }) {
           {s ? (
             <Trake redovi={WEB.map(([k, ime]) => ({ k: ime, v: web[k] ?? 0 }))} />
           ) : (
-            <p className="text-sm text-muted">—</p>
+            <p className="mono text-[11px] text-[color:var(--a-mute)]">—</p>
           )}
-          {s?.web_od && <p className="mt-3 text-xs text-muted">Koraci od {datum(s.web_od)}</p>}
+          {s?.web_od && <p className="lbl mt-3">Koraci od {datum(s.web_od)}</p>}
         </Kartica>
         <Kartica naslov="Još ne vidim" pod="Apple je počeo skupljati 11. 11.">
-          <ul className="flex flex-col gap-2 text-sm">
+          <ul className="flex flex-col gap-2">
             {!(b?.ok && t?.ok && t.grupe.length) && (
-              <li className="rounded-xl border border-dashed border-line px-3 py-2">
-                <b className="font-bold">Buildovi i TestFlight</b>
-                <span className="block text-xs text-muted">Ključ na webu smije samo izvještaje, namjerno. To je u TestFlight appu.</span>
+              <li className="border border-dashed border-[color:var(--a-line)] px-3 py-2">
+                <b className="mono block text-[11px] font-bold">Buildovi i TestFlight</b>
+                <span className="mono mt-1 block text-[10.5px] normal-case tracking-[0.03em] text-[color:var(--a-mute)]">Ključ na webu smije samo izvještaje, namjerno. To je u TestFlight appu.</span>
               </li>
             )}
-            <li className="rounded-xl border border-dashed border-line px-3 py-2">
-              <b className="font-bold">Prikazi stranice, konverzija, zadržavanje</b>
-              <span className="block text-xs text-muted">App Analytics, Apple ih puni 1 do 2 dana nakon prvog zahtjeva.</span>
+            <li className="border border-dashed border-[color:var(--a-line)] px-3 py-2">
+              <b className="mono block text-[11px] font-bold">Prikazi stranice, konverzija, zadržavanje</b>
+              <span className="mono mt-1 block text-[10.5px] normal-case tracking-[0.03em] text-[color:var(--a-mute)]">App Analytics, Apple ih puni 1 do 2 dana nakon prvog zahtjeva.</span>
             </li>
           </ul>
         </Kartica>

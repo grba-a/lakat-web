@@ -6,9 +6,9 @@ import { prijava } from "./actions";
 export function Prijava() {
   const [stanje, posalji, salje] = useActionState(prijava, null);
   return (
-    <form action={posalji} className="mt-8 flex w-full flex-col gap-3">
-      <label htmlFor="lozinka" className="text-[11px] font-bold uppercase tracking-widest text-muted">
-        Šifra
+    <form action={posalji} className="boot mt-8 flex w-full flex-col gap-3" style={{ "--i": 2 }}>
+      <label htmlFor="lozinka" className="lbl">
+        {">"} Šifra
       </label>
       <input
         id="lozinka"
@@ -17,16 +17,16 @@ export function Prijava() {
         autoComplete="current-password"
         required
         autoFocus
-        className="h-12 rounded-xl border border-line bg-surface px-4 text-[16px] text-fg outline-none focus:border-accent"
+        className="h-12 border border-[color:var(--a-line)] bg-[color:var(--a-panel)] px-4 font-[family-name:var(--a-mono)] text-[16px] tracking-[0.2em] text-[color:var(--a-fg)] outline-none focus:border-[color:var(--a-live)]"
       />
       <button
         type="submit"
         disabled={salje}
-        className="h-12 rounded-xl bg-accent font-display text-lg uppercase tracking-wide text-[#052e16] disabled:opacity-60"
+        className="chip mono h-12 bg-[color:var(--a-live)] text-[13px] font-bold text-[#05140a] disabled:opacity-60"
       >
-        {salje ? "Provjeravam…" : "Uđi"}
+        {salje ? "[ PROVJERAVAM… ]" : "[ UĐI ]"}
       </button>
-      <p role="status" className="min-h-5 text-sm text-amber">
+      <p role="status" className="mono min-h-5 text-[11px] normal-case text-[color:var(--a-alarm)]">
         {stanje?.greska ?? ""}
       </p>
     </form>

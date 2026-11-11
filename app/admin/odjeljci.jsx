@@ -1,6 +1,6 @@
 // Odjeljci /admin ploče, faza 1 (Petar 11. 11.). Podaci: admin_pregled(dana), samo zbrojevi.
 // Skupina manja od 3 osobe dolazi iz baze kao null i ovdje piše „< 3“.
-import { Kartica, Naslov, Plocica, Stupci, Trake, broj, datum, posto } from "./ui";
+import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, broj, datum, posto } from "./ui";
 
 export const ODJELJCI = [
   ["pregled", "Pregled"],
@@ -39,7 +39,7 @@ const PUSH = {
 const ULAZI = { ikona: "Ikona", push: "Push", link: "Link" };
 const RADNJE = { app: "Otvorio app", runda: "Objavio rundu", igra: "Igrao", reakcija: "Reagirao", komentar: "Komentirao" };
 const PICA = {
-  piva: "Pivo", kava: "Kava", kava_mljeko: "Kava s mlijekom", voda: "Voda", gemist: "Gemišt", pelin: "Pelin", koktel: "Koktel",
+  piva: "Pivo", kava: "Kava", kava_mlijeko: "Kava s mlijekom", voda: "Voda", gemist: "Gemišt", pelin: "Pelin", koktel: "Koktel",
   vino: "Vino", bijelo: "Bijelo vino", crno: "Crno vino", prosek: "Prošek", rakija: "Rakija", viski: "Viski", sok: "Sok", cola: "Cola",
   toceno: "Točeno pivo", bocica: "Pivo u boci", craft: "Craft pivo", tamno: "Tamno pivo", mojito: "Mojito",
 };
@@ -51,11 +51,12 @@ const zarez = (n) => String(n).replace(".", ",");
 function Promjena({ sad, prije, obrnuto }) {
   if (sad == null || prije == null) return null;
   const r = Number(sad) - Number(prije);
-  if (r === 0) return <span className="text-muted">isto kao prije</span>;
+  if (r === 0) return <span>= isto kao prije</span>;
   const dobro = obrnuto ? r < 0 : r > 0;
-  const pct = Number(prije) > 0 ? ` (${r > 0 ? "+" : "−"}${Math.round(Math.abs(r / Number(prije)) * 100)} %)` : "";
+  // Postotak samo kad je baza dovoljno velika; „+77267 %" od 3 partije ništa ne govori.
+  const pct = Number(prije) >= 10 ? ` (${r > 0 ? "+" : "−"}${Math.round(Math.abs(r / Number(prije)) * 100)} %)` : "";
   return (
-    <span className={dobro ? "text-accent" : "text-red-400"}>
+    <span className={dobro ? "up" : "down"}>
       {r > 0 ? "▲ +" : "▼ −"}
       {zarez(Math.round(Math.abs(r) * 10) / 10)}
       {pct}
@@ -64,9 +65,12 @@ function Promjena({ sad, prije, obrnuto }) {
 }
 
 function Odjeljak({ id, naslov, pod, children }) {
+  const rb = String(ODJELJCI.findIndex(([x]) => x === id) + 1).padStart(2, "0");
   return (
-    <section id={id} className="flex scroll-mt-28 flex-col gap-4">
-      <Naslov pod={pod}>{naslov}</Naslov>
+    <section id={id} className="flex scroll-mt-32 flex-col gap-3">
+      <Naslov pod={pod} broj={rb}>
+        {naslov}
+      </Naslov>
       {children}
     </section>
   );
@@ -75,11 +79,11 @@ function Odjeljak({ id, naslov, pod, children }) {
 function Tablica({ stupci, redovi }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm tabular-nums">
+      <table className="mono w-full text-[11px] normal-case tabular-nums tracking-[0.03em]">
         <thead>
-          <tr className="text-left text-[11px] uppercase tracking-widest text-muted">
+          <tr className="lbl text-left">
             {stupci.map((s, i) => (
-              <th key={s} className={`py-1.5 pr-3 font-bold ${i ? "text-right" : ""}`}>
+              <th key={s} className={`border-b border-[color:var(--a-fg)] py-1.5 pr-3 font-normal ${i ? "text-right" : ""}`}>
                 {s}
               </th>
             ))}
@@ -87,9 +91,9 @@ function Tablica({ stupci, redovi }) {
         </thead>
         <tbody>
           {redovi.map((r) => (
-            <tr key={r[0]} className="border-t border-line">
+            <tr key={r[0]} className="row border-b border-[color:var(--a-line)]">
               {r.map((v, i) => (
-                <td key={i} className={`py-2 pr-3 ${i ? "text-right" : "text-soft"}`}>
+                <td key={i} className={`py-2 pr-3 ${i ? "text-right" : ""}`}>
                   {v}
                 </td>
               ))}
@@ -126,23 +130,25 @@ export function Pregled({ p, mjera }) {
     .sort((a, b) => b.v - a.v);
   return (
     <Odjeljak id="pregled" naslov="Pregled." pod={`Zadnjih ${p.dana} dana prema ${p.dana} dana prije. Danas ${broj(p.ukupno?.aktivni_danas)} aktivnih, vani sad ${broj(p.ukupno?.vani_sad)}.`}>
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-        {kpi.map(([key, ime]) => (
+      <Plocice>
+        {kpi.map(([key, ime], i) => (
           <Plocica
             key={key}
+            i={i}
             oznaka={ime}
             vrijednost={key === "dau" ? zarez(k[key]?.sad ?? "—") : broj(k[key]?.sad)}
             ispod={<Promjena sad={k[key]?.sad} prije={k[key]?.prije} />}
           />
         ))}
-      </div>
+      </Plocice>
       <Kartica naslov={`${m[1]} po danu`} pod="Aktivan = otvorio app, objavio rundu, igrao, reagirao ili komentirao.">
-        <div className="-mt-2 mb-3 flex flex-wrap gap-1.5">
+        <div className="mb-3 flex flex-wrap">
           {MJERE.map(([key, ime]) => (
             <a
               key={key}
               href={`?d=${p.dana}&m=${key}#pregled`}
-              className={`rounded-full border px-3 py-1.5 text-xs ${key === m[0] ? "border-accent bg-accent font-bold text-[#052e16]" : "border-line text-soft"}`}
+              aria-current={key === m[0] ? "true" : undefined}
+              className="chip mono -ml-px flex h-9 items-center border border-[color:var(--a-line)] px-3 text-[11px] text-[color:var(--a-mute)] first:ml-0"
             >
               {ime}
             </a>
@@ -171,18 +177,18 @@ export function Rast({ p }) {
   return (
     <Odjeljak id="rast" naslov="Rast." pod="Kako ljudi dolaze i ostaju.">
       <Kartica naslov="Lijevak" pod={`Zadnjih ${p.dana} dana. Prva runda i prvi pajdaš: od novih profila, bilo kad.`}>
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col">
           {koraci.map(([key, ime], i) => {
             const vr = l[key] ?? 0;
             const max = Math.max(1, l.posjet ?? 0, l.registracija ?? 0);
             return (
-              <li key={key} className="grid grid-cols-[minmax(0,9.5rem)_1fr] items-center gap-3 text-sm">
-                <span className="truncate text-soft">{ime}</span>
+              <li key={key} className="row grid grid-cols-[minmax(0,9.5rem)_1fr] items-center gap-3 border-b border-[color:var(--a-line)] py-1.5 last:border-0">
+                <span className="mono truncate text-[11px] normal-case tracking-[0.03em]">{ime}</span>
                 <span className="flex min-w-0 items-center gap-2">
-                  <span className="h-3 rounded-sm bg-accent" style={{ width: `${Math.max(2, (vr / max) * 65)}%` }} />
-                  <span className="shrink-0 tabular-nums text-muted">
+                  <span className={`bar ${i ? "dim" : ""}`} style={{ width: `${Math.max(2, (vr / max) * 62)}%`, "--i": i }} />
+                  <span className="mono shrink-0 text-[11px] tabular-nums">
                     {broj(vr)}
-                    {i >= 3 ? <span className="text-muted/70"> · {pc(vr, l.registracija)} novih</span> : null}
+                    {i >= 3 ? <span className="text-[color:var(--a-mute)]"> · {pc(vr, l.registracija)} novih</span> : null}
                   </span>
                 </span>
               </li>
@@ -202,12 +208,12 @@ export function Rast({ p }) {
           ])}
         />
       </Kartica>
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+      <Plocice>
         <Plocica oznaka="Pozivni linkovi" vrijednost={broj(v.linkovi)} ispod={`u ${p.dana} dana`} />
         <Plocica oznaka="Iskorišteni" vrijednost={broj(v.iskoristeni)} ispod="ljudi ušlo preko linka" />
         <Plocica oznaka="Pajdaša, medijan" vrijednost={v.pajdasi_medijan == null ? "—" : zarez(v.pajdasi_medijan)} ispod="po profilu" />
         <Plocica oznaka="Gornjih 10 %" vrijednost={v.pajdasi_p90 == null ? "—" : `${zarez(Math.round(v.pajdasi_p90))}+`} ispod="pajdaša" />
-      </div>
+      </Plocice>
     </Odjeljak>
   );
 }
@@ -218,7 +224,7 @@ function Toplina({ celije }) {
   const sati = Array.from({ length: 24 }, (_, h) => h);
   return (
     <div className="overflow-x-auto">
-      <div className="grid min-w-[340px] grid-cols-[28px_repeat(24,minmax(0,1fr))] gap-[2px] text-[10px] text-muted">
+      <div className="mono grid min-w-[340px] grid-cols-[30px_repeat(24,minmax(0,1fr))] gap-[2px] text-[9px] text-[color:var(--a-mute)]">
         <span />
         {sati.map((h) => (
           <span key={h} className="text-center">
@@ -227,15 +233,15 @@ function Toplina({ celije }) {
         ))}
         {DANI.map((dan, i) => (
           <div key={dan} className="contents">
-            <span className="leading-[14px]">{dan}</span>
+            <span className="leading-[14px]">{dan.toUpperCase()}</span>
             {sati.map((h) => {
               const n = mapa.get(`${i + 1}-${h}`) ?? 0;
               return (
                 <span
                   key={h}
                   title={`${dan} ${h} h: ${n}`}
-                  className="h-[14px] rounded-[2px] bg-accent"
-                  style={{ opacity: n ? 0.15 + 0.85 * (n / max) : 0.05 }}
+                  className="cell h-[14px]"
+                  style={{ background: n ? "var(--a-live)" : "var(--a-line)", opacity: n ? 0.2 + 0.8 * (n / max) : 0.5, "--i": i * 24 + h }}
                 />
               );
             })}
@@ -264,7 +270,7 @@ export function Angazman({ p }) {
   const ukPica = svaPica.reduce((s, x) => s + x.v, 0);
   const ostalo = svaPica.slice(8).reduce((s, x) => s + x.v, 0);
   const pica = [...svaPica.slice(0, 8), ...(ostalo ? [{ k: `Ostalo (${svaPica.length - 8})`, v: ostalo }] : [])];
-  const kvartovi = (p.seg_kvart_runde ?? []).map((x) => ({ k: x.kvart, v: x.runde, n: x.ljudi == null ? null : `${x.ljudi} ljudi` }));
+  const kvartovi = (p.seg_kvart_runde ?? []).map((x) => ({ k: x.kvart.replace("Ostali kvartovi", "Ostali"), v: x.runde, n: x.ljudi == null ? null : `${x.ljudi} ljudi` }));
   return (
     <Odjeljak id="angazman" naslov="Angažman." pod={`Zadnjih ${p.dana} dana.`}>
       <Kartica naslov="Kad je LAKAT živ" pod="Runde i partije po danu u tjednu i satu (Zagreb). Tamnije = više.">
@@ -279,7 +285,7 @@ export function Angazman({ p }) {
         </Kartica>
       </div>
       <Kartica naslov="Runde po kvartu" pod="Kvartovi s manje od 3 osobe zbrojeni su zajedno, da se nitko ne prepozna.">
-        {kvartovi.length ? <Trake redovi={kvartovi} /> : <p className="text-sm text-muted">Nema rundi s kvartom u razdoblju.</p>}
+        {kvartovi.length ? <Trake redovi={kvartovi} /> : <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Nema rundi s kvartom u razdoblju.</p>}
       </Kartica>
     </Odjeljak>
   );
@@ -317,7 +323,7 @@ export function Push({ p }) {
           <Tablica stupci={["Vrsta", "Poslano", "Otvoreno", "Stopa"]} redovi={vrste.map((r) => [r.ime, broj(r.poslano), broj(r.otvoreno), posto(r.otvoreno, r.poslano)])} />
         </Kartica>
         <Kartica naslov="Kako ulaze u app">
-          {ulazi.length ? <Trake redovi={ulazi} /> : <p className="text-sm text-muted">Još nema brojki.</p>}
+          {ulazi.length ? <Trake redovi={ulazi} /> : <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Još nema brojki.</p>}
         </Kartica>
       </div>
     </Odjeljak>
@@ -329,7 +335,7 @@ export function Kafici({ p }) {
   return (
     <Odjeljak id="kafici" naslov="Kafići." pod={`Runde u kafićima, zadnjih ${p.dana} dana. ★ = partner.`}>
       <Kartica naslov="Po kafiću" pod="Bez imena gostiju; manje od 3 gosta piše „< 3“.">
-        {redovi.length ? <Tablica stupci={["Kafić", "Runde", "Gostiju"]} redovi={redovi} /> : <p className="text-sm text-muted">Nema rundi u kafićima u razdoblju.</p>}
+        {redovi.length ? <Tablica stupci={["Kafić", "Runde", "Gostiju"]} redovi={redovi} /> : <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Nema rundi u kafićima u razdoblju.</p>}
       </Kartica>
     </Odjeljak>
   );
@@ -341,27 +347,27 @@ export function Sustav({ p }) {
   const b = p.bodovi ?? {};
   return (
     <Odjeljak id="sustav" naslov="Sustav." pod={`Zdravlje, prijave i bodovi, zadnjih ${p.dana} dana.`}>
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+      <Plocice>
         <Plocica
           oznaka="Push greške"
           vrijednost={broj(z.push_greske)}
-          ton={z.push_greske ? "text-amber" : undefined}
+          ton={z.push_greske ? "warn" : undefined}
           ispod={<Promjena sad={z.push_greske} prije={z.push_greske_prije} obrnuto />}
         />
-        <Plocica oznaka="Prijave čekaju" vrijednost={broj(m.cekaju)} ton={m.cekaju ? "text-red-400" : "text-accent"} ispod={`${broj(m.prijave)} prijava · ${broj(m.blokade)} blokada`} />
+        <Plocica oznaka="Prijave čekaju" vrijednost={broj(m.cekaju)} ton={m.cekaju ? "down" : "up"} ispod={`${broj(m.prijave)} prijava · ${broj(m.blokade)} blokada`} />
         <Plocica oznaka="iOS uređaji" vrijednost={broj(z.ios_uredaji)} ispod={`${broj(z.web_push)} web push`} />
-        <Plocica oznaka="Apple opozivi" vrijednost={broj(z.apple_opozivi_cekaju)} ton={z.apple_opozivi_cekaju ? "text-amber" : undefined} ispod="čekaju ponovni pokušaj" />
-      </div>
+        <Plocica oznaka="Apple opozivi" vrijednost={broj(z.apple_opozivi_cekaju)} ton={z.apple_opozivi_cekaju ? "warn" : undefined} ispod="čekaju ponovni pokušaj" />
+      </Plocice>
       <div className="grid gap-4 md:grid-cols-2">
         <Kartica naslov="Bodovi" pod={`Zarađeno ${broj(b.zaradeno)}, potrošeno ${broj(b.potroseno)}, zadataka ${broj(b.zadaci)}.`}>
           {(b.kupnje ?? []).length ? (
             <Trake redovi={b.kupnje.map((x) => ({ k: x.artikl, v: x.broj }))} />
           ) : (
-            <p className="text-sm text-muted">Nitko nije kupovao u dućanu u ovom razdoblju.</p>
+            <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Nitko nije kupovao u dućanu u ovom razdoblju.</p>
           )}
         </Kartica>
         <Kartica naslov="Potrošnja i limiti" pod="Supabase i Vercel limiti dolaze u fazi 2.">
-          <p className="text-sm text-muted">—</p>
+          <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">—</p>
         </Kartica>
       </div>
     </Odjeljak>
