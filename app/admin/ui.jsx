@@ -26,29 +26,54 @@ export function Upozorenje({ children }) {
   );
 }
 
-// Naslov odjeljka: [ 02 ] + golemi Anton naslov + monospace podnaslov.
-export function Naslov({ children, pod, broj: rb }) {
+// Naslov odjeljka: rub u boji skupine, [ 02 ] + znak, Anton naslov, golemi obrisni broj desno (Codex 11. 11.).
+export function Naslov({ children, pod, broj: rb, znak }) {
+  const ime = String(children).replace(/\.$/, "");
   return (
-    <div className="cross boot border-t border-[color:var(--a-line)] pt-5">
-      <p className="lbl">
-        [ {rb ?? "—"} ] {"///"} {String(children).replace(/\.$/, "")}
-      </p>
-      <h2 className="num mt-2 text-[clamp(2.6rem,11vw,5rem)] uppercase">
-        {String(children).replace(/\.$/, "")}
-        <span className="up">.</span>
-      </h2>
-      {pod && <p className="mono mt-2 max-w-[60ch] text-[11px] leading-relaxed text-[color:var(--a-mute)] normal-case tracking-[0.04em]">{pod}</p>}
+    <div className="cross boot flex items-end justify-between gap-4 border-t border-[color:var(--a-line)] pt-5">
+      <div className="min-w-0 border-l-[3px] pl-3" style={{ borderColor: "var(--odj, var(--a-line))" }}>
+        <p className="lbl">
+          <span className="znak">{znak ?? "—"}</span> [ {rb ?? "—"} ] {"///"} {ime}
+        </p>
+        <h2 className="num mt-1.5 text-[clamp(2.1rem,8vw,3.6rem)] uppercase">
+          {ime}
+          <span className="up">.</span>
+        </h2>
+        {pod && <p className="mono mt-2 max-w-[70ch] text-[11.5px] leading-relaxed text-[color:var(--a-mute)] normal-case tracking-[0.03em]">{pod}</p>}
+      </div>
+      <span className="obris num shrink-0 text-[clamp(3.6rem,12vw,6.5rem)] leading-none" aria-hidden="true">
+        {rb}
+      </span>
     </div>
   );
 }
 
-export function Plocica({ oznaka, vrijednost, ispod, ton, mala, i = 0 }) {
+// Mini graf (sparkline): fiksne veličine, bez osi; zadnja točka naglašena. Prazan niz = ništa.
+export function Iskra({ niz, oznaka }) {
+  const v = (niz ?? []).map((x) => Number(x) || 0);
+  if (v.length < 2) return null;
+  const W = 76, H = 24;
+  const max = Math.max(1, ...v);
+  const t = v.map((x, k) => [(k * (W - 4)) / (v.length - 1) + 2, H - 3 - (x / max) * (H - 6)]);
+  const [lx, ly] = t[t.length - 1];
+  return (
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="shrink-0" role="img" aria-label={`${oznaka}: trend zadnjih ${v.length} dana`}>
+      <polyline points={t.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ")} fill="none" stroke="var(--a-fg)" strokeOpacity="0.7" strokeWidth="1.5" strokeLinejoin="round" />
+      <rect x={lx - 2} y={ly - 2} width="4" height="4" fill="var(--a-live)" />
+    </svg>
+  );
+}
+
+export function Plocica({ oznaka, vrijednost, ispod, ton, mala, i = 0, trend }) {
   return (
     <div className="boot flex min-w-0 flex-col gap-2 px-3.5 py-3.5" style={{ "--i": i }}>
       <p className="lbl truncate">{oznaka}</p>
-      <p className={`num ${mala ? "text-[1.7rem]" : "text-[clamp(2.4rem,9vw,3.4rem)]"} ${ton ?? ""}`}>
-        <Broj v={vrijednost} />
-      </p>
+      <div className="flex items-end justify-between gap-2">
+        <p className={`num ${mala ? "text-[1.7rem]" : "text-[clamp(2.4rem,9vw,3.4rem)]"} ${ton ?? ""}`}>
+          <Broj v={vrijednost} />
+        </p>
+        {trend && <Iskra niz={trend} oznaka={oznaka} />}
+      </div>
       {ispod && <p className="mono text-[10.5px] normal-case tracking-[0.04em] text-[color:var(--a-mute)]">{ispod}</p>}
     </div>
   );

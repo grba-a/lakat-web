@@ -1,14 +1,14 @@
 // LAKAT /admin (Petar 11. 11.): App Store stanje i brojke aplikacije na jednom mjestu, pod šifrom.
 // SAMO ZBROJEVI: nijedno ime, slika ni lokacija (pravilo 3.0 vrijedi i za admina).
 import { notFound } from "next/navigation";
-import { adminUkljucen, baza as bazaZdravlje, jesamLiAdmin, pregled } from "@/lib/admin";
+import { adminUkljucen, baza as bazaZdravlje, dnevno, jesamLiAdmin, pregled } from "@/lib/admin";
 import { provjere } from "@/lib/upozorenja";
 import { ascPregled, ascReady } from "@/lib/asc";
 import { odjava } from "./actions";
 import { Prijava } from "./prijava";
 import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, Upozorenje, broj, datum, vrijeme } from "./ui";
-import { Izbornik, Osvjezi, Savjet } from "./zivo";
-import { Angazman, Baza, Igre, Kafici, ODJELJCI, Pregled, Push, Rast, Sustav, Uzbune } from "./odjeljci";
+import { Izbornik, Osvjezi, Savjet, TraziGumb, Trazilica } from "./zivo";
+import { Angazman, Baza, IGRE, Igre, Kafici, ODJELJCI, PUSH, Pregled, Push, Rast, Sustav, Uzbune, odjeljak } from "./odjeljci";
 
 export const metadata = {
   title: "Admin · LAKAT",
@@ -31,6 +31,33 @@ const STANJA = {
   PREPARE_FOR_SUBMISSION: "Priprema",
 };
 
+// Što tražilica zna: odjeljci, kartice, brojke, igre, push vrste, kafići, tablice baze.
+function indeks({ p, bz, asc }) {
+  const st = [];
+  const dodaj = (t, o, id, d, vrsta = "stavka") => st.push({ t, o, id, d, vrsta });
+  ODJELJCI.forEach(([id, ime]) => dodaj(ime, "odjeljak", id, null, "odjeljak"));
+  [
+    ["Graf po danu", "Pregled", "graf-po-danu"], ["Što ljudi rade", "Pregled", "sto-rade"], ["Lijevak", "Rast", "lijevak"],
+    ["Povratak po tjednima (kohorte)", "Rast", "kohorte"], ["Kad je LAKAT živ (dan × sat)", "Angažman", "toplina"],
+    ["Značajke", "Angažman", "znacajke"], ["Što se pije", "Angažman", "pica"], ["Runde po kvartu", "Angažman", "kvartovi"],
+    ["Kako ulaze u app", "Push", "ulazi"], ["Bodovi i dućan", "Sustav", "bodovi"], ["Najveće tablice", "Baza", "tablice-baze"],
+    ["Pohrana fotki", "Baza", "pohrana"], ["Prednarudžbe", "App Store", "app-store"], ["Recenzije", "App Store", "app-store"],
+    ["Lista čekanja", "App Store", "app-store"], ["Uzbune", "vrh", "vrh"], ["Lijevak aplikacije", "Rast", "lijevak-app"],
+  ].forEach(([t, o, id]) => dodaj(t, o, id));
+  if (p) {
+    const k = p.kpi ?? {};
+    [["aktivni", "Aktivni ljudi"], ["dau", "Aktivni po danu"], ["novi", "Novi profili"], ["runde", "Runde"], ["partije", "Partije"],
+     ["reakcije", "Reakcije"], ["komentari", "Komentari"], ["pajdastva", "Pajdaštva"]].forEach(([key, t]) =>
+      dodaj(t, "Pregled", "pregled", k[key]?.sad != null ? String(k[key].sad).replace(".", ",") : null));
+    (p.igre ?? []).forEach((g) => IGRE[g.igra] && dodaj(IGRE[g.igra], "Igre", "igre-tablica", `${broj(g.partije)} partija`));
+    Object.entries(PUSH).forEach(([, ime]) => dodaj(`Push: ${ime}`, "Push", "push-tablica"));
+    (p.kafici ?? []).forEach((x) => dodaj(x.kafic, "Kafići", "kafici-tablica", `${broj(x.runde)} rundi`));
+  }
+  (bz?.podaci?.tablice ?? []).forEach((t) => dodaj(`Tablica ${t.tablica}`, "Baza", "tablice-baze", `${broj(t.redaka)} redaka`));
+  if (asc?.prednarudzbe?.ok) dodaj("Prednarudžbe ukupno", "App Store", "app-store", broj(asc.prednarudzbe.ukupno - asc.prednarudzbe.otkazano));
+  return st;
+}
+
 export default async function AdminPage({ searchParams }) {
   if (!adminUkljucen()) notFound();
 
@@ -50,7 +77,10 @@ export default async function AdminPage({ searchParams }) {
   const sp = (await searchParams) ?? {};
   const dana = [7, 30, 90].includes(Number(sp.d)) ? Number(sp.d) : 30;
   const mjera = typeof sp.m === "string" ? sp.m : "aktivni";
-  const [pr, asc, bz] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje()]);
+  // Današnji dan u Zagrebu (kao u SQL-u); niz 2n dana daje i duh prethodnog razdoblja.
+  const danas = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Zagreb" }).format(new Date());
+  const od2 = new Date(Date.parse(`${danas}T12:00:00Z`) - (2 * dana - 1) * 864e5).toISOString().slice(0, 10);
+  const [pr, asc, bz, nz] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas)]);
   const uzbune = provjere({ pregled: pr, asc, baza: bz });
   const p = pr.podaci;
   // App Store odjeljak čita web korake i listu čekanja u starom obliku.
@@ -69,29 +99,49 @@ export default async function AdminPage({ searchParams }) {
 
   return (
     <main
-      className="mx-auto flex max-w-5xl flex-col gap-10 pb-20 pt-6"
+      className="mx-auto flex max-w-[1600px] flex-col gap-10 pb-20 pt-6 lg:px-8"
       style={{ paddingLeft: "max(16px, env(safe-area-inset-left))", paddingRight: "max(16px, env(safe-area-inset-right))" }}
     >
-      <header className="flex flex-col gap-4">
+      <header id="vrh" className="flex flex-col gap-4">
         <div className="lbl boot flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
           <span>[ LKT / ADMIN ] {"///"} UNIT D-01 {"///"} REV 1.1</span>
           <Osvjezi sekundi={60} />
         </div>
-        <h1 className="macro boot" style={{ "--i": 1 }}>
-          LAKAT<span className="up">.</span>
-          <br />
-          Kontrola
-          <span className="cursor" aria-hidden="true" />
-        </h1>
+        <div className="boot flex flex-wrap items-end justify-between gap-x-8 gap-y-4" style={{ "--i": 1 }}>
+          <h1 className="num text-[clamp(2.6rem,9vw,4.5rem)] uppercase leading-[0.88]">
+            LAKAT<span className="up">.</span> Kontrola
+            <span className="cursor" aria-hidden="true" />
+          </h1>
+          {p && (
+            <div className="flex items-end gap-6" aria-label="Sada">
+              <div>
+                <p className="lbl">
+                  <span className="live-dot mr-1.5 align-middle" aria-hidden="true" />
+                  Aktivni danas
+                </p>
+                <p className="num up text-[clamp(4rem,14vw,5.5rem)]">{broj(p.ukupno?.aktivni_danas)}</p>
+              </div>
+              <div>
+                <p className="lbl">Vani sad</p>
+                <p className="num text-[clamp(2.6rem,9vw,3.5rem)]">{broj(p.ukupno?.vani_sad)}</p>
+              </div>
+            </div>
+          )}
+        </div>
         <div className="boot flex flex-wrap items-end justify-between gap-3" style={{ "--i": 2 }}>
           <p className="mono max-w-[52ch] text-[11px] normal-case leading-relaxed tracking-[0.04em] text-[color:var(--a-mute)]">
             {p ? `Stanje ${vrijeme(p.generirano)}. Samo zbrojevi; uključeni i tvoji testni računi.` : " "}
           </p>
+          <div className="flex gap-2">
+          <a href="/admin/tv" className="chip mono flex h-11 items-center border border-[color:var(--a-line)] px-4 text-[11px] text-[color:var(--a-mute)] lg:hidden">
+            [ TV ]
+          </a>
           <form action={odjava}>
             <button type="submit" className="chip mono h-11 border border-[color:var(--a-line)] px-4 text-[11px] text-[color:var(--a-mute)]">
               [ ODJAVA ]
             </button>
           </form>
+          </div>
         </div>
       </header>
 
@@ -124,41 +174,72 @@ export default async function AdminPage({ searchParams }) {
 
       <nav
         aria-label="Odjeljci"
-        className="sticky z-20 -mx-4 -mb-6 flex flex-col gap-2 border-b border-[color:var(--a-line)] bg-[color:var(--a-bg)] px-4 py-2.5"
+        className="sticky z-20 -mx-4 -mb-6 flex flex-col gap-2 border-b border-[color:var(--a-line)] bg-[color:var(--a-bg)] px-4 py-2.5 lg:hidden"
         style={{ top: "env(safe-area-inset-top, 0px)" }}
       >
-        <div className="flex items-center">
+        <div className="flex items-center gap-2">
+          <div className="flex flex-1 items-center">
           {[7, 30, 90].map((n) => (
             <a
               key={n}
               href={`?d=${n}&m=${mjera}`}
               aria-current={n === dana ? "page" : undefined}
-              className="chip mono -ml-px flex h-10 items-center border border-[color:var(--a-line)] px-3.5 text-[11px] text-[color:var(--a-mute)] first:ml-0"
+              className="chip mono -ml-px flex h-10 flex-1 items-center justify-center border border-[color:var(--a-line)] px-3.5 text-[11px] text-[color:var(--a-mute)] first:ml-0 lg:flex-none"
             >
               {n}D
             </a>
           ))}
-          <span className="lbl ml-3">vs {dana}D prije</span>
+          </div>
+          <TraziGumb />
         </div>
         <Izbornik odjeljci={ODJELJCI} />
       </nav>
 
-      {p ? (
-        <>
-          <Pregled p={p} mjera={mjera} />
-          <Rast p={p} />
-          <Angazman p={p} />
-          <Igre p={p} />
-          <Push p={p} />
-          <Kafici p={p} />
-          <Sustav p={p} />
-          <Baza b={bz.podaci} greska={bz.greska} />
-        </>
-      ) : (
-        <Upozorenje>{pr.greska}</Upozorenje>
-      )}
-      <AppStore asc={asc} s={s} />
+      <div className="flex flex-col gap-12 lg:grid lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-10">
+        <aside className="hidden lg:block" aria-label="Izbornik">
+          <div className="sticky top-6 flex flex-col gap-3">
+            <TraziGumb className="w-full justify-between" />
+            <a href="/admin/tv" className="chip mono flex h-10 items-center justify-between border border-[color:var(--a-line)] px-3 text-[11px] text-[color:var(--a-mute)]">
+              <span>[ TV NAČIN ]</span>
+              <span aria-hidden="true">▶</span>
+            </a>
+            <div className="flex items-center">
+          {[7, 30, 90].map((n) => (
+            <a
+              key={n}
+              href={`?d=${n}&m=${mjera}`}
+              aria-current={n === dana ? "page" : undefined}
+              className="chip mono -ml-px flex h-10 flex-1 items-center justify-center border border-[color:var(--a-line)] px-3.5 text-[11px] text-[color:var(--a-mute)] first:ml-0 lg:flex-none"
+            >
+              {n}D
+            </a>
+          ))}
+            </div>
+            <span className="lbl">vs {dana}D prije</span>
+            <Izbornik odjeljci={ODJELJCI} vertikalno />
+          </div>
+        </aside>
+
+        <div className="flex min-w-0 flex-col gap-14">
+          {p ? (
+            <>
+              <Pregled p={p} mjera={mjera} niz={nz.podaci} />
+              <Rast p={p} />
+              <Angazman p={p} />
+              <Igre p={p} />
+              <Push p={p} />
+              <Kafici p={p} />
+              <Sustav p={p} />
+              <Baza b={bz.podaci} greska={bz.greska} />
+            </>
+          ) : (
+            <Upozorenje>{pr.greska}</Upozorenje>
+          )}
+          <AppStore asc={asc} s={s} />
+        </div>
+      </div>
       <Savjet />
+      <Trazilica stavke={indeks({ p, bz, asc })} />
     </main>
   );
 }
@@ -169,8 +250,8 @@ function AppStore({ asc, s }) {
   const v = asc?.verzija, b = asc?.build, t = asc?.testeri, r = asc?.recenzije;
   const pn = asc?.prednarudzbe, pz = asc?.preuzimanja;
   return (
-    <section id="app-store" className="flex scroll-mt-32 flex-col gap-3">
-      <Naslov pod="Izlazak 1. 12. 2026." broj={String(ODJELJCI.length).padStart(2, "0")}>
+    <section id="app-store" className="flex scroll-mt-36 flex-col gap-3 lg:scroll-mt-6" style={{ "--odj": odjeljak("app-store").boja }}>
+      <Naslov pod="Izlazak 1. 12. 2026." broj={odjeljak("app-store").rb} znak={odjeljak("app-store").znak}>
         App Store.
       </Naslov>
       {!ascReady() && <Upozorenje>Appleov ključ nije spojen (ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8_B64).</Upozorenje>}

@@ -2,7 +2,7 @@
 
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { KOLACIC, TRAJANJE_S, adminUkljucen, noviKolacic, oznaciUspjeh, otisak, pokusaj, tocnaLozinka } from "@/lib/admin";
+import { KOLACIC, TRAJANJE_S, adminUkljucen, jedanDan, jesamLiAdmin, noviKolacic, oznaciUspjeh, otisak, pokusaj, tocnaLozinka } from "@/lib/admin";
 
 export async function prijava(_prije, formData) {
   if (!adminUkljucen()) redirect("/");
@@ -33,4 +33,15 @@ export async function prijava(_prije, formData) {
 export async function odjava() {
   (await cookies()).delete({ name: KOLACIC, path: "/admin" });
   redirect("/admin");
+}
+
+// Ladica dana: samo za prijavljenog admina, samo datum u obliku GGGG-MM-DD (ništa drugo ne ide u bazu).
+export async function detaljiDana(dan) {
+  if (!(await jesamLiAdmin())) return { greska: "Prijava je istekla." };
+  if (typeof dan !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(dan)) return { greska: "Neispravan datum." };
+  try {
+    return { podaci: await jedanDan(dan) };
+  } catch {
+    return { greska: "Dan se nije učitao." };
+  }
 }

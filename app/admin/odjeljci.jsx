@@ -2,18 +2,30 @@
 // Skupina manja od 3 osobe dolazi iz baze kao null i ovdje piše „< 3“.
 import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, broj, datum, posto } from "./ui";
 import { mb } from "@/lib/upozorenja";
+import { Tablica } from "./tablica";
+import { Vrijeme } from "./vrijeme";
 
+export { IGRE, PUSH };
+
+// Tri prigušene boje po skupini (Petar: „nemoj previše boja"), Codexova paleta; zelena/crvena/žuta ostaju za stanje.
+export const GRUPE = { korisnici: "#7DD3FC", aktivnost: "#C4B5FD", tehnika: "#A7B4C6" };
+// [id, ime, ASCII znak, skupina]
 export const ODJELJCI = [
-  ["pregled", "Pregled"],
-  ["rast", "Rast"],
-  ["angazman", "Angažman"],
-  ["igre", "Igre"],
-  ["push", "Push"],
-  ["kafici", "Kafići"],
-  ["sustav", "Sustav"],
-  ["baza", "Baza"],
-  ["app-store", "App Store"],
+  ["pregled", "Pregled", "[=]", "korisnici"],
+  ["rast", "Rast", "/^", "korisnici"],
+  ["angazman", "Angažman", "><", "korisnici"],
+  ["igre", "Igre", "[+]", "aktivnost"],
+  ["push", "Push", ">>", "aktivnost"],
+  ["kafici", "Kafići", "[_]", "aktivnost"],
+  ["sustav", "Sustav", "</>", "tehnika"],
+  ["baza", "Baza", "|||", "tehnika"],
+  ["app-store", "App Store", "[A]", "tehnika"],
 ];
+export const odjeljak = (id) => {
+  const k = ODJELJCI.findIndex(([x]) => x === id);
+  const [, ime, znak, grupa] = ODJELJCI[k] ?? [];
+  return { rb: String(k + 1).padStart(2, "0"), ime, znak, boja: GRUPE[grupa] };
+};
 
 const IGRE = {
   sankerov_lakat: "Šankerov lakat",
@@ -67,10 +79,10 @@ function Promjena({ sad, prije, obrnuto }) {
 }
 
 function Odjeljak({ id, naslov, pod, children }) {
-  const rb = String(ODJELJCI.findIndex(([x]) => x === id) + 1).padStart(2, "0");
+  const o = odjeljak(id);
   return (
-    <section id={id} className="flex scroll-mt-32 flex-col gap-3">
-      <Naslov pod={pod} broj={rb}>
+    <section id={id} className="flex scroll-mt-36 flex-col gap-3 lg:scroll-mt-6" style={{ "--odj": o.boja }}>
+      <Naslov pod={pod} broj={o.rb} znak={o.znak}>
         {naslov}
       </Naslov>
       {children}
@@ -78,36 +90,7 @@ function Odjeljak({ id, naslov, pod, children }) {
   );
 }
 
-function Tablica({ stupci, redovi }) {
-  return (
-    <div className="overflow-x-auto">
-      <table className="mono w-full text-[11px] normal-case tabular-nums tracking-[0.03em]">
-        <thead>
-          <tr className="lbl text-left">
-            {stupci.map((s, i) => (
-              <th key={s} className={`border-b border-[color:var(--a-fg)] py-1.5 pr-3 font-normal ${i ? "text-right" : ""}`}>
-                {s}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {redovi.map((r) => (
-            <tr key={r[0]} className="row border-b border-[color:var(--a-line)]">
-              {r.map((v, i) => (
-                <td key={i} className={`py-2 pr-3 ${i ? "text-right" : ""}`}>
-                  {v}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-export function Pregled({ p, mjera }) {
+export function Pregled({ p, mjera, niz }) {
   const k = p.kpi ?? {};
   const kpi = [
     ["aktivni", "Aktivnih ljudi"],
@@ -124,14 +107,20 @@ export function Pregled({ p, mjera }) {
     ["runde", "Runde"],
     ["partije", "Partije"],
     ["reakcije", "Reakcije"],
+    ["komentari", "Komentari"],
+    ["pajdastva", "Pajdaštva"],
     ["novi", "Novi"],
   ];
-  const m = MJERE.find(([key]) => key === mjera) ?? MJERE[0];
   const radnje = Object.entries(p.aktivni_po_radnji ?? {})
     .map(([key, v]) => ({ k: RADNJE[key] ?? key, v }))
     .sort((a, b) => b.v - a.v);
+  // Niz 2n dana: prva polovica = prethodno razdoblje (duh), druga = sada.
+  const svi = niz ?? p.dnevno ?? [];
+  const sad = svi.slice(-p.dana);
+  const prije = svi.length >= 2 * p.dana ? svi.slice(0, p.dana) : [];
+  const trend = (key) => (key === "dau" ? sad.map((d) => d.aktivni) : sad.map((d) => d[key] ?? 0));
   return (
-    <Odjeljak id="pregled" naslov="Pregled." pod={`Zadnjih ${p.dana} dana prema ${p.dana} dana prije. Danas ${broj(p.ukupno?.aktivni_danas)} aktivnih, vani sad ${broj(p.ukupno?.vani_sad)}.`}>
+    <Odjeljak id="pregled" naslov="Pregled." pod={`Zadnjih ${p.dana} dana prema ${p.dana} dana prije.`}>
       <Plocice>
         {kpi.map(([key, ime], i) => (
           <Plocica
@@ -139,83 +128,98 @@ export function Pregled({ p, mjera }) {
             i={i}
             oznaka={ime}
             vrijednost={key === "dau" ? zarez(k[key]?.sad ?? "—") : broj(k[key]?.sad)}
+            trend={key === "aktivni" ? null : trend(key)}
             ispod={<Promjena sad={k[key]?.sad} prije={k[key]?.prije} />}
           />
         ))}
       </Plocice>
-      <Kartica naslov={`${m[1]} po danu`} pod="Aktivan = otvorio app, objavio rundu, igrao, reagirao ili komentirao.">
-        <div className="mb-3 flex flex-wrap">
-          {MJERE.map(([key, ime]) => (
-            <a
-              key={key}
-              href={`?d=${p.dana}&m=${key}#pregled`}
-              aria-current={key === m[0] ? "true" : undefined}
-              className="chip mono -ml-px flex h-9 items-center border border-[color:var(--a-line)] px-3 text-[11px] text-[color:var(--a-mute)] first:ml-0"
-            >
-              {ime}
-            </a>
-          ))}
+      <div className="grid gap-3 xl:grid-cols-12">
+        <div className="min-w-0 xl:col-span-8">
+          <Kartica id="graf-po-danu" naslov="Kroz vrijeme" pod="Puna linija = sad, isprekidana = isto razdoblje prije. Prijeđi mišem ili dodirni; klik otvara dan.">
+            <Vrijeme sad={sad} prije={prije} mjere={MJERE} pocetna={mjera} igre={IGRE} push={PUSH} />
+          </Kartica>
         </div>
-        <Stupci redovi={p.dnevno ?? []} polje={m[0]} oznaka={m[1]} />
-      </Kartica>
-      <Kartica naslov="Što ljudi rade" pod={`Koliko je različitih ljudi barem jednom to napravilo u ${p.dana} dana.`}>
-        <Trake redovi={radnje} />
-      </Kartica>
+        <div className="min-w-0 xl:col-span-4">
+          <Kartica id="sto-rade" naslov="Što ljudi rade" pod={`Koliko je različitih ljudi barem jednom to napravilo u ${p.dana} dana.`}>
+            <Trake redovi={radnje} />
+          </Kartica>
+        </div>
+      </div>
     </Odjeljak>
+  );
+}
+
+// Pravi lijevak: ista skupina ljudi kroz korake, gubitak između svakog koraka (Codex 11. 11.).
+function Lijevak({ koraci }) {
+  const max = Math.max(1, ...koraci.map(([, n]) => n ?? 0));
+  return (
+    <ol className="flex flex-col">
+      {koraci.map(([ime, n], i) => {
+        const prethodni = i ? koraci[i - 1][1] : null;
+        const gubitak = prethodni ? Math.round((1 - (n ?? 0) / prethodni) * 100) : null;
+        return (
+          <li key={ime} className="flex flex-col">
+            {gubitak != null && (
+              <span className={`mono py-1 pl-2 text-[10.5px] ${gubitak >= 50 ? "down" : gubitak > 0 ? "warn" : "up"}`}>
+                {gubitak > 0 ? `↓ −${gubitak} %` : "↓ bez gubitka"}
+              </span>
+            )}
+            <div
+              tabIndex={0}
+              data-tip={`${ime}: ${broj(n)}${prethodni ? ` · ${Math.round(((n ?? 0) / prethodni) * 100)} % od prethodnog koraka` : ""}`}
+              className="row flex items-center gap-3 border border-[color:var(--a-line)] px-3 py-2 outline-none focus-visible:border-[color:var(--a-fg)]"
+            >
+              <span className="mono w-36 shrink-0 truncate text-[11.5px] normal-case">{ime}</span>
+              <span className="flex min-w-0 flex-1 items-center gap-2">
+                <span className={`bar ${i ? "dim" : ""}`} style={{ width: `${Math.max(2, ((n ?? 0) / max) * 80)}%`, "--i": i }} />
+                <span className="num text-[1.3rem]">{broj(n)}</span>
+              </span>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
 export function Rast({ p }) {
   const l = p.lijevak ?? {};
-  const koraci = [
-    ["posjet", "Posjet laktarenje.com"],
-    ["lista", "Upis na listu"],
-    ["registracija", "Registracija u appu"],
-    ["prva_runda", "Prva runda"],
-    ["prvi_pajdas", "Prvi pajdaš"],
-  ];
+  const web = Object.fromEntries((p.web ?? []).map((w) => [w.korak, w.broj]));
   const v = p.viralnost ?? {};
   const pc = (a, b) => (a == null || !b ? "—" : `${Math.round((a / b) * 100)} %`);
   return (
-    <Odjeljak id="rast" naslov="Rast." pod="Kako ljudi dolaze i ostaju.">
-      <Kartica naslov="Lijevak" pod={`Zadnjih ${p.dana} dana. Prva runda i prvi pajdaš: od novih profila, bilo kad.`}>
-        <ul className="flex flex-col">
-          {koraci.map(([key, ime], i) => {
-            const vr = l[key] ?? 0;
-            const max = Math.max(1, l.posjet ?? 0, l.registracija ?? 0);
-            return (
-              <li key={key} className="row grid grid-cols-[minmax(0,9.5rem)_1fr] items-center gap-3 border-b border-[color:var(--a-line)] py-1.5 last:border-0">
-                <span className="mono truncate text-[11px] normal-case tracking-[0.03em]">{ime}</span>
-                <span className="flex min-w-0 items-center gap-2">
-                  <span className={`bar ${i ? "dim" : ""}`} style={{ width: `${Math.max(2, (vr / max) * 62)}%`, "--i": i }} />
-                  <span className="mono shrink-0 text-[11px] tabular-nums">
-                    {broj(vr)}
-                    {i >= 3 ? <span className="text-[color:var(--a-mute)]"> · {pc(vr, l.registracija)} novih</span> : null}
-                  </span>
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      </Kartica>
-      <Kartica naslov="Vraćaju li se" pod="Po tjednu registracije: koliko ih je bilo aktivno dan poslije, u drugom tjednu i oko 30. dana. Prazno = još nije prošlo dovoljno dana.">
-        <Tablica
-          stupci={["Tjedan od", "Novi", "Dan 1", "Tjedan 2", "Dan 30"]}
-          redovi={(p.kohorte ?? []).map((c) => c.malo ? [datum(c.tjedan), "< 3", "skriveno", "—", "—"] : [
-            datum(c.tjedan),
-            broj(c.novi),
-            c.d1 == null ? "—" : `${pc(c.d1, c.novi)} (${c.d1})`,
-            c.d7 == null ? "—" : `${pc(c.d7, c.novi)} (${c.d7})`,
-            c.d30 == null ? "—" : `${pc(c.d30, c.novi)} (${c.d30})`,
-          ])}
-        />
-      </Kartica>
-      <Plocice>
-        <Plocica oznaka="Pozivni linkovi" vrijednost={broj(v.linkovi)} ispod={`u ${p.dana} dana`} />
-        <Plocica oznaka="Iskorišteni" vrijednost={broj(v.iskoristeni)} ispod="ljudi ušlo preko linka" />
-        <Plocica oznaka="Pajdaša, medijan" vrijednost={v.pajdasi_medijan == null ? "—" : zarez(v.pajdasi_medijan)} ispod="po profilu" />
-        <Plocica oznaka="Gornjih 10 %" vrijednost={v.pajdasi_p90 == null ? "—" : `${zarez(Math.round(v.pajdasi_p90))}+`} ispod="pajdaša" />
-      </Plocice>
+    <Odjeljak id="rast" naslov="Rast." pod={`Kako ljudi dolaze i ostaju. Zadnjih ${p.dana} dana.`}>
+      <div className="grid gap-3 xl:grid-cols-2">
+        <Kartica id="lijevak" naslov="Lijevak · laktarenje.com" pod="Posjeti stranice do potvrđenog upisa na listu čekanja.">
+          <Lijevak koraci={[["Posjet", web.posjet ?? 0], ["Počeo obrazac", web.obrazac_start ?? 0], ["Poslao obrazac", web.form_ok ?? 0], ["Potvrdio e-mail", web.potvrda ?? 0]]} />
+        </Kartica>
+        <Kartica id="lijevak-app" naslov="Lijevak · aplikacija" pod="Novi profili iz ovog razdoblja: koliko ih je objavilo prvu rundu i dobilo prvog pajdaša.">
+          <Lijevak koraci={[["Registracija", l.registracija ?? 0], ["Prva runda", l.prva_runda ?? 0], ["Prvi pajdaš", l.prvi_pajdas ?? 0]]} />
+        </Kartica>
+      </div>
+      <div className="grid gap-3 xl:grid-cols-12">
+        <div className="min-w-0 xl:col-span-7">
+          <Kartica id="kohorte" naslov="Vraćaju li se" pod="Po tjednu registracije: aktivni dan poslije, u drugom tjednu, oko 30. dana. Plavije = više se vratilo. „—“ = još nije prošlo dovoljno dana.">
+            <Tablica
+              naziv="kohorte"
+              stupci={["Tjedan od", "Novi", "Dan 1", "Tjedan 2", "Dan 30"]}
+              redovi={(p.kohorte ?? []).map((c) =>
+                c.malo
+                  ? [datum(c.tjedan), "< 3", "skriveno", "—", "—"]
+                  : [datum(c.tjedan), broj(c.novi), ...[c.d1, c.d7, c.d30].map((d) => (d == null ? "—" : { t: `${pc(d, c.novi)} (${d})`, v: d / c.novi, h: d / c.novi }))]
+              )}
+            />
+          </Kartica>
+        </div>
+        <div className="min-w-0 xl:col-span-5">
+          <Plocice stupaca={2}>
+            <Plocica oznaka="Pozivni linkovi" vrijednost={broj(v.linkovi)} ispod={`u ${p.dana} dana`} />
+            <Plocica oznaka="Iskorišteni" vrijednost={broj(v.iskoristeni)} ispod="ljudi ušlo preko linka" />
+            <Plocica oznaka="Pajdaša, medijan" vrijednost={v.pajdasi_medijan == null ? "—" : zarez(v.pajdasi_medijan)} ispod="po profilu" />
+            <Plocica oznaka="Gornjih 10 %" vrijednost={v.pajdasi_p90 == null ? "—" : `${zarez(Math.round(v.pajdasi_p90))}+`} ispod="pajdaša" />
+          </Plocice>
+        </div>
+      </div>
     </Odjeljak>
   );
 }
@@ -275,20 +279,20 @@ export function Angazman({ p }) {
   const kvartovi = (p.seg_kvart_runde ?? []).map((x) => ({ k: x.kvart.replace("Ostali kvartovi", "Ostali"), v: x.runde, n: x.ljudi == null ? null : `${x.ljudi} ljudi` }));
   return (
     <Odjeljak id="angazman" naslov="Angažman." pod={`Zadnjih ${p.dana} dana.`}>
-      <Kartica naslov="Kad je LAKAT živ" pod="Runde i partije po danu u tjednu i satu (Zagreb). Tamnije = više.">
+      <Kartica id="toplina" naslov="Kad je LAKAT živ" pod="Runde i partije po danu u tjednu i satu (Zagreb). Tamnije = više.">
         <Toplina celije={p.sati} />
       </Kartica>
-      <div className="grid gap-4 md:grid-cols-2">
-        <Kartica naslov="Značajke" pod={`Od ${broj(z.runde)} rundi i ostalo u razdoblju.`}>
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <Kartica id="znacajke" naslov="Značajke" pod={`Od ${broj(z.runde)} rundi i ostalo u razdoblju.`}>
           <Trake redovi={znacajke} />
         </Kartica>
-        <Kartica naslov="Što se pije" pod={ukPica ? `${broj(ukPica)} upisanih pića.` : "Nema upisanih pića u razdoblju."}>
+        <Kartica id="pica" naslov="Što se pije" pod={ukPica ? `${broj(ukPica)} upisanih pića.` : "Nema upisanih pića u razdoblju."}>
           <Trake redovi={pica.map((x) => ({ ...x, n: posto(x.v, ukPica) }))} />
         </Kartica>
+        <Kartica id="kvartovi" naslov="Runde po kvartu" pod="Kvartovi s manje od 3 osobe zbrojeni su zajedno, da se nitko ne prepozna.">
+          {kvartovi.length ? <Trake redovi={kvartovi} /> : <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Nema rundi s kvartom u razdoblju.</p>}
+        </Kartica>
       </div>
-      <Kartica naslov="Runde po kvartu" pod="Kvartovi s manje od 3 osobe zbrojeni su zajedno, da se nitko ne prepozna.">
-        {kvartovi.length ? <Trake redovi={kvartovi} /> : <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Nema rundi s kvartom u razdoblju.</p>}
-      </Kartica>
     </Odjeljak>
   );
 }
@@ -299,8 +303,8 @@ export function Igre({ p }) {
     .map((g) => [IGRE[g.igra], broj(g.partije), broj(g.prije), malo(g.igraca)]);
   return (
     <Odjeljak id="igre" naslov="Igre." pod={`Partije u zadnjih ${p.dana} dana i u ${p.dana} dana prije.`}>
-      <Kartica naslov="Po igri">
-        <Tablica stupci={["Igra", "Partije", "Prije", "Igrača"]} redovi={redovi} />
+      <Kartica id="igre-tablica" naslov="Po igri">
+        <Tablica naziv="igre" stupci={["Igra", "Partije", "Prije", "Igrača"]} redovi={redovi} />
       </Kartica>
     </Odjeljak>
   );
@@ -321,10 +325,10 @@ export function Push({ p }) {
   return (
     <Odjeljak id="push" naslov="Push." pod={`${od}Otvoreno ${posto(otv, uk)} od ${broj(uk)} poslanih.`}>
       <div className="grid gap-4 md:grid-cols-[2fr_1fr]">
-        <Kartica naslov="Po vrsti">
-          <Tablica stupci={["Vrsta", "Poslano", "Otvoreno", "Stopa"]} redovi={vrste.map((r) => [r.ime, broj(r.poslano), broj(r.otvoreno), posto(r.otvoreno, r.poslano)])} />
+        <Kartica id="push-tablica" naslov="Po vrsti">
+          <Tablica naziv="push" stupci={["Vrsta", "Poslano", "Otvoreno", "Stopa"]} redovi={vrste.map((r) => [r.ime, broj(r.poslano), broj(r.otvoreno), posto(r.otvoreno, r.poslano)])} />
         </Kartica>
-        <Kartica naslov="Kako ulaze u app">
+        <Kartica id="ulazi" naslov="Kako ulaze u app">
           {ulazi.length ? <Trake redovi={ulazi} /> : <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Još nema brojki.</p>}
         </Kartica>
       </div>
@@ -336,8 +340,8 @@ export function Kafici({ p }) {
   const redovi = (p.kafici ?? []).map((x) => [`${x.kafic}${x.partner ? " ★" : ""}`, broj(x.runde), malo(x.gostiju)]);
   return (
     <Odjeljak id="kafici" naslov="Kafići." pod={`Runde u kafićima, zadnjih ${p.dana} dana. ★ = partner.`}>
-      <Kartica naslov="Po kafiću" pod="Bez imena gostiju. Kafići s manje od 3 gosta zbrojeni su u „ostali“ ili izostavljeni.">
-        {redovi.length ? <Tablica stupci={["Kafić", "Runde", "Gostiju"]} redovi={redovi} /> : <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Nema rundi u kafićima u razdoblju.</p>}
+      <Kartica id="kafici-tablica" naslov="Po kafiću" pod="Bez imena gostiju. Kafići s manje od 3 gosta zbrojeni su u „ostali“ ili izostavljeni.">
+        {redovi.length ? <Tablica naziv="kafici" stupci={["Kafić", "Runde", "Gostiju"]} redovi={redovi} /> : <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Nema rundi u kafićima u razdoblju.</p>}
       </Kartica>
     </Odjeljak>
   );
@@ -361,7 +365,7 @@ export function Sustav({ p }) {
         <Plocica oznaka="Apple opozivi" vrijednost={broj(z.apple_opozivi_cekaju)} ton={z.apple_opozivi_cekaju ? "warn" : undefined} ispod="čekaju ponovni pokušaj" />
       </Plocice>
       <div className="grid gap-4 md:grid-cols-2">
-        <Kartica naslov="Bodovi" pod={`Zarađeno ${broj(b.zaradeno)}, potrošeno ${broj(b.potroseno)}, zadataka ${broj(b.zadaci)}.`}>
+        <Kartica id="bodovi" naslov="Bodovi" pod={`Zarađeno ${broj(b.zaradeno)}, potrošeno ${broj(b.potroseno)}, zadataka ${broj(b.zadaci)}.`}>
           {(b.kupnje ?? []).length ? (
             <Trake redovi={b.kupnje.map((x) => ({ k: x.artikl, v: x.broj }))} />
           ) : (
@@ -433,14 +437,15 @@ export function Baza({ b, greska }) {
         <Plocica i={3} oznaka="Cache" vrijednost={`${String(b.cache_pct ?? "—").replace(".", ",")} %`} mala ton={Number(b.cache_pct) >= 99 ? "up" : "warn"} ispod={`najdulji upit ${b.najduzi_upit_s} s`} />
       </Plocice>
       <div className="grid gap-3 md:grid-cols-2">
-        <Kartica naslov="Najveće tablice" pod="Veličina s indeksima; mrtvi redovi čekaju čišćenje (vacuum).">
+        <Kartica id="tablice-baze" naslov="Najveće tablice" pod="Veličina s indeksima; mrtvi redovi čekaju čišćenje (vacuum).">
           <Tablica
+            naziv="tablice-baze"
             stupci={["Tablica", "Veličina", "Redaka", "Mrtvih"]}
             redovi={(b.tablice ?? []).map((t) => [t.tablica, mb(t.b), broj(t.redaka), broj(t.mrtvih)])}
           />
         </Kartica>
-        <Kartica naslov="Pohrana po mjestu" pod="dokazi = fotke rundi, avatars = profilne.">
-          <Tablica stupci={["Mjesto", "Veličina", "Datoteka"]} redovi={(b.pohrana ?? []).map((x) => [x.bucket, mb(Number(x.b)), broj(x.datoteka)])} />
+        <Kartica id="pohrana" naslov="Pohrana po mjestu" pod="dokazi = fotke rundi, avatars = profilne.">
+          <Tablica naziv="pohrana" stupci={["Mjesto", "Veličina", "Datoteka"]} redovi={(b.pohrana ?? []).map((x) => [x.bucket, mb(Number(x.b)), broj(x.datoteka)])} />
         </Kartica>
       </div>
     </Odjeljak>
