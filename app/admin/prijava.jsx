@@ -6,7 +6,7 @@ import { prijava } from "./actions";
 export function Prijava() {
   const [stanje, posalji, salje] = useActionState(prijava, null);
   return (
-    <form action={posalji} className="boot mt-8 flex w-full flex-col gap-3" style={{ "--i": 2 }}>
+    <form action={posalji} className="mt-8 flex w-full flex-col gap-3">
       <label htmlFor="lozinka" className="lbl">
         {">"} Šifra
       </label>
@@ -16,7 +16,9 @@ export function Prijava() {
         type="password"
         autoComplete="current-password"
         required
-        autoFocus
+        autoCapitalize="none"
+        autoCorrect="off"
+        spellCheck={false}
         className="h-12 border border-[color:var(--a-line)] bg-[color:var(--a-panel)] px-4 font-[family-name:var(--a-mono)] text-[16px] tracking-[0.2em] text-[color:var(--a-fg)] outline-none focus:border-[color:var(--a-live)]"
       />
       <button

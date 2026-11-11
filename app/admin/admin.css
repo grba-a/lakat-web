@@ -31,6 +31,8 @@
   background: repeating-linear-gradient(0deg, transparent 0 2px, rgb(0 0 0 / 0.18) 2px 3px);
   mix-blend-mode: multiply;
 }
+/* Na prijavi bez CRT sloja: iOS zna blokirati tap u polje ispod elementa s mix-blend-mode (Petar 11. 11.). */
+.adm:has(#lozinka)::before { display: none; }
 
 /* Mikro-tipografija: sve oznake i podaci u monospaceu, velikim slovima, razmaknuto. */
 .adm .mono { font-family: var(--a-mono); letter-spacing: 0.08em; text-transform: uppercase; }
