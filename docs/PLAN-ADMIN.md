@@ -51,3 +51,9 @@ toplinska tablica povratka, TV način `/admin/tv`. Odbijeno od Codexa: gašenje 
 
 ## Parkirano (Možda)
 Pitanja Petru 11. 11.: 2FA „Da“? Rečenica o zbirnoj statistici u Privatnost? Tražilica korisnika i odlomak o adminu u Privatnosti. Rečenica o zbirnoj statistici: pitanje Petru.
+
+## Odluke 11. 11. noć (artifact 2azobNDkVa4jmKKsynBz26)
+Da: Instagram statistika (instagram_manage_insights + novi token, Petar dodaje), oglasi samo čitanje od 1. 12. (ads_read),
+ratna soba za 1. 12., tjedni sažetak s Instagramom, špijunski efekti u kodu, Higgsfield pozadina „kao Matrix“ (skice prvo).
+Ne: Facebook stranica, zvukovi (umjesto toga vizualni skočni prozor HITNO / NOVOST). Odmah osvježavanje pri povratku na karticu: Da.
+Uzbune mailom + pushom na grbaa: Da (čeka Vercel tokene; push ruta u lakat-pwa na Petrovu riječ).

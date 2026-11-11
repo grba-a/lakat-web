@@ -46,6 +46,18 @@ export function Osvjezi({ sekundi = 60 }) {
   const router = useRouter();
   const [ostalo, setOstalo] = useState(sekundi);
   useEffect(() => {
+    // Povratak na karticu (ili otključan mobitel): osvježi odmah, ne čekaj do 60 s.
+    const vidljivo = () => {
+      if (!document.hidden) {
+        router.refresh();
+        setOstalo(sekundi);
+      }
+    };
+    document.addEventListener("visibilitychange", vidljivo);
+    return () => document.removeEventListener("visibilitychange", vidljivo);
+  }, [router, sekundi]);
+
+  useEffect(() => {
     const id = setInterval(() => {
       if (document.hidden) return;
       setOstalo((s) => {
