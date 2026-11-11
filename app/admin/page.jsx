@@ -76,7 +76,6 @@ export default async function AdminPage() {
         <h1 className="font-display text-5xl uppercase leading-none">
           <Punct>Admin.</Punct>
         </h1>
-        <p className="mt-3 text-muted">Samo za Petra.</p>
         <Prijava />
       </main>
     );
