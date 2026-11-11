@@ -6,9 +6,9 @@ Deploy na laktarenje.com samo na Petrovu riječ (push radi on ili kaže „guraj
 
 ## Stanje
 - LIVE `22e7a24`: /admin pod šifrom, aplikacija + App Store osnovno.
-- Lokalno `11e9668` (čeka push): brojač pokušaja u bazi (`supabase-admin2.sql` već na PROD), bez teksta na prijavi.
+- Lokalno, čeka Petrov push: `11e9668` brojač pokušaja (`supabase-admin2.sql` na PROD) + `857f056` faza 1 (`supabase-admin3.sql` na PROD).
 
-## Faza 1 — izgled i segmenti (sve „Da")
+## Faza 1 — izgled i segmenti (sve „Da") — GOTOVO lokalno 11. 11. (`857f056`)
 Odjeljci s izbornikom (Pregled, Rast, Angažman, Igre, Push, Akvizicija, App Store), razdoblje 7/30/90 + usporedba,
 segmenti (platforma, izvor, grad, kvart; < 3 osobe = „manje od 3"), kohorte D1/D7/D30, lijevak (posjet → lista →
 registracija → prva runda → prvi pajdaš), dan × sat. Iz baze: runde po kafiću, što se pije, viralnost (pozivni linkovi,
@@ -27,4 +27,4 @@ mail o izlasku (samo ta svrha).
 ## Faza 4 — tjedni sažetak mailom (ponedjeljak ujutro, samo Petru)
 
 ## Parkirano (Možda)
-Tražilica korisnika i odlomak o adminu u Privatnosti. Rečenica o zbirnoj statistici: pitanje Petru.
+Pitanja Petru 11. 11.: 2FA „Da“? Rečenica o zbirnoj statistici u Privatnost? Tražilica korisnika i odlomak o adminu u Privatnosti. Rečenica o zbirnoj statistici: pitanje Petru.
