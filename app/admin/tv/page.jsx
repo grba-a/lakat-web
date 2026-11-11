@@ -225,7 +225,7 @@ export default async function TvPage() {
                 {uzbune.slice(0, 4).map((x) => {
                   const boja = x.razina === "kriticno" ? "var(--a-alarm)" : x.razina === "vazno" ? "var(--a-warn)" : "var(--a-mute)";
                   return (
-                    <li key={x.kljuc} className="rounded-[var(--r-sm)] border-l-2 bg-black/30 px-3 py-2" style={{ borderColor: boja }}>
+                    <li key={x.kljuc} className="rounded-[var(--r-sm)] border bg-black/30 px-3 py-2" style={{ borderColor: `color-mix(in srgb, ${boja} 35%, transparent)` }}>
                       <p className="mono text-[clamp(10px,0.75vw,15px)] font-bold" style={{ color: boja }}>
                         !! {x.razina === "kriticno" ? "KRITIČNO" : x.razina === "vazno" ? "VAŽNO" : "INFO"}
                       </p>
