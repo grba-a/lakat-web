@@ -79,7 +79,10 @@ export default async function TvPage() {
         <p className="num up text-[clamp(3rem,10vw,10rem)]">Sve radi.</p>
       ) : (
         uzbune.map((u) => (
-          <div key={u.kljuc} className="border-l-4 pl-[2vw]" style={{ borderColor: u.razina === "kriticno" ? "var(--a-alarm)" : u.razina === "vazno" ? "var(--a-warn)" : "var(--a-mute)" }}>
+          <div key={u.kljuc} className="flex flex-col gap-[0.5vh]">
+            <p className="mono text-[clamp(12px,1.3vw,20px)] font-bold" style={{ color: u.razina === "kriticno" ? "var(--a-alarm)" : u.razina === "vazno" ? "var(--a-warn)" : "var(--a-mute)" }}>
+              !! {u.razina === "kriticno" ? "KRITIČNO" : u.razina === "vazno" ? "VAŽNO" : "INFO"}
+            </p>
             <p className="num text-[clamp(2rem,5vw,5rem)]">{u.naslov}</p>
             <p className="mono text-[clamp(12px,1.3vw,20px)] normal-case text-[color:var(--a-mute)]">{u.detalj}</p>
           </div>
