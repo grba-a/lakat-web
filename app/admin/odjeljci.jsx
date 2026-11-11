@@ -28,15 +28,16 @@ export const odjeljak = (id) => {
   return { rb: String(k + 1).padStart(2, "0"), ime, znak, boja: GRUPE[grupa] };
 };
 
+// Ključevi su iz baze (igra_partije.igra) i ne mijenjaju se; imena su ista kao u iOS appu (Igre.swift).
 const IGRE = {
-  sankerov_lakat: "Šankerov lakat",
+  sankerov_lakat: "Šanker",
   konobar: "Konobar",
   galeb: "Galeb",
-  zlatni_tocionik: "Zlatni točionik",
+  zlatni_tocionik: "Točionik",
   kula: "Kula",
-  burek_u_cetiri: "Burek u četiri",
+  burek_u_cetiri: "Pekara",
   gajba: "Gajba",
-  do_krigle: "Do krigle",
+  do_krigle: "Spoji",
 };
 const PUSH = {
   runda: "Runda",
