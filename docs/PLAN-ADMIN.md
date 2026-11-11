@@ -5,8 +5,7 @@ dogovoreno; tajne samo u `~/.config/lakat/` i Vercel Sensitive; SQL samo service
 Deploy na laktarenje.com samo na Petrovu riječ (push radi on ili kaže „guraj").
 
 ## Stanje
-- LIVE `22e7a24`: /admin pod šifrom, aplikacija + App Store osnovno.
-- Lokalno, čeka Petrov push: `11e9668` brojač pokušaja (`supabase-admin2.sql` na PROD) + `857f056` faza 1 (`supabase-admin3.sql` na PROD).
+- LIVE `1a9cb51` (11. 11. ~21 h): brojač pokušaja, faza 1, brutalistički Tactical Telemetry izgled s pokretom i auto-osvježavanjem.
 
 ## Faza 1 — izgled i segmenti (sve „Da") — GOTOVO lokalno 11. 11. (`857f056`)
 Odjeljci s izbornikom (Pregled, Rast, Angažman, Igre, Push, Akvizicija, App Store), razdoblje 7/30/90 + usporedba,
