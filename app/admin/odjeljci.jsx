@@ -201,7 +201,7 @@ export function Rast({ p }) {
       <Kartica naslov="Vraćaju li se" pod="Po tjednu registracije: koliko ih je bilo aktivno dan poslije, u drugom tjednu i oko 30. dana. Prazno = još nije prošlo dovoljno dana.">
         <Tablica
           stupci={["Tjedan od", "Novi", "Dan 1", "Tjedan 2", "Dan 30"]}
-          redovi={(p.kohorte ?? []).map((c) => [
+          redovi={(p.kohorte ?? []).map((c) => c.malo ? [datum(c.tjedan), "< 3", "skriveno", "—", "—"] : [
             datum(c.tjedan),
             broj(c.novi),
             c.d1 == null ? "—" : `${pc(c.d1, c.novi)} (${c.d1})`,
@@ -241,7 +241,6 @@ function Toplina({ celije }) {
               return (
                 <span
                   key={h}
-                  tabIndex={0}
                   data-tip={`${dan} ${String(h).padStart(2, "0")}–${String(h + 1).padStart(2, "0")} h: ${n} ${n === 1 ? "runda/partija" : "rundi i partija"}`}
                   className="cell h-[14px]"
                   style={{ background: n ? "var(--a-live)" : "var(--a-line)", opacity: n ? 0.2 + 0.8 * (n / max) : 0.5, "--i": i * 24 + h }}

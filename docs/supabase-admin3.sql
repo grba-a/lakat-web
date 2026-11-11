@@ -85,7 +85,9 @@ begin
       select izvor, count(distinct user_id) u from _akt where dan >= v_od group by izvor) x),
 
     -- Kohorte: tjedni registracija (zadnjih 8), vratili se dan poslije, u 2. tjednu, oko 30. dana
-    'kohorte', (select coalesce(jsonb_agg(jsonb_build_object('tjedan', tjedan, 'novi', novi, 'd1', d1, 'd7', d7, 'd30', d30) order by tjedan desc), '[]'::jsonb) from (
+    -- Tjedan s manje od 3 nova profila ne pokazuje povratak (Codex 11. 11.: inače se čita jedna osoba).
+    'kohorte', (select coalesce(jsonb_agg(jsonb_build_object('tjedan', tjedan, 'novi', novi, 'malo', novi < 3,
+        'd1', case when novi >= 3 then d1 end, 'd7', case when novi >= 3 then d7 end, 'd30', case when novi >= 3 then d30 end) order by tjedan desc), '[]'::jsonb) from (
       select date_trunc('week', (p.created_at at time zone 'Europe/Zagreb'))::date tjedan,
         count(*) novi,
         case when max((p.created_at at time zone 'Europe/Zagreb')::date) + 1 <= v_danas then
@@ -123,7 +125,9 @@ begin
           from x join kvartovi k on k.id = x.kvart_id where x.ljudi >= 3
         union all
         select jsonb_build_object('grad', null, 'kvart', 'Ostali kvartovi (' || count(*) || ')', 'runde', sum(x.runde), 'ljudi', null)
-          from x where x.ljudi < 3 having count(*) > 0) y),
+          from x where x.ljudi < 3
+          having count(*) > 0 and (select count(distinct c.user_id) from checkins c where c.cancelled_at is null and c.checked_in_at >= t_od
+                                   and c.kvart_id in (select kvart_id from x where ljudi < 3)) >= 3) y),
     'seg_ulaz', (select coalesce(jsonb_agg(jsonb_build_object('kljuc', kljuc, 'broj', b)), '[]'::jsonb) from (
       select kljuc, sum(broj) b from puls_brojac where kljuc like 'ulaz.%' and dan >= v_od group by kljuc) u),
     'seg_lista', jsonb_build_object(
@@ -147,10 +151,18 @@ begin
       select korak, sum(broj) b from web_koraci where dan >= v_od group by korak) w),
 
     -- Kafići (imena tvrtki, ne osoba); manje od 3 gosta = null
-    'kafici', (select coalesce(jsonb_agg(jsonb_build_object('kafic', k.name, 'partner', k.partner, 'runde', x.r,
-        'gostiju', case when x.u < 3 then null else x.u end) order by x.r desc), '[]'::jsonb) from (
-      select kafic_id, count(*) r, count(distinct user_id) u from checkins
-      where cancelled_at is null and kafic_id is not null and checked_in_at >= t_od group by kafic_id) x join kafici k on k.id = x.kafic_id),
+    -- Kafići s manje od 3 gosta spajaju se u „ostali" (samo ako i zajedno imaju barem 3 različita gosta).
+    'kafici', (with x as (
+        select kafic_id, count(*) r, count(distinct user_id) u from checkins
+        where cancelled_at is null and kafic_id is not null and checked_in_at >= t_od group by kafic_id)
+      select coalesce(jsonb_agg(r order by (r->>'runde')::int desc), '[]'::jsonb) from (
+        select jsonb_build_object('kafic', k.name, 'partner', k.partner, 'runde', x.r, 'gostiju', x.u) r
+          from x join kafici k on k.id = x.kafic_id where x.u >= 3
+        union all
+        select jsonb_build_object('kafic', 'Ostali kafići (' || count(*) || ')', 'partner', false, 'runde', sum(x.r), 'gostiju', null)
+          from x where x.u < 3
+          having count(*) > 0 and (select count(distinct c.user_id) from checkins c where c.cancelled_at is null and c.checked_in_at >= t_od
+                                   and c.kafic_id in (select kafic_id from x where u < 3)) >= 3) y),
 
     'pica', (select coalesce(jsonb_agg(jsonb_build_object('vrsta', drink_type, 'broj', c) order by c desc), '[]'::jsonb) from (
       select drink_type, count(*) c from drinks where logged_at >= t_od group by 1) d),
