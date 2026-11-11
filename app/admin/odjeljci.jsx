@@ -1,6 +1,7 @@
 // Odjeljci /admin ploče, faza 1 (Petar 11. 11.). Podaci: admin_pregled(dana), samo zbrojevi.
 // Skupina manja od 3 osobe dolazi iz baze kao null i ovdje piše „< 3“.
 import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, broj, datum, posto } from "./ui";
+import { mb } from "@/lib/upozorenja";
 
 export const ODJELJCI = [
   ["pregled", "Pregled"],
@@ -10,6 +11,7 @@ export const ODJELJCI = [
   ["push", "Push"],
   ["kafici", "Kafići"],
   ["sustav", "Sustav"],
+  ["baza", "Baza"],
   ["app-store", "App Store"],
 ];
 
@@ -369,6 +371,77 @@ export function Sustav({ p }) {
         </Kartica>
         <Kartica naslov="Potrošnja i limiti" pod="Supabase i Vercel limiti dolaze u fazi 2.">
           <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">—</p>
+        </Kartica>
+      </div>
+    </Odjeljak>
+  );
+}
+
+// Traka uzbuna na vrhu: zeleno „sve radi" ili popis po razini (kritično crveno, važno žuto).
+export function Uzbune({ popis }) {
+  if (!popis.length) {
+    return (
+      <div className="boot flex items-center gap-3 border border-[color:var(--a-live)] px-3.5 py-3" style={{ "--i": 3 }}>
+        <span className="live-dot" aria-hidden="true" />
+        <span className="mono text-[11px] up">[ SVE RADI ] 0 uzbuna</span>
+      </div>
+    );
+  }
+  const boja = { kriticno: "var(--a-alarm)", vazno: "var(--a-warn)", info: "var(--a-mute)" };
+  const oznaka = { kriticno: "KRITIČNO", vazno: "VAŽNO", info: "INFO" };
+  return (
+    <ul className="boot flex flex-col" style={{ "--i": 3 }} aria-label="Uzbune">
+      {popis.map((x, i) => (
+        <li
+          key={x.kljuc}
+          className="-mt-px flex flex-wrap items-baseline gap-x-3 gap-y-0.5 border px-3.5 py-2.5"
+          style={{ borderColor: boja[x.razina], "--i": i }}
+        >
+          <span className="mono text-[10.5px] font-bold" style={{ color: boja[x.razina] }}>
+            !! {oznaka[x.razina]}
+          </span>
+          <span className="mono text-[12px] normal-case tracking-[0.02em]">{x.naslov}</span>
+          <span className="mono text-[10.5px] normal-case tracking-[0.02em] text-[color:var(--a-mute)]">{x.detalj}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function Baza({ b, greska }) {
+  if (!b) {
+    return (
+      <Odjeljak id="baza" naslov="Baza." pod="Supabase PROD.">
+        <p className="mono text-[11px] down">{greska}</p>
+      </Odjeljak>
+    );
+  }
+  const foto = (b.pohrana ?? []).reduce((s, x) => s + Number(x.b || 0), 0);
+  const udio = b.spajanja_max ? b.spajanja / b.spajanja_max : 0;
+  return (
+    <Odjeljak id="baza" naslov="Baza." pod="Supabase PROD, uživo. Sadržaj se ne čita, samo veličine i brojke.">
+      <Plocice>
+        <Plocica i={0} oznaka="Veličina baze" vrijednost={mb(b.baza_b)} mala ispod={`${broj(b.auth_racuni)} računa`} />
+        <Plocica i={1} oznaka="Fotke i datoteke" vrijednost={mb(foto)} mala ispod={`+${mb(b.pohrana_7d_b)} u 7 dana`} />
+        <Plocica
+          i={2}
+          oznaka="Spajanja"
+          vrijednost={`${b.spajanja}/${b.spajanja_max}`}
+          mala
+          ton={udio >= 0.8 ? "down" : udio >= 0.6 ? "warn" : undefined}
+          ispod={`aktivnih upita: ${broj(b.spajanja_aktivna)}`}
+        />
+        <Plocica i={3} oznaka="Cache" vrijednost={`${String(b.cache_pct ?? "—").replace(".", ",")} %`} mala ton={Number(b.cache_pct) >= 99 ? "up" : "warn"} ispod={`najdulji upit ${b.najduzi_upit_s} s`} />
+      </Plocice>
+      <div className="grid gap-3 md:grid-cols-2">
+        <Kartica naslov="Najveće tablice" pod="Veličina s indeksima; mrtvi redovi čekaju čišćenje (vacuum).">
+          <Tablica
+            stupci={["Tablica", "Veličina", "Redaka", "Mrtvih"]}
+            redovi={(b.tablice ?? []).map((t) => [t.tablica, mb(t.b), broj(t.redaka), broj(t.mrtvih)])}
+          />
+        </Kartica>
+        <Kartica naslov="Pohrana po mjestu" pod="dokazi = fotke rundi, avatars = profilne.">
+          <Tablica stupci={["Mjesto", "Veličina", "Datoteka"]} redovi={(b.pohrana ?? []).map((x) => [x.bucket, mb(Number(x.b)), broj(x.datoteka)])} />
         </Kartica>
       </div>
     </Odjeljak>

@@ -1,13 +1,14 @@
 // LAKAT /admin (Petar 11. 11.): App Store stanje i brojke aplikacije na jednom mjestu, pod šifrom.
 // SAMO ZBROJEVI: nijedno ime, slika ni lokacija (pravilo 3.0 vrijedi i za admina).
 import { notFound } from "next/navigation";
-import { adminUkljucen, jesamLiAdmin, pregled } from "@/lib/admin";
+import { adminUkljucen, baza as bazaZdravlje, jesamLiAdmin, pregled } from "@/lib/admin";
+import { provjere } from "@/lib/upozorenja";
 import { ascPregled, ascReady } from "@/lib/asc";
 import { odjava } from "./actions";
 import { Prijava } from "./prijava";
 import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, Upozorenje, broj, datum, vrijeme } from "./ui";
 import { Izbornik, Osvjezi, Savjet } from "./zivo";
-import { Angazman, Igre, Kafici, ODJELJCI, Pregled, Push, Rast, Sustav } from "./odjeljci";
+import { Angazman, Baza, Igre, Kafici, ODJELJCI, Pregled, Push, Rast, Sustav, Uzbune } from "./odjeljci";
 
 export const metadata = {
   title: "Admin · LAKAT",
@@ -49,7 +50,8 @@ export default async function AdminPage({ searchParams }) {
   const sp = (await searchParams) ?? {};
   const dana = [7, 30, 90].includes(Number(sp.d)) ? Number(sp.d) : 30;
   const mjera = typeof sp.m === "string" ? sp.m : "aktivni";
-  const [pr, asc] = await Promise.all([pregled(dana), ascPregled()]);
+  const [pr, asc, bz] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje()]);
+  const uzbune = provjere({ pregled: pr, asc, baza: bz });
   const p = pr.podaci;
   // App Store odjeljak čita web korake i listu čekanja u starom obliku.
   const s = p
@@ -92,6 +94,8 @@ export default async function AdminPage({ searchParams }) {
           </form>
         </div>
       </header>
+
+      <Uzbune popis={uzbune} />
 
       {p && (
         <div className="ticker -mx-4 boot" aria-hidden="true" style={{ "--i": 3 }}>
@@ -148,6 +152,7 @@ export default async function AdminPage({ searchParams }) {
           <Push p={p} />
           <Kafici p={p} />
           <Sustav p={p} />
+          <Baza b={bz.podaci} greska={bz.greska} />
         </>
       ) : (
         <Upozorenje>{pr.greska}</Upozorenje>

@@ -92,7 +92,8 @@
 }
 .adm .chip { transition: transform 140ms var(--a-ease-out), color 120ms ease, border-color 120ms ease; }
 .adm .chip:active { transform: scale(0.97); }
-.adm .chip[aria-current] { background: var(--a-live); border-color: var(--a-live); color: #05140a; }
+/* !important u sloju pobjeđuje Tailwind klasu boje teksta na aktivnom gumbu. */
+  .adm .chip[aria-current] { background: var(--a-live) !important; border-color: var(--a-live) !important; color: #05140a !important; font-weight: 700; }
 
 @media (prefers-reduced-motion: no-preference) {
   .adm .cursor { animation: adm-blink 1.1s steps(1) infinite; }
