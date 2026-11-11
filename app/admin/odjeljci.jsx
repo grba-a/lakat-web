@@ -336,7 +336,7 @@ export function Kafici({ p }) {
   const redovi = (p.kafici ?? []).map((x) => [`${x.kafic}${x.partner ? " ★" : ""}`, broj(x.runde), malo(x.gostiju)]);
   return (
     <Odjeljak id="kafici" naslov="Kafići." pod={`Runde u kafićima, zadnjih ${p.dana} dana. ★ = partner.`}>
-      <Kartica naslov="Po kafiću" pod="Bez imena gostiju; manje od 3 gosta piše „< 3“.">
+      <Kartica naslov="Po kafiću" pod="Bez imena gostiju. Kafići s manje od 3 gosta zbrojeni su u „ostali“ ili izostavljeni.">
         {redovi.length ? <Tablica stupci={["Kafić", "Runde", "Gostiju"]} redovi={redovi} /> : <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Nema rundi u kafićima u razdoblju.</p>}
       </Kartica>
     </Odjeljak>
