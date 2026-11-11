@@ -154,6 +154,9 @@ export default async function AdminPage({ searchParams }) {
           <a href="/admin/tv" className="chip mono flex h-11 items-center border border-[color:var(--a-line)] px-4 text-[11px] text-[color:var(--a-mute)] lg:hidden">
             [ TV ]
           </a>
+          <a href="/admin/izlazak" className="chip mono flex h-11 items-center border border-[color:var(--a-line)] px-4 text-[11px] text-[color:var(--a-mute)] lg:hidden">
+            [ 1. 12. ]
+          </a>
           <form action={odjava}>
             <button type="submit" className="chip mono h-11 border border-[color:var(--a-line)] px-4 text-[11px] text-[color:var(--a-mute)]">
               [ ODJAVA ]
@@ -220,6 +223,10 @@ export default async function AdminPage({ searchParams }) {
             <a href="/admin/tv" className="chip mono flex h-10 items-center justify-between border border-[color:var(--a-line)] px-3 text-[11px] text-[color:var(--a-mute)]">
               <span>[ TV NAČIN ]</span>
               <span aria-hidden="true">▶</span>
+            </a>
+            <a href="/admin/izlazak" className="chip mono flex h-10 items-center justify-between border border-[color:var(--a-line)] px-3 text-[11px] text-[color:var(--a-mute)]">
+              <span>[ RATNA SOBA 1. 12. ]</span>
+              <span aria-hidden="true">◉</span>
             </a>
             <div className="flex items-center">
           {[7, 30, 90].map((n) => (

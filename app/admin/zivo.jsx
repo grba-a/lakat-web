@@ -33,7 +33,11 @@ export function Broj({ v, className }) {
         id = setTimeout(mijesaj, 45);
       };
       mijesaj();
-      return () => clearTimeout(id);
+      return () => {
+        clearTimeout(id);
+        el.textContent = tekst;
+        el.classList.remove("dekod");
+      };
     }
     if (stari != null) return;
     if (!/^-?[\d.]+(,\d+)?$/.test(tekst)) return;
@@ -53,7 +57,11 @@ export function Broj({ v, className }) {
     };
     el.textContent = fmt.format(0);
     id = requestAnimationFrame(korak);
-    return () => cancelAnimationFrame(id);
+    // Čišćenje uvijek vraća konačni broj: u razvoju React pokreće efekt dvaput, inače bi ostala nula.
+    return () => {
+      cancelAnimationFrame(id);
+      el.textContent = tekst;
+    };
   }, [tekst]);
   return (
     <span ref={ref} className={className}>
@@ -417,5 +425,30 @@ export function Najave({ uzbune, brojke }) {
         </button>
       </div>
     </div>
+  );
+}
+
+// Odbrojavanje do lansiranja (ili vrijeme od lansiranja), otkucava svake sekunde.
+// Piše izravno u element (bez stanja), pa server i preglednik ne mogu imati različit tekst pri hidrataciji.
+export function Odbrojavanje({ cilj, className }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const dva = (n) => String(n).padStart(2, "0");
+    const tik = () => {
+      const el = ref.current;
+      if (!el) return;
+      const ms = cilj - Date.now();
+      const s = Math.floor(Math.abs(ms) / 1000);
+      const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60), sek = s % 60;
+      el.textContent = ms > 0 ? `${d ? `${d}d ` : ""}${dva(h)}:${dva(m)}:${dva(sek)}` : `LIVE +${d ? `${d}d ` : ""}${dva(h)}:${dva(m)}`;
+    };
+    tik();
+    const id = setInterval(tik, 1000);
+    return () => clearInterval(id);
+  }, [cilj]);
+  return (
+    <span ref={ref} className={className}>
+      —
+    </span>
   );
 }
