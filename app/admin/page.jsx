@@ -148,7 +148,7 @@ export default async function AdminPage({ searchParams }) {
         </div>
         <div className="boot flex flex-wrap items-end justify-between gap-3" style={{ "--i": 2 }}>
           <p className="mono max-w-[52ch] text-[11px] normal-case leading-relaxed tracking-[0.04em] text-[color:var(--a-mute)]">
-            {p ? `Stanje ${vrijeme(p.generirano)}. Samo zbrojevi; uključeni i tvoji testni računi.` : " "}
+            {p ? `Stanje ${vrijeme(p.generirano)}. Broji od 20. 10. (iOS app); stariji web sadržaj ostaje u bazi, ali se ne broji. Samo zbrojevi; uključeni i tvoji testni računi.` : " "}
           </p>
           <div className="flex gap-2">
           <a href="/admin/tv" className="chip mono flex h-11 items-center border border-[color:var(--a-line)] px-4 text-[11px] text-[color:var(--a-mute)] lg:hidden">
