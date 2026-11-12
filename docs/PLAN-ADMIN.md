@@ -57,3 +57,12 @@ Da: Instagram statistika (instagram_manage_insights + novi token, Petar dodaje),
 ratna soba za 1. 12., tjedni sažetak s Instagramom, špijunski efekti u kodu, Higgsfield pozadina „kao Matrix“ (skice prvo).
 Ne: Facebook stranica, zvukovi (umjesto toga vizualni skočni prozor HITNO / NOVOST). Odmah osvježavanje pri povratku na karticu: Da.
 Uzbune mailom + pushom na grbaa: Da (čeka Vercel tokene; push ruta u lakat-pwa na Petrovu riječ).
+
+## Stanje 12. 11. noć (lokalno, čeka push)
+- Gotovo: kartica Potrošnja i limiti (Supabase Pro 8 GB / 100 GB / 100k MAU, provjereno na supabase.com/pricing 12. 11.),
+  kartica Mailovi (Brevo aggregatedReport), faza 4 tjedni sažetak (`/admin/tjedni`, cron pon 06:00 UTC, pregled `?pregled=1`),
+  imena igara kao u appu, ploča broji od 20. 10. (SQL admin8 na PROD), kolačić u Privatnosti weba.
+- App Analytics: Sales ključ vidi 194 izvještaja (zahtjev 29f70416), ali 0 instanci 12. 11. — Apple ih još puni; ugraditi kad stignu
+  (Discovery r14, Downloads r3, Sessions r8, Install/Delete r6, Crashes r2).
+- Čeka Petra: `CRON_SECRET` + `ADMIN_MAIL` (Sensitive), push, 2 Vercel tokena (web analitika, Vercel limiti, faza U),
+  Supabase pristupni token (egress), 2FA Da/Ne, push lakat-pwa Privatnosti v2.
