@@ -349,6 +349,10 @@ function AppStore({ asc, s, mail, dana }) {
             <p className="mono text-[11px] text-[color:var(--a-mute)]">—</p>
           )}
           {s?.web_od && <p className="lbl mt-3">Koraci od {datum(s.web_od)}</p>}
+          <a href="/admin/lista" className="chip mono mt-3 flex h-11 items-center justify-between rounded-[var(--r-sm)] border border-[color:var(--a-line)] px-3.5 text-[11px] text-[color:var(--a-mute)]">
+            <span>[ POPIS I IZVOZ ]</span>
+            <span aria-hidden="true">→</span>
+          </a>
         </Kartica>
         <Kartica id="mailovi" naslov="Mailovi (Brevo)" pod={`Potvrde liste i ostali mailovi, zadnjih ${dana} dana. Samo zbrojevi.`}>
           {mail && !mail.greska ? (
