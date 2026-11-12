@@ -374,7 +374,7 @@ const velicina = (b) => {
   return n >= 1024 ** 3 ? `${(n / 1024 ** 3).toFixed(2).replace(".", ",")} GB` : `${Math.round(n / 1024 ** 2)} MB`;
 };
 
-export function Sustav({ p, baza: bz }) {
+export function Sustav({ p, baza: bz, prijave, dvaFaktora }) {
   const z = p.zdravlje ?? {};
   const m = p.moderacija ?? {};
   const b = p.bodovi ?? {};
@@ -397,6 +397,25 @@ export function Sustav({ p, baza: bz }) {
             <Trake redovi={b.kupnje.map((x) => ({ k: x.artikl, v: x.broj }))} />
           ) : (
             <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Nitko nije kupovao u dućanu u ovom razdoblju.</p>
+          )}
+        </Kartica>
+        <Kartica
+          id="prijave"
+          naslov="Prijave na ploču"
+          pod={`Zadnjih 20 pokušaja. ${dvaFaktora ? "2FA uključen." : "2FA još nije uključen."} Otisak je skraćeni HMAC IP-a, ne adresa.`}
+        >
+          {prijave?.length ? (
+            <ul className="mono flex flex-col text-[11px] normal-case tabular-nums">
+              {prijave.slice(0, 10).map((x, i) => (
+                <li key={i} className="grid grid-cols-[1fr_auto_auto] gap-3 border-b border-[color:var(--a-line)] py-1.5 last:border-0">
+                  <span>{new Date(x.at).toLocaleString("hr-HR", { timeZone: "Europe/Zagreb", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
+                  <span className="text-[color:var(--a-mute)]">{x.otisak}</span>
+                  <span style={{ color: x.uspjeh ? "var(--a-live)" : "var(--a-alarm)" }}>{x.uspjeh ? (x.dvafa ? "UŠAO · 2FA" : "UŠAO") : "ODBIJEN"}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">{prijave == null ? "Baza se ne javlja." : "Nema pokušaja."}</p>
           )}
         </Kartica>
         <Kartica id="limiti" naslov="Potrošnja i limiti" pod="Supabase Pro: koliko je potrošeno od uključenog u plan. Žuto od 50 %, crveno od 80 %.">

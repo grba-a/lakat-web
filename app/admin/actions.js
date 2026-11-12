@@ -2,7 +2,8 @@
 
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { KOLACIC, TRAJANJE_S, adminUkljucen, jedanDan, jesamLiAdmin, noviKolacic, oznaciUspjeh, otisak, pokusaj, tocnaLozinka } from "@/lib/admin";
+import { KOLACIC, TRAJANJE_S, adminUkljucen, jedanDan, jesamLiAdmin, noviKolacic, oznaciUspjeh, oznaciUspjeh2, otisak, pokusaj, tocnaLozinka } from "@/lib/admin";
+import { dvaFaktora, provjeriKod } from "@/lib/totp";
 
 export async function prijava(_prije, formData) {
   if (!adminUkljucen()) redirect("/");
@@ -14,12 +15,19 @@ export async function prijava(_prije, formData) {
     return { greska: "Previše pokušaja. Pričekaj 15 minuta." };
   }
   const unos = String(formData.get("lozinka") || "").slice(0, 200);
-  if (!tocnaLozinka(unos)) {
+  // 2FA (faza 3): kad je ADMIN_TOTP postavljen, uz šifru treba i kod iz Passwords. Ne otkriva se što je krivo.
+  const dva = dvaFaktora();
+  const korak = dva ? provjeriKod(String(formData.get("kod") || "").slice(0, 12)) : null;
+  if (!tocnaLozinka(unos) || (dva && korak == null)) {
     // Kriva šifra čeka sekundu i pol: pogađanje postaje sporo, a Petru to ne smeta.
     await new Promise((r) => setTimeout(r, 1500));
-    return { greska: "Kriva šifra." };
+    return { greska: dva ? "Kriva šifra ili kod." : "Kriva šifra." };
   }
-  await oznaciUspjeh(id);
+  if (dva) {
+    if (!(await oznaciUspjeh2(id, korak))) return { greska: "Taj kod je već iskorišten. Pričekaj sljedeći." };
+  } else {
+    await oznaciUspjeh(id);
+  }
   (await cookies()).set(KOLACIC, noviKolacic(), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
