@@ -349,7 +349,32 @@ export function Kafici({ p }) {
   );
 }
 
-export function Sustav({ p }) {
+// Supabase Pro: uključeno u plan (supabase.com/pricing, provjereno 12. 11. 2026.). Iznad toga se plaća dodatno.
+const SUPABASE_PRO = { baza: 8 * 1024 ** 3, pohrana: 100 * 1024 ** 3, mau: 100000 };
+
+function Limit({ oznaka, sad, max, ispis, napomena }) {
+  const udio = max ? Math.min(1, (Number(sad) || 0) / max) : 0;
+  const ton = udio >= 0.8 ? "var(--a-alarm)" : udio >= 0.5 ? "var(--a-warn)" : "var(--a-live)";
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-baseline justify-between gap-3">
+        <span className="lbl">{oznaka}</span>
+        <span className="mono text-[11px] normal-case">{ispis}</span>
+      </div>
+      <span className="relative block h-2 overflow-hidden rounded-full bg-[color:var(--a-line)]" aria-hidden="true">
+        <span className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${Math.max(1, udio * 100)}%`, background: ton }} />
+      </span>
+      {napomena && <span className="mono text-[10.5px] normal-case text-[color:var(--a-mute)]">{napomena}</span>}
+    </div>
+  );
+}
+
+const velicina = (b) => {
+  const n = Number(b) || 0;
+  return n >= 1024 ** 3 ? `${(n / 1024 ** 3).toFixed(2).replace(".", ",")} GB` : `${Math.round(n / 1024 ** 2)} MB`;
+};
+
+export function Sustav({ p, baza: bz }) {
   const z = p.zdravlje ?? {};
   const m = p.moderacija ?? {};
   const b = p.bodovi ?? {};
@@ -374,8 +399,26 @@ export function Sustav({ p }) {
             <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Nitko nije kupovao u dućanu u ovom razdoblju.</p>
           )}
         </Kartica>
-        <Kartica naslov="Potrošnja i limiti" pod="Supabase i Vercel limiti dolaze u fazi 2.">
-          <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">—</p>
+        <Kartica id="limiti" naslov="Potrošnja i limiti" pod="Supabase Pro: koliko je potrošeno od uključenog u plan. Žuto od 50 %, crveno od 80 %.">
+          {bz ? (
+            <div className="flex flex-col gap-4">
+              <Limit oznaka="Baza" sad={bz.baza_b} max={SUPABASE_PRO.baza} ispis={`${velicina(bz.baza_b)} od 8 GB`} />
+              {(() => {
+                const foto = (bz.pohrana ?? []).reduce((s, x) => s + Number(x.b || 0), 0);
+                return <Limit oznaka="Fotke i datoteke" sad={foto} max={SUPABASE_PRO.pohrana} ispis={`${velicina(foto)} od 100 GB`} />;
+              })()}
+              <Limit
+                oznaka="Aktivni korisnici"
+                sad={p.kpi?.aktivni?.sad}
+                max={SUPABASE_PRO.mau}
+                ispis={`${broj(p.kpi?.aktivni?.sad)} od 100.000`}
+                napomena={`Aktivni u zadnjih ${p.dana} dana, približno Supabaseovom MAU.`}
+              />
+              <p className="mono text-[10.5px] normal-case text-[color:var(--a-mute)]">Promet (egress, 250 GB) traži Supabase pristupni token, a Vercel limiti Vercel token. Oba od tebe.</p>
+            </div>
+          ) : (
+            <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Baza se ne javlja.</p>
+          )}
         </Kartica>
       </div>
     </Odjeljak>

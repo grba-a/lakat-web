@@ -253,7 +253,7 @@ export default async function AdminPage({ searchParams }) {
               <Push p={p} />
               <Kafici p={p} />
               <Instagram ig={ig} niz={igNiz} />
-              <Sustav p={p} />
+              <Sustav p={p} baza={bz.podaci} />
               <Baza b={bz.podaci} greska={bz.greska} />
             </>
           ) : (
