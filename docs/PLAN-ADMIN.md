@@ -66,3 +66,16 @@ Uzbune mailom + pushom na grbaa: Da (čeka Vercel tokene; push ruta u lakat-pwa 
   (Discovery r14, Downloads r3, Sessions r8, Install/Delete r6, Crashes r2).
 - Čeka Petra: `CRON_SECRET` + `ADMIN_MAIL` (Sensitive), push, 2 Vercel tokena (web analitika, Vercel limiti, faza U),
   Supabase pristupni token (egress), 2FA Da/Ne, push lakat-pwa Privatnosti v2.
+
+## Noćni plan 12. 11. (Petar: „radi cijelu noć, završi dashboard, ne staj")
+Pravila: sve lokalno + commit; push i deploy tek ujutro na njegovu riječ (jedna naredba). Codex za svaki veći komad,
+WebKit 390/1440. Push na grbaa (lakat-pwa) NE noćas — uzbune samo mailom.
+1. [ ] Faza 3b `/admin/lista` — tražilica, filteri, CSV samo potvrđenih (SQL admin10 na PROD ✓). Mailovi samo na toj stranici, nikad na TV-u.
+2. [ ] Faza U — `admin_uzbune` + `admin_isporuke`, tajna u Supabase Vault (`uzbune_tajna`, generira je baza, nitko je ne vidi),
+       pg_cron svakih 5 min → pg_net POST laktarenje.com/admin/provjera s tajnom → ruta provjerava tajnu preko RPC-a,
+       računa provjere(), otvara/zatvara incidente, mail Brevo na ADMIN_MAIL samo pri promjeni, tihi sati 00–08 (osim kritično).
+       Cron se pali tek nakon deploya (ruta mora postojati) — ujutro.
+3. [ ] Karta kvartova (TV zid + ratna soba): kvartovi tablica (grad, ime) + poligoni iz OSM (ODbL, potpis), SVG bez podloge,
+       jučerašnji dan, prag 10 ljudi. Prikaz tek kad je Privatnost v2 (lakat-pwa 39148cc) uživo.
+4. [ ] App Analytics (instance još 0 u 01:30) — provjeriti ujutro; tokeni → faza 2 (Vercel posjete/limiti, Supabase egress).
+5. [ ] Krugovi poboljšanja po odjeljcima (brzina, čitljivost, mobitel, a11y), Codex audit na kraju.
