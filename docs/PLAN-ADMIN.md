@@ -79,3 +79,12 @@ WebKit 390/1440. Push na grbaa (lakat-pwa) NE noćas — uzbune samo mailom.
        jučerašnji dan, prag 10 ljudi. Prikaz tek kad je Privatnost v2 (lakat-pwa 39148cc) uživo.
 4. [ ] App Analytics (instance još 0 u 01:30) — provjeriti ujutro; tokeni → faza 2 (Vercel posjete/limiti, Supabase egress).
 5. [ ] Krugovi poboljšanja po odjeljcima (brzina, čitljivost, mobitel, a11y), Codex audit na kraju.
+
+## 12. 11. ~02:10 — Petar spava; noćni zadatak PROMIJENJEN (njegove riječi)
+Glavno: **istraživanje cijelu noć (Claude + Codex)** → artifact s **što više kvalitetnih, provjerenih pitanja i prijedloga
+(50 je minimum, može 200+), loše izbaciti**, s vizualima, kategorije: Aplikacija · Društvene mreže · Web · Apple · Ploča ·
+Higgsfield (samo ideje, ništa ne generirati) · Sistem i zarada · Brend · Znanje (skillovi koje trebam). Pinterest/Dribbble/
+Behance za dizajn, konkurencija, novosti. Da/Ne/Možda + komentar u db `odluke/`. Brief: scratchpad/istrazivanje/BRIEF.md.
+Pokrenuto: 6 istraživača (konkurencija, društvene mreže, Apple, ploča/web/automatizacija, zarada/zakon, dizajn+Higgsfield+skillovi)
++ Codex `--search` (izlaz scratchpad/istrazivanje/codex-ideje.md). Drugi val po potrebi: postojeće značajke appa, lokalno tržište.
+Usput: faza U ruta /admin/provjera (SQL admin11 na PROD ✓, cron SQL admin11-cron čeka deploy), sve lokalno.
