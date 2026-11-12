@@ -374,7 +374,7 @@ const velicina = (b) => {
   return n >= 1024 ** 3 ? `${(n / 1024 ** 3).toFixed(2).replace(".", ",")} GB` : `${Math.round(n / 1024 ** 2)} MB`;
 };
 
-export function Sustav({ p, baza: bz, prijave, dvaFaktora }) {
+export function Sustav({ p, baza: bz, prijave, dvaFaktora, incidenti }) {
   const z = p.zdravlje ?? {};
   const m = p.moderacija ?? {};
   const b = p.bodovi ?? {};
@@ -397,6 +397,29 @@ export function Sustav({ p, baza: bz, prijave, dvaFaktora }) {
             <Trake redovi={b.kupnje.map((x) => ({ k: x.artikl, v: x.broj }))} />
           ) : (
             <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">Nitko nije kupovao u dućanu u ovom razdoblju.</p>
+          )}
+        </Kartica>
+        <Kartica id="incidenti" naslov="Povijest uzbuna" pod="Provjera svakih 5 min, mail samo tebi. Tihi sati 00–08 osim kritičnog.">
+          {incidenti?.length ? (
+            <ul className="mono flex flex-col text-[11px] normal-case">
+              {incidenti.slice(0, 8).map((x) => (
+                <li key={x.kljuc + x.otvoreno} className="flex flex-col gap-0.5 border-b border-[color:var(--a-line)] py-1.5 last:border-0">
+                  <span>
+                    <b style={{ color: x.rijeseno ? "var(--a-mute)" : x.razina === "kriticno" ? "var(--a-alarm)" : x.razina === "vazno" ? "var(--a-warn)" : "var(--a-mute)" }}>
+                      {x.rijeseno ? "✓" : "!!"}
+                    </b>{" "}
+                    {x.naslov}
+                  </span>
+                  <span className="text-[10.5px] text-[color:var(--a-mute)]">
+                    od {new Date(x.otvoreno).toLocaleString("hr-HR", { timeZone: "Europe/Zagreb", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    {x.rijeseno ? ` do ${new Date(x.rijeseno).toLocaleString("hr-HR", { timeZone: "Europe/Zagreb", hour: "2-digit", minute: "2-digit" })}` : " · otvoreno"}
+                    {x.javljeno ? " · javljeno mailom" : ""}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">{incidenti == null ? "Baza se ne javlja." : "Još nema zapisanih uzbuna. Bilježe se kad cron krene."}</p>
           )}
         </Kartica>
         <Kartica

@@ -5,6 +5,7 @@ import { adminUkljucen, baza as bazaZdravlje, dnevno, igSnimka, jesamLiAdmin, pr
 import { instagram } from "@/lib/instagram";
 import { mailovi } from "@/lib/brevo-statistika";
 import { dvaFaktora } from "@/lib/totp";
+import { povijestUzbuna } from "@/lib/uzbune-isporuka";
 import { provjere } from "@/lib/upozorenja";
 import { ascPregled, ascReady } from "@/lib/asc";
 import { odjava } from "./actions";
@@ -95,7 +96,7 @@ export default async function AdminPage({ searchParams }) {
   // Današnji dan u Zagrebu (kao u SQL-u); niz 2n dana daje i duh prethodnog razdoblja.
   const danas = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Zagreb" }).format(new Date());
   const od2 = new Date(Date.parse(`${danas}T12:00:00Z`) - (2 * dana - 1) * 864e5).toISOString().slice(0, 10);
-  const [pr, asc, bz, nz, ig, mail, prijave] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas), instagram(), mailovi(dana), zadnjePrijave()]);
+  const [pr, asc, bz, nz, ig, mail, prijave, incidenti] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas), instagram(), mailovi(dana), zadnjePrijave(), povijestUzbuna()]);
   // Instagram ne daje povijest pratitelja: svako otvaranje upiše današnju snimku i vrati niz.
   const igNiz = ig?.profil ? await igSnimka(ig.profil.pratitelji, ig.profil.objave) : [];
   const uzbune = provjere({ pregled: pr, asc, baza: bz });
@@ -255,7 +256,7 @@ export default async function AdminPage({ searchParams }) {
               <Push p={p} />
               <Kafici p={p} />
               <Instagram ig={ig} niz={igNiz} />
-              <Sustav p={p} baza={bz.podaci} prijave={prijave} dvaFaktora={dvaFaktora()} />
+              <Sustav p={p} baza={bz.podaci} prijave={prijave} dvaFaktora={dvaFaktora()} incidenti={incidenti} />
               <Baza b={bz.podaci} greska={bz.greska} />
             </>
           ) : (
