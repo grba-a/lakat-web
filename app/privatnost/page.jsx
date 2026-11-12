@@ -216,6 +216,7 @@ export default function PrivatnostPage() {
         </p>
         <p>
           <b>Na ovoj stranici:</b> posjete brojimo preko Vercel Web Analyticsa, bez kolačića i bez praćenja po drugim stranicama.
+          Kad potvrdiš mail, postavimo kolačić lakat_upis na 30 dana, samo da ti možemo spremiti grad i kvart bez nove prijave.
           Postavke zvuka, tvoj rekord u igri i lov na Krigle pamti samo tvoj preglednik i ne šalju se nama.
         </p>
         <p>
