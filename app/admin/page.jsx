@@ -3,6 +3,7 @@
 import { notFound } from "next/navigation";
 import { adminUkljucen, baza as bazaZdravlje, dnevno, igSnimka, jesamLiAdmin, pregled } from "@/lib/admin";
 import { instagram } from "@/lib/instagram";
+import { mailovi } from "@/lib/brevo-statistika";
 import { provjere } from "@/lib/upozorenja";
 import { ascPregled, ascReady } from "@/lib/asc";
 import { odjava } from "./actions";
@@ -93,7 +94,7 @@ export default async function AdminPage({ searchParams }) {
   // Današnji dan u Zagrebu (kao u SQL-u); niz 2n dana daje i duh prethodnog razdoblja.
   const danas = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Zagreb" }).format(new Date());
   const od2 = new Date(Date.parse(`${danas}T12:00:00Z`) - (2 * dana - 1) * 864e5).toISOString().slice(0, 10);
-  const [pr, asc, bz, nz, ig] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas), instagram()]);
+  const [pr, asc, bz, nz, ig, mail] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas), instagram(), mailovi(dana)]);
   // Instagram ne daje povijest pratitelja: svako otvaranje upiše današnju snimku i vrati niz.
   const igNiz = ig?.profil ? await igSnimka(ig.profil.pratitelji, ig.profil.objave) : [];
   const uzbune = provjere({ pregled: pr, asc, baza: bz });
@@ -259,7 +260,7 @@ export default async function AdminPage({ searchParams }) {
           ) : (
             <Upozorenje>{pr.greska}</Upozorenje>
           )}
-          <AppStore asc={asc} s={s} />
+          <AppStore asc={asc} s={s} mail={mail} dana={dana} />
         </div>
       </div>
       <Savjet />
@@ -278,7 +279,7 @@ export default async function AdminPage({ searchParams }) {
   );
 }
 
-function AppStore({ asc, s }) {
+function AppStore({ asc, s, mail, dana }) {
   const web = Object.fromEntries((s?.web ?? []).map((w) => [w.korak, w.broj]));
   const lista = s?.lista;
   const v = asc?.verzija, b = asc?.build, t = asc?.testeri, r = asc?.recenzije;
@@ -347,6 +348,22 @@ function AppStore({ asc, s }) {
             <p className="mono text-[11px] text-[color:var(--a-mute)]">—</p>
           )}
           {s?.web_od && <p className="lbl mt-3">Koraci od {datum(s.web_od)}</p>}
+        </Kartica>
+        <Kartica id="mailovi" naslov="Mailovi (Brevo)" pod={`Potvrde liste i ostali mailovi, zadnjih ${dana} dana. Samo zbrojevi.`}>
+          {mail && !mail.greska ? (
+            <Trake
+              redovi={[
+                { k: "Poslano", v: mail.poslano },
+                { k: "Isporučeno", v: mail.isporuceno },
+                { k: "Otvoreno", v: mail.otvoreno },
+                { k: "Klik", v: mail.klikova },
+                { k: "Odbijeno", v: mail.odbijeno },
+                { k: "Spam", v: mail.spam },
+              ]}
+            />
+          ) : (
+            <p className="mono text-[11px] normal-case text-[color:var(--a-mute)]">{mail?.greska ?? "Brevo ključ nije spojen."}</p>
+          )}
         </Kartica>
         <Kartica naslov="Još ne vidim" pod="Apple je počeo skupljati 11. 11.">
           <ul className="flex flex-col gap-2">
