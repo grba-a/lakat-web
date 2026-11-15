@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["5FUD8NT6YC.com.grbaa.lakat"],
+        "components": [
+          { "/": "/f/*", "comment": "Pozivnica pajdaša (Core/Pozivnica.swift)" },
+          { "/": "/z/*", "comment": "Izazov iz igre (Features/Igre/IgreCilj.swift)" }
+        ]
+      }
+    ]
+  }
+}
