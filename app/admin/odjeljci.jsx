@@ -728,7 +728,7 @@ export function Gradovi({ g }) {
               <li key={r.grad} className="grid grid-cols-[minmax(0,7.5rem)_1fr] items-center gap-3 border-b border-[color:var(--a-line)] py-2 last:border-0">
                 <span className="mono truncate text-[12px] normal-case tracking-[0.03em]">{r.grad}</span>
                 <span className="flex min-w-0 flex-col gap-1">
-                  <span className="relative block h-2 overflow-hidden rounded-full bg-[color:var(--a-line)]" role="img" aria-label={`${r.grad}: ${n} od ${CILJ_GRADA}`}>
+                  <span className="relative block h-2 overflow-hidden rounded-full bg-[color:var(--a-line)]" role="img" aria-label={r.ljudi_30d != null ? `${r.grad}: ${n} od ${CILJ_GRADA}` : `${r.grad}: manje od 3 od ${CILJ_GRADA}`}>
                     <span className={`bar ${i ? "dim" : ""} absolute inset-y-0 left-0`} style={{ width: `${Math.max(1, (n / CILJ_GRADA) * 100)}%`, "--i": i }} />
                   </span>
                   <span className="mono text-[11px] normal-case tracking-[0.03em] text-[color:var(--a-mute)]">
