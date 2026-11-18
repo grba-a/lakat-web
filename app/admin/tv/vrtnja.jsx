@@ -26,6 +26,8 @@ export function TvOkvir({ sat, children, oznaka = "TV" }) {
   useEffect(() => {
     const tipka = (e) => {
       if (e.key.toLowerCase() !== "f" || e.metaKey || e.ctrlKey) return;
+      const t = e.target;
+      if (t instanceof HTMLElement && (t.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName))) return;
       if (document.fullscreenElement) document.exitFullscreen?.();
       else document.documentElement.requestFullscreen?.().catch(() => {});
     };

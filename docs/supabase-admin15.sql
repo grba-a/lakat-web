@@ -21,3 +21,6 @@ create index if not exists admin_plan_dan_idx on public.admin_plan (dan);
 alter table public.admin_plan enable row level security;
 revoke all on table public.admin_plan from public, anon, authenticated;
 grant select, insert, update, delete on table public.admin_plan to service_role;
+
+-- Codex 18. 11.: „Gotovo danas“ broji po trenutku završetka, ne po zadnjoj izmjeni.
+alter table public.admin_plan add column if not exists zavrseno timestamptz;

@@ -44,7 +44,7 @@ export default async function PlanPage() {
     otvoreno: otvoreno.length,
     tebe: otvoreno.filter((k) => (k.tko ?? "").includes("ti") || k.stanje === "spremno").length,
     kasni: raspored.filter((k) => k.kasni).length,
-    danas: svi.filter((k) => k.stanje === "gotovo" && (k.azurirano ?? "").slice(0, 10) === danas).length,
+    danas: svi.filter((k) => k.stanje === "gotovo" && k.zavrseno && new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Zagreb" }).format(new Date(k.zavrseno)) === danas).length,
   };
 
   return (

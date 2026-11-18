@@ -38,7 +38,10 @@ function Kartica({ k, otvori }) {
 function Ladica({ k, stupci, redovi, zatvori }) {
   const router = useRouter();
   const [nacrt, setNacrt] = useState(k);
-  const [tekst, setTekst] = useState(k.id ? k.biljeska ?? "" : "");
+  const [promijenjeno, setPromijenjeno] = useState({});
+  // Vlastita bilješka se uređuje kao naslov; na tuđoj kartici je to napomena (biljeska) za Claudea.
+  const [tekst, setTekst] = useState(k.id ? (k.moja ? k.naslov : k.biljeska ?? "") : "");
+  const maks = !k.id || k.moja ? 200 : 600;
   const [greska, setGreska] = useState("");
   const [radi, start] = useTransition();
   useEffect(() => {
@@ -46,15 +49,26 @@ function Ladica({ k, stupci, redovi, zatvori }) {
     document.addEventListener("keydown", esc);
     return () => document.removeEventListener("keydown", esc);
   }, [zatvori]);
-  const izbor = (polje, v) => setNacrt((n) => ({ ...n, [polje]: v }));
+  const izbor = (polje, v) => {
+    setNacrt((n) => ({ ...n, [polje]: v }));
+    setPromijenjeno((p) => ({ ...p, [polje]: true }));
+  };
   const spremi = () =>
     start(async () => {
       const dan = nacrt.stupac === "kasnije" ? null : nacrt.stupac;
-      const r = k.id
-        ? await spremiKarticu(k.id, { stanje: nacrt.stanje, red: nacrt.red, dan, biljeska: tekst })
-        : tekst.trim()
-          ? await dodajKarticu({ naslov: tekst, red: nacrt.red, dan, stanje: "todo" })
-          : { ok: true };
+      let r;
+      if (k.id) {
+        // Šalje se samo ono što je Petar stvarno promijenio: datum i stanje ostaju kakvi jesu (Codex 18. 11.).
+        const p = {};
+        if (promijenjeno.stanje) p.stanje = nacrt.stanje;
+        if (promijenjeno.red) p.red = nacrt.red;
+        if (promijenjeno.stupac) p.dan = dan;
+        if (k.moja) { if (tekst.trim() !== k.naslov) p.naslov = tekst; }
+        else if (tekst.trim() !== (k.biljeska ?? "")) p.biljeska = tekst;
+        r = Object.keys(p).length ? await spremiKarticu(k.id, p) : { ok: true };
+      } else {
+        r = tekst.trim() ? await dodajKarticu({ naslov: tekst, red: nacrt.red, dan, stanje: "todo" }) : { ok: true };
+      }
       if (r.greska) return setGreska(r.greska);
       router.refresh();
       zatvori();
@@ -73,7 +87,7 @@ function Ladica({ k, stupci, redovi, zatvori }) {
       <section role="dialog" aria-modal="true" aria-label={k.id ? k.naslov : "Nova bilješka"} className="fixed inset-x-0 bottom-0 z-50 mx-auto grid max-h-[86dvh] max-w-[640px] gap-3 overflow-y-auto rounded-t-[20px] border-t border-[color:var(--a-line)] bg-[#121413] p-4" style={{ paddingBottom: "max(18px, env(safe-area-inset-bottom))" }}>
         <h3 className="text-[18px] font-extrabold normal-case">{k.id ? (k.moja ? "Tvoja bilješka" : k.naslov) : "Nova bilješka"}</h3>
         <label className="sr-only" htmlFor="plan-tekst">{k.id && !k.moja ? "Napomena za Claudea" : "Tekst bilješke"}</label>
-        <textarea id="plan-tekst" value={tekst} onChange={(e) => setTekst(e.target.value)} placeholder={k.id && !k.moja ? "Napomena za Claudea…" : "Napiši bilješku…"} className="min-h-16 w-full rounded-[var(--r-md)] border border-[color:var(--a-line)] bg-[#0d0f0e] p-3 text-[15px] normal-case text-[color:var(--a-fg)]" />
+        <textarea id="plan-tekst" autoFocus maxLength={maks} value={tekst} onChange={(e) => setTekst(e.target.value)} placeholder={k.id && !k.moja ? "Napomena za Claudea…" : "Napiši bilješku…"} className="min-h-16 w-full rounded-[var(--r-md)] border border-[color:var(--a-line)] bg-[#0d0f0e] p-3 text-[15px] normal-case text-[color:var(--a-fg)]" />
         {k.id && (
           <>
             <p className="lbl">Stanje</p>
@@ -84,6 +98,7 @@ function Ladica({ k, stupci, redovi, zatvori }) {
         <div className="flex flex-wrap gap-2">{stupci.map((s) => <button key={s.id} type="button" className={gumb(nacrt.stupac === s.id)} onClick={() => izbor("stupac", s.id)}>{s.naslov} {s.pod !== "bez datuma" ? s.pod : ""}</button>)}</div>
         <p className="lbl">Područje</p>
         <div className="flex flex-wrap gap-2">{redovi.map(([r, ime]) => <button key={r} type="button" className={gumb(nacrt.red === r)} onClick={() => izbor("red", r)}>{ime}</button>)}</div>
+        <p className="mono text-right text-[11px] text-[color:var(--a-mute)]">{tekst.length} / {maks}</p>
         {greska && <p className="mono text-[12px] text-[color:var(--a-alarm)]">{greska}</p>}
         <div className="flex justify-between gap-2">
           {k.id && k.moja ? <button type="button" disabled={radi} onClick={obrisi} className="chip mono min-h-11 rounded-[var(--r-md)] border border-[color:var(--a-alarm)] px-4 text-[12px] text-[color:var(--a-alarm)]">Obriši</button> : <span />}
@@ -100,6 +115,7 @@ export function Ploca({ stupci, redovi, kartice, greska, brojke, lansiranje }) {
   const u = (red, stupac) => kartice.filter((k) => k.red === red && k.stupac === stupac).sort((a, b) => Number(!!b.kasni) - Number(!!a.kasni) || a.redoslijed - b.redoslijed);
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3 p-[clamp(10px,1.2vw,24px)]">
+      <div inert={otvorena ? true : undefined} className="flex min-h-0 flex-1 flex-col gap-3">
       <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[var(--r-lg)] border border-[color:var(--a-line)] bg-[color:var(--a-line)] md:grid-cols-5">
         {[["Otvoreno", brojke.otvoreno], ["Čeka tebe", brojke.tebe], ["Kasni", brojke.kasni], ["Gotovo danas", brojke.danas]].map(([o, v], i) => (
           <div key={o} className="flex flex-col gap-1 bg-[#0d0f0e] px-4 py-3">
@@ -129,7 +145,7 @@ export function Ploca({ stupci, redovi, kartice, greska, brojke, lansiranje }) {
               {stupci.map((s) => (
                 <div key={s.id} className={`grid content-start gap-2 border-l border-t border-[color:var(--a-line)] p-2 ${s.danas ? "bg-[rgb(74_222_128/0.035)]" : ""}`} style={{ minHeight: 96 }}>
                   {u(r, s.id).map((k) => <Kartica key={k.id} k={k} otvori={setOtvorena} />)}
-                  <button type="button" onClick={() => setOtvorena({ red: r, stupac: s.id, stanje: "todo", moja: true })} className="chip mono min-h-9 rounded-[var(--r-md)] border border-dashed border-[color:var(--a-line)] text-[11px] text-[color:var(--a-mute)] opacity-70 hover:opacity-100">
+                  <button type="button" onClick={() => setOtvorena({ red: r, stupac: s.id, stanje: "todo", moja: true })} className="chip mono min-h-11 rounded-[var(--r-md)] border border-dashed border-[color:var(--a-line)] text-[11px] text-[color:var(--a-mute)] opacity-70 hover:opacity-100">
                     + bilješka
                   </button>
                 </div>
@@ -138,7 +154,8 @@ export function Ploca({ stupci, redovi, kartice, greska, brojke, lansiranje }) {
           ))}
         </div>
       </div>
-      {otvorena && <Ladica k={otvorena} stupci={stupci} redovi={redovi} zatvori={() => setOtvorena(null)} />}
+      </div>
+      {otvorena && <Ladica key={otvorena.id ?? `nova-${otvorena.red}-${otvorena.stupac}`} k={otvorena} stupci={stupci} redovi={redovi} zatvori={() => setOtvorena(null)} />}
     </div>
   );
 }
