@@ -156,6 +156,9 @@ export default async function AdminPage({ searchParams }) {
             {p ? `Stanje ${vrijeme(p.generirano)}. Broji od 20. 10. (iOS app); stariji web sadržaj ostaje u bazi, ali se ne broji. Samo zbrojevi; uključeni i tvoji testni računi.` : " "}
           </p>
           <div className="flex gap-2">
+          <a href="/admin/plan" className="chip mono flex h-11 items-center border border-[color:var(--a-line)] px-4 text-[11px] text-[color:var(--a-mute)] lg:hidden">
+            [ PLAN ]
+          </a>
           <a href="/admin/tv" className="chip mono flex h-11 items-center border border-[color:var(--a-line)] px-4 text-[11px] text-[color:var(--a-mute)] lg:hidden">
             [ TV ]
           </a>
@@ -223,6 +226,10 @@ export default async function AdminPage({ searchParams }) {
       <div className="flex flex-col gap-12 lg:grid lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-10">
         <aside className="hidden lg:block" aria-label="Izbornik">
           <div className="sticky top-6 flex flex-col gap-3">
+            <a href="/admin/plan" className="chip mono flex h-10 items-center justify-between border border-[color:var(--a-line)] px-3 text-[11px] text-[color:var(--a-mute)]">
+              <span>[ PLAN RADA ]</span>
+              <span aria-hidden="true">▦</span>
+            </a>
             <a href="/admin/tv" className="chip mono flex h-10 items-center justify-between border border-[color:var(--a-line)] px-3 text-[11px] text-[color:var(--a-mute)]">
               <span>[ TV NAČIN ]</span>
               <span aria-hidden="true">▶</span>

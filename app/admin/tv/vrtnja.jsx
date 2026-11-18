@@ -22,7 +22,7 @@ export function Sat() {
   return <span ref={ref} className="num text-[clamp(1.1rem,1.4vw,2rem)] tabular-nums">—</span>;
 }
 
-export function TvOkvir({ sat, children }) {
+export function TvOkvir({ sat, children, oznaka = "TV" }) {
   useEffect(() => {
     const tipka = (e) => {
       if (e.key.toLowerCase() !== "f" || e.metaKey || e.ctrlKey) return;
@@ -36,7 +36,7 @@ export function TvOkvir({ sat, children }) {
     <div className="flex min-h-dvh flex-col lg:h-dvh lg:overflow-hidden">
       <header className="flex items-center justify-between gap-4 border-b border-[color:var(--a-line)] px-[clamp(12px,1.6vw,32px)] py-2.5" style={{ paddingTop: "max(10px, env(safe-area-inset-top))" }}>
         <span className="lbl whitespace-nowrap text-[clamp(10px,0.75vw,16px)]">
-          [ LKT / TV ] <span className="hidden sm:inline">{"///"} ZID 01 {"///"} SAMO ZBROJEVI</span>
+          [ LKT / {oznaka} ] <span className="hidden sm:inline">{"///"} {oznaka === "TV" ? "ZID 01 /// SAMO ZBROJEVI" : "PLAN RADA /// DO 1. 12."}</span>
         </span>
         <div className="flex items-center gap-4 whitespace-nowrap">
           {sat}
