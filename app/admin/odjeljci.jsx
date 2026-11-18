@@ -11,6 +11,7 @@ export { IGRE, PUSH };
 export const GRUPE = { korisnici: "#7DD3FC", aktivnost: "#C4B5FD", tehnika: "#A7B4C6" };
 // [id, ime, ASCII znak, skupina]
 export const ODJELJCI = [
+  ["glavni", "Glavni broj", "(!)", "korisnici"],
   ["pregled", "Pregled", "[=]", "korisnici"],
   ["rast", "Rast", "/^", "korisnici"],
   ["angazman", "Angažman", "><", "korisnici"],
@@ -652,6 +653,56 @@ export function Cronovi({ c }) {
           Pozivi iz baze u 24 h: {broj(c.http.ok)} uspješnih, {broj(c.http.greske)} s greškom.
         </p>
       )}
+    </Odjeljak>
+  );
+}
+
+// Glavni broj (Petar 18. 11.): izlasci s ekipom. Osoba + noć u kojoj je objavila rundu, a vani je bio i bar jedan
+// njezin pajdaš. Uspoređuje se tekući tjedan do danas s istim dijelom prošlog tjedna; ritam je prosjek po danu.
+export function Glavni({ g }) {
+  const pod = "Izlazak s ekipom = netko je objavio rundu, a iste noći je vani bio i bar jedan njegov pajdaš. Zato LAKAT postoji.";
+  if (!g?.podaci) {
+    return (
+      <Odjeljak id="glavni" naslov="Glavni broj." pod={pod}>
+        <p className="mono text-[11px] text-[color:var(--a-mute)]">{g?.greska ?? "Nema podataka."}</p>
+      </Odjeljak>
+    );
+  }
+  const p = g.podaci;
+  const tjedni = p.tjedni ?? [];
+  const prosli = tjedni.at(-2);
+  const razlika = p.do_danas - p.do_danas_prije;
+  const ritam = (p.ritam ?? []).map((r) => ({ k: DANI[r.dan - 1], v: Number(r.prosjek) }));
+  const najjaci = ritam.reduce((a, b) => (b.v > a.v ? b : a), ritam[0] ?? { k: "—", v: 0 });
+  return (
+    <Odjeljak id="glavni" naslov="Glavni broj." pod={pod}>
+      <Plocice>
+        <Plocica
+          i={0}
+          oznaka="Izlasci s ekipom, ovaj tjedan"
+          vrijednost={p.do_danas}
+          ton={razlika > 0 ? "up" : razlika < 0 ? "down" : undefined}
+          ispod={`${razlika >= 0 ? "+" : ""}${razlika} prema istim danima prošli tjedan (${broj(p.do_danas_prije)})`}
+          trend={tjedni.map((t) => t.izlasci)}
+        />
+        <Plocica i={1} oznaka="Prošli tjedan" vrijednost={prosli?.izlasci ?? 0} mala ispod={`${broj(prosli?.ljudi ?? 0)} ljudi s ekipom`} />
+        <Plocica
+          i={2}
+          oznaka="Sami vani, prošli tjedan"
+          vrijednost={Math.max(0, (prosli?.vani ?? 0) - (prosli?.izlasci ?? 0))}
+          mala
+          ispod="noći bez ijednog pajdaša vani"
+        />
+        <Plocica i={3} oznaka="Najjači dan" vrijednost={najjaci.k} mala ispod={`prosjek ${String(najjaci.v).replace(".", ",")} izlazaka`} />
+      </Plocice>
+      <div className="grid gap-3 md:grid-cols-2">
+        <Kartica id="glavni-tjedni" naslov="Po tjednu" pod="Izlasci s ekipom, zadnjih 8 tjedana; zadnji stupac je tekući tjedan.">
+          <Stupci redovi={tjedni.map((t) => ({ dan: t.tjedan, izlasci: t.izlasci }))} polje="izlasci" oznaka="Izlasci s ekipom" />
+        </Kartica>
+        <Kartica id="glavni-ritam" naslov="Tjedni ritam" pod="Prosjek izlazaka s ekipom po danu, iz tjedana u kojima se izlazilo.">
+          <Trake redovi={ritam} />
+        </Kartica>
+      </div>
     </Odjeljak>
   );
 }
