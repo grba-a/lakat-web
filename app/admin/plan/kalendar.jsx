@@ -169,19 +169,25 @@ export function Kalendar({ v, d, danas, naslov, prije, poslije, dani, kartice, b
           <span className="ml-auto flex flex-wrap gap-3">{redovi.map(([r, ime]) => <span key={r} className="mono flex items-center gap-1.5 text-[11px] normal-case text-[color:var(--a-mute)]"><span aria-hidden="true" className="inline-block size-2.5 rounded-full" style={{ background: BOJA_RED[r] }} />{ime}</span>)}</span>
         </div>
 
-        <div className={`grid min-h-0 flex-1 gap-3 ${v === "mjesec" ? "" : "lg:grid-cols-[minmax(0,1fr)_minmax(240px,300px)]"}`}>
+        {/* Red mreže je minmax(0,1fr): prikaz stane u visinu ekrana (TV okvir ne skrola), a višak skrola unutra. */}
+        <div className={`grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)] gap-3 ${v === "mjesec" ? "" : "lg:grid-cols-[minmax(0,1fr)_minmax(240px,300px)]"}`}>
           {v === "mjesec" && (
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[var(--r-lg)] border border-[color:var(--a-line)]">
-              <div className="grid grid-cols-7 border-b border-[color:var(--a-line)] bg-[#0a0a0a]">{DANI_KRATKO.map((n) => <p key={n} className={`${LBL} px-2 py-2 text-center`}>{n}</p>)}</div>
-              <div className="grid flex-1 grid-cols-7" style={{ gridAutoRows: "minmax(clamp(64px,11vh,150px), 1fr)" }}>
+            // Jedna mreža: red naslova + točno onoliko tjedana koliko mjesec ima; tjedni dijele visinu ekrana (najmanje 64 px).
+            <div className="grid h-full min-h-0 grid-cols-7 overflow-y-auto rounded-[var(--r-lg)] border border-[color:var(--a-line)]" style={{ gridTemplateRows: `auto repeat(${Math.ceil(dani.length / 7)}, minmax(64px, 1fr))` }}>
+              {DANI_KRATKO.map((n) => <p key={n} className={`${LBL} sticky top-0 z-10 border-b border-[color:var(--a-line)] bg-[#0a0a0a] px-2 py-2 text-center`}>{n}</p>)}
+              <div className="contents">
                 {dani.map((x) => {
                   const lista = zaDan(x.id);
                   return (
-                    <div key={x.id} onClick={() => router.push(url("dan", x.id))} className={`group relative flex min-w-0 cursor-pointer flex-col gap-1 border-b border-r border-[color:var(--a-line)] p-1 sm:p-1.5 ${x.uMjesecu ? "" : "bg-[rgb(255_255_255/0.015)] opacity-55"} ${x.danas ? "bg-[rgb(74_222_128/0.05)]" : ""}`}>
-                      <Link href={url("dan", x.id)} onClick={(e) => e.stopPropagation()} aria-label={`${x.dan}, ${x.broj}.`} className={`num flex size-8 items-center justify-center self-start rounded-full text-[clamp(13px,1vw,18px)] leading-none ${x.danas ? "bg-[color:var(--a-live)] text-[#04140a]" : x.vikend ? "text-[color:var(--a-mute)]" : ""}`}>{x.broj}</Link>
+                    <div key={x.id} onClick={() => router.push(url("dan", x.id))} className={`group relative flex min-h-0 min-w-0 cursor-pointer flex-col gap-1 overflow-hidden border-b border-r border-[color:var(--a-line)] p-1 sm:p-1.5 ${x.uMjesecu ? "" : "bg-[rgb(255_255_255/0.015)] opacity-55"} ${x.danas ? "bg-[rgb(74_222_128/0.05)]" : ""}`}>
+                      {/* Broj dana i ukupan broj stavki uvijek vidljivi; stavke ispod se režu kad je red nizak (laptop). */}
+                      <div className="flex shrink-0 items-center justify-between gap-1">
+                        <Link href={url("dan", x.id)} onClick={(e) => e.stopPropagation()} aria-label={`${x.dan}, ${x.broj}.`} className={`num flex size-8 shrink-0 items-center justify-center rounded-full text-[clamp(13px,1vw,18px)] leading-none ${x.danas ? "bg-[color:var(--a-live)] text-[#04140a]" : x.vikend ? "text-[color:var(--a-mute)]" : ""}`}>{x.broj}</Link>
+                        {lista.length > 0 && <span className="mono hidden text-[11px] text-[color:var(--a-mute)] sm:inline">{lista.length}</span>}
+                      </div>
                       {/* Mobitel: točkice; veći ekran: stavke (najviše 3) i „+N“. */}
                       <div className="flex flex-wrap gap-1 sm:hidden">{lista.slice(0, 4).map((k) => <span key={k.id} className="size-1.5 rounded-full" style={{ background: k.kasni ? "var(--a-alarm)" : BOJA_RED[k.red], opacity: gotova(k) ? 0.4 : 1 }} />)}</div>
-                      <div className="hidden min-w-0 flex-col gap-1 sm:flex">
+                      <div className="hidden min-h-0 min-w-0 flex-col gap-1 overflow-hidden sm:flex">
                         {lista.slice(0, 3).map((k) => <Cip key={k.id} k={k} otvori={otvori} />)}
                         {lista.length > 3 && <Link href={url("dan", x.id)} onClick={(e) => e.stopPropagation()} className="mono px-2 text-[11px] text-[color:var(--a-mute)] hover:text-[color:var(--a-fg)]">+{lista.length - 3} više</Link>}
                       </div>
