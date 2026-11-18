@@ -213,7 +213,7 @@ export function Kalendar({ v, d, danas, naslov, prije, poslije, dani, kartice, b
           )}
 
           {v === "dan" && (
-            <div className="grid content-start gap-4">
+            <div className="grid min-h-0 content-start gap-4 overflow-y-auto pr-1">
               {redovi.map(([r, ime]) => {
                 const lista = zaDan(d).filter((k) => k.red === r);
                 return (
@@ -228,7 +228,7 @@ export function Kalendar({ v, d, danas, naslov, prije, poslije, dani, kartice, b
           )}
 
           {v !== "mjesec" && (
-            <aside className="grid content-start gap-2 rounded-[var(--r-lg)] border border-[color:var(--a-line)] p-3" aria-label="Bez datuma">
+            <aside className="grid min-h-0 content-start gap-2 overflow-y-auto rounded-[var(--r-lg)] border border-[color:var(--a-line)] p-3" aria-label="Bez datuma">
               <h2 className={LBL}>Bez datuma · {bezDatuma.length}</h2>
               {bezDatuma.map((k) => <Cip key={k.id} k={k} otvori={otvori} veliki />)}
               <button type="button" onClick={() => nova(null)} className="chip mono min-h-11 rounded-[var(--r-md)] border border-dashed border-[color:var(--a-line)] text-[11px] text-[color:var(--a-mute)]">+ bilješka</button>

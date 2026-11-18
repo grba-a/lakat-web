@@ -18,7 +18,12 @@ const DANI = ["nedjelja", "ponedjeljak", "utorak", "srijeda", "četvrtak", "peta
 const DAN = 864e5;
 const iso = (t) => new Date(t).toISOString().slice(0, 10);
 const t12 = (d) => Date.parse(`${d}T12:00:00Z`);
-const praviDan = (v) => typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v) && iso(t12(v)) === v;
+// Samo stvaran datum između 2020. i 2100. (Codex 18. 11.: 2026-13-01 je rušio stranicu, 0099 je postajao 1999).
+const praviDan = (v) => {
+  if (typeof v !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+  const god = Number(v.slice(0, 4)), t = t12(v);
+  return god >= 2020 && god <= 2100 && Number.isFinite(t) && iso(t) === v;
+};
 const ponedjeljak = (t) => t - ((new Date(t).getUTCDay() + 6) % 7) * DAN;
 
 export default async function PlanPage({ searchParams }) {
