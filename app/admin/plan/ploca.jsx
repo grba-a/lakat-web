@@ -3,7 +3,7 @@
 // Zid plana: mreža dan × red, kartice s trakom stanja. Dodir kartice = ladica (stanje, dan, red, bilješka),
 // „+“ u ćeliji = tvoja bilješka. Sprema se odmah (akcije), zid se osvježi. Pokret samo transform/opacity.
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { STANJA } from "@/lib/plan";
 import { dodajKarticu, obrisiKarticu, spremiKarticu } from "./actions";
 
@@ -38,21 +38,31 @@ function Kartica({ k, otvori }) {
 function Ladica({ k, stupci, redovi, zatvori }) {
   const router = useRouter();
   const [nacrt, setNacrt] = useState(k);
-  const [promijenjeno, setPromijenjeno] = useState({});
   // Vlastita bilješka se uređuje kao naslov; na tuđoj kartici je to napomena (biljeska) za Claudea.
   const [tekst, setTekst] = useState(k.id ? (k.moja ? k.naslov : k.biljeska ?? "") : "");
   const maks = !k.id || k.moja ? 200 : 600;
   const [greska, setGreska] = useState("");
   const [radi, start] = useTransition();
+  const ladica = useRef(null);
+  const zatvoriRef = useRef(zatvori);
+  zatvoriRef.current = zatvori;
   useEffect(() => {
-    const esc = (e) => e.key === "Escape" && zatvori();
-    document.addEventListener("keydown", esc);
-    return () => document.removeEventListener("keydown", esc);
-  }, [zatvori]);
-  const izbor = (polje, v) => {
-    setNacrt((n) => ({ ...n, [polje]: v }));
-    setPromijenjeno((p) => ({ ...p, [polje]: true }));
-  };
+    // Fokus ostaje u ladici (Tab kruži), Esc zatvara, a nakon zatvaranja fokus se vraća na karticu s koje je otvorena.
+    const prije = document.activeElement;
+    const tipka = (e) => {
+      if (e.key === "Escape") return zatvoriRef.current();
+      if (e.key !== "Tab" || !ladica.current) return;
+      const f = [...ladica.current.querySelectorAll("button, textarea, [href]")].filter((x) => !x.disabled);
+      if (!f.length) return;
+      const [prvi, zadnji] = [f[0], f.at(-1)];
+      if (e.shiftKey && document.activeElement === prvi) { e.preventDefault(); zadnji.focus(); }
+      else if (!e.shiftKey && document.activeElement === zadnji) { e.preventDefault(); prvi.focus(); }
+      else if (!ladica.current.contains(document.activeElement)) { e.preventDefault(); prvi.focus(); }
+    };
+    document.addEventListener("keydown", tipka);
+    return () => { document.removeEventListener("keydown", tipka); if (prije instanceof HTMLElement) prije.focus(); };
+  }, []);
+  const izbor = (polje, v) => setNacrt((n) => ({ ...n, [polje]: v }));
   const spremi = () =>
     start(async () => {
       const dan = nacrt.stupac === "kasnije" ? null : nacrt.stupac;
@@ -60,9 +70,10 @@ function Ladica({ k, stupci, redovi, zatvori }) {
       if (k.id) {
         // Šalje se samo ono što je Petar stvarno promijenio: datum i stanje ostaju kakvi jesu (Codex 18. 11.).
         const p = {};
-        if (promijenjeno.stanje) p.stanje = nacrt.stanje;
-        if (promijenjeno.red) p.red = nacrt.red;
-        if (promijenjeno.stupac) p.dan = dan;
+        // Usporedba s izvornim stanjem: ponovni klik na isto (ili tamo-natrag) ne mijenja ništa (Codex 18. 11. b).
+        if (nacrt.stanje !== k.stanje) p.stanje = nacrt.stanje;
+        if (nacrt.red !== k.red) p.red = nacrt.red;
+        if (nacrt.stupac !== k.stupac) p.dan = dan;
         if (k.moja) { if (tekst.trim() !== k.naslov) p.naslov = tekst; }
         else if (tekst.trim() !== (k.biljeska ?? "")) p.biljeska = tekst;
         r = Object.keys(p).length ? await spremiKarticu(k.id, p) : { ok: true };
@@ -84,7 +95,7 @@ function Ladica({ k, stupci, redovi, zatvori }) {
   return (
     <>
       <div className="fixed inset-0 z-40 bg-black/60" onClick={zatvori} aria-hidden="true" />
-      <section role="dialog" aria-modal="true" aria-label={k.id ? k.naslov : "Nova bilješka"} className="fixed inset-x-0 bottom-0 z-50 mx-auto grid max-h-[86dvh] max-w-[640px] gap-3 overflow-y-auto rounded-t-[20px] border-t border-[color:var(--a-line)] bg-[#121413] p-4" style={{ paddingBottom: "max(18px, env(safe-area-inset-bottom))" }}>
+      <section ref={ladica} role="dialog" aria-modal="true" aria-label={k.id ? k.naslov : "Nova bilješka"} className="fixed inset-x-0 bottom-0 z-50 mx-auto grid max-h-[86dvh] max-w-[640px] gap-3 overflow-y-auto rounded-t-[20px] border-t border-[color:var(--a-line)] bg-[#121413] p-4" style={{ paddingBottom: "max(18px, env(safe-area-inset-bottom))" }}>
         <h3 className="text-[18px] font-extrabold normal-case">{k.id ? (k.moja ? "Tvoja bilješka" : k.naslov) : "Nova bilješka"}</h3>
         <label className="sr-only" htmlFor="plan-tekst">{k.id && !k.moja ? "Napomena za Claudea" : "Tekst bilješke"}</label>
         <textarea id="plan-tekst" autoFocus maxLength={maks} value={tekst} onChange={(e) => setTekst(e.target.value)} placeholder={k.id && !k.moja ? "Napomena za Claudea…" : "Napiši bilješku…"} className="min-h-16 w-full rounded-[var(--r-md)] border border-[color:var(--a-line)] bg-[#0d0f0e] p-3 text-[15px] normal-case text-[color:var(--a-fg)]" />
