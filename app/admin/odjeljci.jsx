@@ -13,6 +13,7 @@ export const GRUPE = { korisnici: "#7DD3FC", aktivnost: "#C4B5FD", tehnika: "#A7
 export const ODJELJCI = [
   ["glavni", "Glavni broj", "(!)", "korisnici"],
   ["pregled", "Pregled", "[=]", "korisnici"],
+  ["gradovi", "Gradovi", "#", "korisnici"],
   ["rast", "Rast", "/^", "korisnici"],
   ["angazman", "Angažman", "><", "korisnici"],
   ["igre", "Igre", "[+]", "aktivnost"],
@@ -703,6 +704,43 @@ export function Glavni({ g }) {
           <Trake redovi={ritam} />
         </Kartica>
       </div>
+    </Odjeljak>
+  );
+}
+
+// Put do 1.000 po gradu (Petar 18. 11.): kritična masa grada je 1.000 ljudi koji izlaze s LAKTOM. Traka = ljudi s rundom
+// u zadnjih 30 dana (kvart runde određuje grad); uz nju prijave s liste čekanja. Ispod 3 osobe broj se ne pokazuje.
+const CILJ_GRADA = 1000;
+export function Gradovi({ g }) {
+  const pod = "Ljudi s rundom u zadnjih 30 dana prema cilju od 1.000 po gradu, uz prijave s liste čekanja. Manje od 3 se ne pokazuje.";
+  const redovi = (g?.podaci ?? []).filter((r) => r.ljudi_30d != null || r.ljudi_sve != null || r.prijave != null);
+  return (
+    <Odjeljak id="gradovi" naslov="Put do 1.000." pod={pod}>
+      {!g?.podaci ? (
+        <p className="mono text-[11px] text-[color:var(--a-mute)]">{g?.greska ?? "Nema podataka."}</p>
+      ) : !redovi.length ? (
+        <p className="mono text-[11px] text-[color:var(--a-mute)]">Još nijedan grad nema 3 ili više ljudi.</p>
+      ) : (
+        <ul className="flex flex-col" aria-label="Gradovi prema 1.000">
+          {redovi.map((r, i) => {
+            const n = r.ljudi_30d ?? 0;
+            return (
+              <li key={r.grad} className="grid grid-cols-[minmax(0,7.5rem)_1fr] items-center gap-3 border-b border-[color:var(--a-line)] py-2 last:border-0">
+                <span className="mono truncate text-[12px] normal-case tracking-[0.03em]">{r.grad}</span>
+                <span className="flex min-w-0 flex-col gap-1">
+                  <span className="relative block h-2 overflow-hidden rounded-full bg-[color:var(--a-line)]" role="img" aria-label={`${r.grad}: ${n} od ${CILJ_GRADA}`}>
+                    <span className={`bar ${i ? "dim" : ""} absolute inset-y-0 left-0`} style={{ width: `${Math.max(1, (n / CILJ_GRADA) * 100)}%`, "--i": i }} />
+                  </span>
+                  <span className="mono text-[11px] normal-case tracking-[0.03em] text-[color:var(--a-mute)]">
+                    {r.ljudi_30d != null ? `${broj(r.ljudi_30d)} / 1.000 s rundom (30 d)` : "< 3 s rundom"}
+                    {r.prijave != null ? ` · ${broj(r.prijave)} na listi čekanja` : ""}
+                  </span>
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </Odjeljak>
   );
 }

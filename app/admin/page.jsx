@@ -1,7 +1,7 @@
 // LAKAT /admin (Petar 11. 11.): App Store stanje i brojke aplikacije na jednom mjestu, pod šifrom.
 // SAMO ZBROJEVI: nijedno ime, slika ni lokacija (pravilo 3.0 vrijedi i za admina).
 import { notFound } from "next/navigation";
-import { adminUkljucen, baza as bazaZdravlje, dnevno, glavni, igSnimka, jesamLiAdmin, pregled, zadnjePrijave } from "@/lib/admin";
+import { adminUkljucen, baza as bazaZdravlje, dnevno, glavni, gradovi, igSnimka, jesamLiAdmin, pregled, zadnjePrijave } from "@/lib/admin";
 import { instagram } from "@/lib/instagram";
 import { mailovi } from "@/lib/brevo-statistika";
 import { dvaFaktora } from "@/lib/totp";
@@ -14,7 +14,7 @@ import { odjava } from "./actions";
 import { Prijava } from "./prijava";
 import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, Upozorenje, broj, datum, vrijeme } from "./ui";
 import { Izbornik, Najave, Orb, Osvjezi, Radar, Savjet, Trazilica } from "./zivo";
-import { Angazman, Baza, Cronovi, Glavni, IGRE, Igre, Instagram, Kafici, ODJELJCI, PUSH, Pregled, Push, Rast, Sustav, Uzbune, odjeljak } from "./odjeljci";
+import { Angazman, Baza, Cronovi, Glavni, Gradovi, IGRE, Igre, Instagram, Kafici, ODJELJCI, PUSH, Pregled, Push, Rast, Sustav, Uzbune, odjeljak } from "./odjeljci";
 
 export const metadata = {
   title: "Admin · LAKAT",
@@ -98,7 +98,7 @@ export default async function AdminPage({ searchParams }) {
   // Današnji dan u Zagrebu (kao u SQL-u); niz 2n dana daje i duh prethodnog razdoblja.
   const danas = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Zagreb" }).format(new Date());
   const od2 = new Date(Date.parse(`${danas}T12:00:00Z`) - (2 * dana - 1) * 864e5).toISOString().slice(0, 10);
-  const [pr, asc, bz, nz, ig, mail, prijave, incidenti, cr, gl, aa] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas), instagram(), mailovi(dana), zadnjePrijave(), povijestUzbuna(), cronovi(), glavni(8), appleAnalitika()]);
+  const [pr, asc, bz, nz, ig, mail, prijave, incidenti, cr, gl, aa, gr] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas), instagram(), mailovi(dana), zadnjePrijave(), povijestUzbuna(), cronovi(), glavni(8), appleAnalitika(), gradovi()]);
   // Instagram ne daje povijest pratitelja: svako otvaranje upiše današnju snimku i vrati niz.
   const igNiz = ig?.profil ? await igSnimka(ig.profil.pratitelji, ig.profil.objave) : [];
   const uzbune = provjere({ pregled: pr, asc, baza: bz, cronovi: cr });
@@ -253,6 +253,7 @@ export default async function AdminPage({ searchParams }) {
             <>
               <Glavni g={gl} />
               <Pregled p={p} mjera={mjera} niz={nz.podaci} />
+              <Gradovi g={gr} />
               <Rast p={p} />
               <Angazman p={p} />
               <Igre p={p} />
