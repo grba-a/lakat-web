@@ -45,10 +45,10 @@ function Ladica({ k, stupci, redovi, zatvori }) {
   const [radi, start] = useTransition();
   const ladica = useRef(null);
   const zatvoriRef = useRef(zatvori);
-  zatvoriRef.current = zatvori;
+  useEffect(() => { zatvoriRef.current = zatvori; }, [zatvori]);
   useEffect(() => {
-    // Fokus ostaje u ladici (Tab kruži), Esc zatvara, a nakon zatvaranja fokus se vraća na karticu s koje je otvorena.
-    const prije = document.activeElement;
+    // Fokus ostaje u ladici (Tab kruži), Esc zatvara; povratak fokusa na karticu radi zid (Ploca), jer autoFocus
+    // tekstnog polja stigne prije ovog efekta.
     const tipka = (e) => {
       if (e.key === "Escape") return zatvoriRef.current();
       if (e.key !== "Tab" || !ladica.current) return;
@@ -60,7 +60,7 @@ function Ladica({ k, stupci, redovi, zatvori }) {
       else if (!ladica.current.contains(document.activeElement)) { e.preventDefault(); prvi.focus(); }
     };
     document.addEventListener("keydown", tipka);
-    return () => { document.removeEventListener("keydown", tipka); if (prije instanceof HTMLElement) prije.focus(); };
+    return () => document.removeEventListener("keydown", tipka);
   }, []);
   const izbor = (polje, v) => setNacrt((n) => ({ ...n, [polje]: v }));
   const spremi = () =>
@@ -121,7 +121,14 @@ function Ladica({ k, stupci, redovi, zatvori }) {
 }
 
 export function Ploca({ stupci, redovi, kartice, greska, brojke, lansiranje }) {
-  const [otvorena, setOtvorena] = useState(null);
+  const [otvorena, postavi] = useState(null);
+  const otvarac = useRef(null);
+  // Zapamti element s kojeg je ladica otvorena i vrati mu fokus kad se zatvori.
+  const setOtvorena = (k) => {
+    if (k) otvarac.current = document.activeElement;
+    else if (otvarac.current instanceof HTMLElement) setTimeout(() => otvarac.current?.focus(), 0);
+    postavi(k);
+  };
   if (greska) return <p className="mono p-6 text-[13px] normal-case text-[color:var(--a-mute)]">{greska}</p>;
   const u = (red, stupac) => kartice.filter((k) => k.red === red && k.stupac === stupac).sort((a, b) => Number(!!b.kasni) - Number(!!a.kasni) || a.redoslijed - b.redoslijed);
   return (
