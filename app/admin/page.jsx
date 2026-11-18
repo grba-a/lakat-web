@@ -7,12 +7,13 @@ import { mailovi } from "@/lib/brevo-statistika";
 import { dvaFaktora } from "@/lib/totp";
 import { povijestUzbuna } from "@/lib/uzbune-isporuka";
 import { provjere } from "@/lib/upozorenja";
+import { cronovi } from "@/lib/cronovi";
 import { ascPregled, ascReady } from "@/lib/asc";
 import { odjava } from "./actions";
 import { Prijava } from "./prijava";
 import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, Upozorenje, broj, datum, vrijeme } from "./ui";
 import { Izbornik, Najave, Orb, Osvjezi, Radar, Savjet, Trazilica } from "./zivo";
-import { Angazman, Baza, IGRE, Igre, Instagram, Kafici, ODJELJCI, PUSH, Pregled, Push, Rast, Sustav, Uzbune, odjeljak } from "./odjeljci";
+import { Angazman, Baza, Cronovi, IGRE, Igre, Instagram, Kafici, ODJELJCI, PUSH, Pregled, Push, Rast, Sustav, Uzbune, odjeljak } from "./odjeljci";
 
 export const metadata = {
   title: "Admin · LAKAT",
@@ -96,10 +97,10 @@ export default async function AdminPage({ searchParams }) {
   // Današnji dan u Zagrebu (kao u SQL-u); niz 2n dana daje i duh prethodnog razdoblja.
   const danas = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Zagreb" }).format(new Date());
   const od2 = new Date(Date.parse(`${danas}T12:00:00Z`) - (2 * dana - 1) * 864e5).toISOString().slice(0, 10);
-  const [pr, asc, bz, nz, ig, mail, prijave, incidenti] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas), instagram(), mailovi(dana), zadnjePrijave(), povijestUzbuna()]);
+  const [pr, asc, bz, nz, ig, mail, prijave, incidenti, cr] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas), instagram(), mailovi(dana), zadnjePrijave(), povijestUzbuna(), cronovi()]);
   // Instagram ne daje povijest pratitelja: svako otvaranje upiše današnju snimku i vrati niz.
   const igNiz = ig?.profil ? await igSnimka(ig.profil.pratitelji, ig.profil.objave) : [];
-  const uzbune = provjere({ pregled: pr, asc, baza: bz });
+  const uzbune = provjere({ pregled: pr, asc, baza: bz, cronovi: cr });
   const p = pr.podaci;
   // App Store odjeljak čita web korake i listu čekanja u starom obliku.
   const s = p
@@ -258,6 +259,7 @@ export default async function AdminPage({ searchParams }) {
               <Instagram ig={ig} niz={igNiz} />
               <Sustav p={p} baza={bz.podaci} prijave={prijave} dvaFaktora={dvaFaktora()} incidenti={incidenti} />
               <Baza b={bz.podaci} greska={bz.greska} />
+              <Cronovi c={cr} />
             </>
           ) : (
             <Upozorenje>{pr.greska}</Upozorenje>

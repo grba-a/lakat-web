@@ -1,6 +1,6 @@
 // Odjeljci /admin ploče, faza 1 (Petar 11. 11.). Podaci: admin_pregled(dana), samo zbrojevi.
 // Skupina manja od 3 osobe dolazi iz baze kao null i ovdje piše „< 3“.
-import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, broj, datum, posto } from "./ui";
+import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, broj, datum, posto, vrijeme } from "./ui";
 import { mb } from "@/lib/upozorenja";
 import { Tablica } from "./tablica";
 import { Vrijeme } from "./vrijeme";
@@ -20,6 +20,7 @@ export const ODJELJCI = [
   ["instagram", "Instagram", "[@]", "aktivnost"],
   ["sustav", "Sustav", "</>", "tehnika"],
   ["baza", "Baza", "|||", "tehnika"],
+  ["cronovi", "Cronovi", "(~)", "tehnika"],
   ["app-store", "App Store", "[A]", "tehnika"],
 ];
 export const odjeljak = (id) => {
@@ -607,6 +608,50 @@ export function Instagram({ ig, niz }) {
           redovi={objave.map((o) => [{ t: datum(o.dan), v: o.dan }, o.vrsta, { t: o.opis || "—", v: o.opis }, broj(o.lajkovi), broj(o.komentari)])}
         />
       </Kartica>
+    </Odjeljak>
+  );
+}
+
+// Cronovi (Petar 18. 11.): poslovi koji rade sami. Pada / kasni ide i u uzbune; „čeka“ = još se nije javio (prije deploya).
+const CRON_STANJE = {
+  pada: ["PADA", "var(--a-alarm)"],
+  kasni: ["KASNI", "var(--a-warn)"],
+  ceka: ["ČEKA PRVI", "var(--a-mute)"],
+  ugasen: ["UGAŠEN", "var(--a-mute)"],
+  ok: ["RADI", "var(--a-live)"],
+};
+export function Cronovi({ c }) {
+  const pod = "Poslovi koji rade sami: zadnji uspjeh i kad bi trebali raditi. Pada ili kasni javlja se i kao uzbuna.";
+  if (!c || c.nema || c.greska) {
+    return (
+      <Odjeljak id="cronovi" naslov="Cronovi." pod={pod}>
+        <p className="mono text-[11px] text-[color:var(--a-mute)]">{c?.greska ?? "Čeka SQL docs/supabase-admin12.sql."}</p>
+      </Odjeljak>
+    );
+  }
+  return (
+    <Odjeljak id="cronovi" naslov="Cronovi." pod={pod}>
+      <ul className="flex flex-col gap-1.5" aria-label="Cronovi">
+        {c.redovi.map((r) => {
+          const [oznaka, boja] = CRON_STANJE[r.stanje] ?? CRON_STANJE.ok;
+          return (
+            <li key={r.posao} className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 rounded-[var(--r-md)] border px-3.5 py-2.5" style={{ borderColor: r.stanje === "ok" ? "var(--a-line, #262626)" : boja }}>
+              <span className="mono text-[11px] font-bold" style={{ color: boja }}>{oznaka}</span>
+              <span className="mono text-[12px] normal-case tracking-[0.02em]">{r.ime}</span>
+              <span className="mono text-[11px] normal-case tracking-[0.02em] text-[color:var(--a-mute)]">
+                {r.zadnjiOk ? `zadnji uspjeh ${vrijeme(r.zadnjiOk)}` : "još se nije javio"}
+                {r.svaki ? ` · ${r.svaki}` : ""}
+                {r.greska ? ` · ${r.greska}` : ""}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      {c.http && (
+        <p className="mono mt-2 text-[11px] text-[color:var(--a-mute)]">
+          Pozivi iz baze u 24 h: {broj(c.http.ok)} uspješnih, {broj(c.http.greske)} s greškom.
+        </p>
+      )}
     </Odjeljak>
   );
 }

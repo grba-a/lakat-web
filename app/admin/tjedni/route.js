@@ -4,6 +4,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { adminUkljucen, jesamLiAdmin } from "@/lib/admin";
 import { posaljiTjedni, tjedniSazetak } from "@/lib/tjedni";
+import { otkucaj } from "@/lib/cronovi";
 
 export const dynamic = "force-dynamic";
 
@@ -26,9 +27,11 @@ export async function GET(request) {
   if (!cronOk(request)) return new Response("Not found", { status: 404 });
   try {
     const naslov = await posaljiTjedni();
+    await otkucaj("web-tjedni", true);
     return Response.json({ ok: true, naslov });
   } catch (e) {
     console.error("tjedni", String(e.message || e).slice(0, 200));
+    await otkucaj("web-tjedni", false, e.message || e);
     return Response.json({ ok: false }, { status: 502 });
   }
 }
