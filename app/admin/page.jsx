@@ -9,6 +9,7 @@ import { povijestUzbuna } from "@/lib/uzbune-isporuka";
 import { provjere } from "@/lib/upozorenja";
 import { cronovi } from "@/lib/cronovi";
 import { ascPregled, ascReady } from "@/lib/asc";
+import { appleAnalitika } from "@/lib/apple-analitika";
 import { odjava } from "./actions";
 import { Prijava } from "./prijava";
 import { Kartica, Naslov, Plocica, Plocice, Stupci, Trake, Upozorenje, broj, datum, vrijeme } from "./ui";
@@ -97,7 +98,7 @@ export default async function AdminPage({ searchParams }) {
   // Današnji dan u Zagrebu (kao u SQL-u); niz 2n dana daje i duh prethodnog razdoblja.
   const danas = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Zagreb" }).format(new Date());
   const od2 = new Date(Date.parse(`${danas}T12:00:00Z`) - (2 * dana - 1) * 864e5).toISOString().slice(0, 10);
-  const [pr, asc, bz, nz, ig, mail, prijave, incidenti, cr, gl] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas), instagram(), mailovi(dana), zadnjePrijave(), povijestUzbuna(), cronovi(), glavni(8)]);
+  const [pr, asc, bz, nz, ig, mail, prijave, incidenti, cr, gl, aa] = await Promise.all([pregled(dana), ascPregled(), bazaZdravlje(), dnevno(od2, danas), instagram(), mailovi(dana), zadnjePrijave(), povijestUzbuna(), cronovi(), glavni(8), appleAnalitika()]);
   // Instagram ne daje povijest pratitelja: svako otvaranje upiše današnju snimku i vrati niz.
   const igNiz = ig?.profil ? await igSnimka(ig.profil.pratitelji, ig.profil.objave) : [];
   const uzbune = provjere({ pregled: pr, asc, baza: bz, cronovi: cr });
@@ -265,7 +266,7 @@ export default async function AdminPage({ searchParams }) {
           ) : (
             <Upozorenje>{pr.greska}</Upozorenje>
           )}
-          <AppStore asc={asc} s={s} mail={mail} dana={dana} />
+          <AppStore asc={asc} s={s} mail={mail} dana={dana} aa={aa} />
         </div>
       </div>
       <Savjet />
@@ -284,7 +285,7 @@ export default async function AdminPage({ searchParams }) {
   );
 }
 
-function AppStore({ asc, s, mail, dana }) {
+function AppStore({ asc, s, mail, dana, aa }) {
   const web = Object.fromEntries((s?.web ?? []).map((w) => [w.korak, w.broj]));
   const lista = s?.lista;
   const v = asc?.verzija, b = asc?.build, t = asc?.testeri, r = asc?.recenzije;
@@ -382,13 +383,38 @@ function AppStore({ asc, s, mail, dana }) {
                 <span className="mono mt-1 block text-[10.5px] normal-case tracking-[0.03em] text-[color:var(--a-mute)]">Ključ na webu smije samo izvještaje, namjerno. To je u TestFlight appu.</span>
               </li>
             )}
-            <li className="border border-dashed border-[color:var(--a-line)] px-3 py-2">
-              <b className="mono block text-[11px] font-bold">Prikazi stranice, konverzija, zadržavanje</b>
-              <span className="mono mt-1 block text-[10.5px] normal-case tracking-[0.03em] text-[color:var(--a-mute)]">App Analytics, Apple ih puni 1 do 2 dana nakon prvog zahtjeva.</span>
-            </li>
           </ul>
         </Kartica>
       </div>
+      <AppleAnalitika a={aa} />
     </section>
+  );
+}
+
+// Apple Analytics (lib/apple-analitika.js): App Store prikazi i posjeti, izvori, instalacije po kanalu. Apple kasni
+// 1–2 dana i skriva vrlo male brojke, pa zadnji dani mogu biti nepotpuni.
+const IZVOR = { "App Store search": "Pretraga u App Storeu", "App referrer": "Iz druge aplikacije", "App Store browse": "Pregledavanje App Storea", "Web referrer": "S weba", "Institutional purchase": "Ustanove", Unavailable: "Nepoznato" };
+function AppleAnalitika({ a }) {
+  if (!a) return null;
+  if (a.greska) return <Upozorenje>Apple Analytics: {a.greska}</Upozorenje>;
+  const zadnjih7 = (niz, polje) => niz.slice(-7).reduce((x, d) => x + (d[polje] || 0), 0);
+  const ins = a.instalacije ?? [];
+  return (
+    <div className="flex flex-col gap-3">
+      <Plocice>
+        <Plocica i={0} oznaka="Prikazi u App Storeu, 7 d" vrijednost={zadnjih7(a.dani, "prikazi")} mala trend={a.dani.map((d) => d.prikazi)} ispod="koliko je puta LAKAT viđen u popisu" />
+        <Plocica i={1} oznaka="Posjeti stranici, 7 d" vrijednost={zadnjih7(a.dani, "posjeti")} mala trend={a.dani.map((d) => d.posjeti)} ispod="otvorili stranicu aplikacije" />
+        <Plocica i={2} oznaka="Instalacije TestFlight, 7 d" vrijednost={zadnjih7(ins, "testflight")} mala ispod="novi buildovi i testeri" />
+        <Plocica i={3} oznaka="Instalacije App Store, 7 d" vrijednost={zadnjih7(ins, "trgovina")} mala ispod="stižu nakon izlaska 1. 12." />
+      </Plocice>
+      <div className="grid gap-3 md:grid-cols-2">
+        <Kartica id="apple-posjeti" naslov="Posjeti stranici po danu" pod="Apple Analytics, kasni 1–2 dana; vrlo male brojke Apple skriva.">
+          <Stupci redovi={a.dani} polje="posjeti" oznaka="Posjeti" />
+        </Kartica>
+        <Kartica id="apple-izvori" naslov="Odakle dolaze" pod="Posjeti stranici po izvoru, zadnjih 14 dana.">
+          <Trake redovi={(a.izvori ?? []).map(([k, v]) => ({ k: IZVOR[k] ?? k, v }))} />
+        </Kartica>
+      </div>
+    </div>
   );
 }
