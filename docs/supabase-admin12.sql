@@ -13,6 +13,8 @@ create table if not exists public.admin_otkucaji (
 );
 alter table public.admin_otkucaji enable row level security;
 revoke all on table public.admin_otkucaji from public, anon, authenticated;
+-- Pas čuvar u lakat-pwa čita tablicu izravno (service_role); Supabase novim tablicama više ne daje prava sam (Codex 18. 11.).
+grant select on table public.admin_otkucaji to service_role;
 
 create or replace function public.admin_otkucaj(p_posao text, p_ok boolean, p_greska text default null)
 returns void
