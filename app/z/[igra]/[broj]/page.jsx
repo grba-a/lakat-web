@@ -1,42 +1,32 @@
 import { notFound } from "next/navigation";
 import { KriglaTyping } from "@/components/krigla-typing";
 import { APP_STORE, storeLink } from "@/lib/launch";
+import { procitaj } from "@/lib/izazov";
 
 // Izazov iz igre u aplikaciji (lakat-ios val 5d, „Ruši me, pajdo"): /z/kula/26?od=petar.
 // Tko ima app, otvori ga (lakat://z/…) baš na toj igri s brojem na vrhu; ostali dobiju store ili
 // listu. Osobno i beskonačno, pa ne ide u indeks. Ime se ne sklanja (stoji u nominativu).
-// Nazivi i stropovi kao u aplikaciji (lakat-ios Igre.swift `sve`). Strop je PO IGRI: Spoji i Gajba idu do 99 999,
-// Galeb do 9 999 — izazov iznad 999 prije je davao 404 (Petar 8. 11.: „svaki drugi korisnik naleti na limit od 999").
-const IGRE = {
-  kula: { naziv: "Kula", max: 999 },
-  burek_u_cetiri: { naziv: "Pekara", max: 999 },
-  gajba: { naziv: "Gajba", max: 99999 },
-  galeb: { naziv: "Galeb", max: 9999 },
-  sankerov_lakat: { naziv: "Šanker", max: 200 },
-  zlatni_tocionik: { naziv: "Točionik", max: 999 },
-  do_krigle: { naziv: "Spoji", max: 99999 },
-  konobar: { naziv: "Konobar", max: 999 },
-  // Stare igre: linkovi iz ranijih buildova i dalje rade.
-  ravna_crta: { naziv: "Ravna crta", max: 999 },
-  gosti: { naziv: "Gosti na vratima", max: 9999 },
-};
-
-function procitaj(params, searchParams) {
-  const igra = IGRE[params.igra];
-  const naziv = igra?.naziv;
-  const broj = Number.parseInt(params.broj, 10);
-  if (!igra || !Number.isInteger(broj) || broj < 0 || broj > igra.max || String(broj) !== params.broj) return null;
-  const od = (searchParams?.od ?? "").toString().trim().slice(0, 24) || "Pajdaš";
-  return { igra: params.igra, naziv, broj, od };
-}
-
 export async function generateMetadata({ params, searchParams }) {
   const z = procitaj(await params, await searchParams);
   if (!z) return { robots: { index: false, follow: false } };
+  const naslov = `${z.naziv}: ${z.od} ima ${z.broj}. Sruši to.`;
+  const opis = "Igra iz LAKTA, aplikacije za druženje s ekipom. Rekord vide samo pajdaši.";
+  // Pretpregled u chatu nosi rekord, ne opću najavu stranice (layout openGraph se ovdje zamjenjuje cijeli).
+  // Slika je ruta, ne opengraph-image: ta ne vidi ?od=, a ime je pola poruke.
+  const slika = `/z/${z.igra}/${z.broj}/slika?od=${encodeURIComponent(z.od)}`;
   return {
-    title: `${z.naziv}: ${z.od} ima ${z.broj}. Sruši to. · LAKAT`,
-    description: "Igra iz LAKTA, aplikacije za druženje s ekipom. Rekord vide samo pajdaši.",
+    title: `${naslov} · LAKAT`,
+    description: opis,
     robots: { index: false, follow: true },
+    openGraph: {
+      locale: "hr_HR",
+      type: "website",
+      siteName: "LAKAT",
+      title: naslov,
+      description: opis,
+      images: [{ url: slika, width: 1200, height: 630, alt: naslov }],
+    },
+    twitter: { card: "summary_large_image", title: naslov, description: opis, images: [slika] },
   };
 }
 
