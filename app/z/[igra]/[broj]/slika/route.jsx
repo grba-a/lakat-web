@@ -21,16 +21,36 @@ function velicina(tekst) {
   return Math.min(tier, Math.floor(630 / najdulja));
 }
 
+// Emoji i znakovi kojih nema u Antonu tjeraju next/og da glif dohvaća s CDN-a (jsdelivr, Google Fonts);
+// bez mreže crtanje pukne. Zato iz imena idu emojiji, varijacijski selektori, ZWJ, zastavice i tagovi.
+const EMOJI = /[\p{Extended_Pictographic}\p{Emoji_Modifier}\p{Regional_Indicator}\u200D\uFE00-\uFE0F\u20E3\u{E0020}-\u{E007F}]/gu;
+const ocisti = (t) => String(t ?? "").replace(EMOJI, "").replace(/\s+/g, " ").trim();
+
+// Slika se nacrta odmah u memoriju (ImageResponse inače crta tek dok se odgovor šalje, pa greška ne bi
+// stigla do catcha). Ako ipak pukne (npr. pismo koje Anton nema, a CDN nije dostupan), ide čista brend
+// kartica bez teksta umjesto 500.
+async function uMemoriju(res) {
+  const buf = await res.arrayBuffer();
+  return new Response(buf, { headers: res.headers });
+}
+
 export async function GET(request, { params }) {
-  const z = procitaj(await params, { od: request.nextUrl.searchParams.get("od") });
+  const z = procitaj(await params, { od: ocisti(request.nextUrl.searchParams.get("od")) });
   if (!z) return new Response("Nema", { status: 404 });
 
   const [anton, krigla] = await Promise.all([
     readFile(join(process.cwd(), "assets/Anton-Regular.ttf")),
     readFile(join(process.cwd(), "assets/krigla-og.png"), "base64"),
   ]);
-  const naslov = `${z.naziv}: ${z.od} ima ${z.broj}`;
-  const rijeci = naslov.split(/\s+/);
+  try {
+    return await uMemoriju(nacrtaj({ naslov: `${z.naziv}: ${z.od} ima ${z.broj}`, anton, krigla }));
+  } catch {
+    return uMemoriju(nacrtaj({ naslov: "", anton, krigla }));
+  }
+}
+
+function nacrtaj({ naslov, anton, krigla }) {
+  const rijeci = naslov.split(/\s+/).filter(Boolean);
   const fs = velicina(naslov);
 
   return new ImageResponse(
@@ -52,19 +72,21 @@ export async function GET(request, { params }) {
           <div style={{ display: "flex", fontSize: 48 }}>
             LAKAT<span style={{ color: ZELENA }}>.</span>
           </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", flexWrap: "wrap", fontSize: fs, lineHeight: 0.98 }}>
-              {rijeci.map((r, i) => (
-                <span key={i} style={{ display: "flex", marginRight: i === rijeci.length - 1 ? 0 : fs * 0.22 }}>
-                  {r}
-                  {i === rijeci.length - 1 ? <span style={{ color: ZELENA }}>.</span> : null}
-                </span>
-              ))}
+          {rijeci.length ? (
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", fontSize: fs, lineHeight: 0.98 }}>
+                {rijeci.map((r, i) => (
+                  <span key={i} style={{ display: "flex", marginRight: i === rijeci.length - 1 ? 0 : fs * 0.22 }}>
+                    {r}
+                    {i === rijeci.length - 1 ? <span style={{ color: ZELENA }}>.</span> : null}
+                  </span>
+                ))}
+              </div>
+              <div style={{ display: "flex", fontSize: 64, marginTop: 18, textTransform: "uppercase" }}>
+                Sruši to<span style={{ color: ZELENA }}>.</span>
+              </div>
             </div>
-            <div style={{ display: "flex", fontSize: 64, marginTop: 18, textTransform: "uppercase" }}>
-              Sruši to<span style={{ color: ZELENA }}>.</span>
-            </div>
-          </div>
+          ) : null}
         </div>
       </div>
     ),
