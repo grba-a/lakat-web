@@ -11,12 +11,14 @@ import { procitaj } from "@/lib/izazov";
 const SIZE = { width: 1200, height: 630 };
 const ZELENA = "#4ADE80";
 
-// Najduža riječ (dug nadimak) mora stati u jedan red lijevo od Krigle; Anton u verzalu je ~0,5 em po znaku.
+// Najduža riječ (dug nadimak) mora stati u jedan red lijevo od Krigle; Anton je ~0,5 em po znaku u verzalu, manje u malim slovima.
 function velicina(tekst) {
   const n = tekst.length;
   const tier = n <= 12 ? 124 : n <= 22 ? 104 : n <= 36 ? 84 : 68;
-  const najdulja = Math.max(...tekst.split(/\s+/).map((r) => r.length), 1);
-  return Math.min(tier, Math.floor(630 / (najdulja * 0.5)));
+  // Široka slova (m, w) broje se kao 0,75 em, ostala 0,5 em: i „wwww…" od 24 znaka stane.
+  const sirina = (r) => [...r].reduce((a, c) => a + (/[mwMW]/.test(c) ? 0.75 : 0.5), 0);
+  const najdulja = Math.max(...tekst.split(/\s+/).map(sirina), 1);
+  return Math.min(tier, Math.floor(630 / najdulja));
 }
 
 export async function GET(request, { params }) {
@@ -51,7 +53,7 @@ export async function GET(request, { params }) {
             LAKAT<span style={{ color: ZELENA }}>.</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", flexWrap: "wrap", fontSize: fs, lineHeight: 0.98, textTransform: "uppercase" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", fontSize: fs, lineHeight: 0.98 }}>
               {rijeci.map((r, i) => (
                 <span key={i} style={{ display: "flex", marginRight: i === rijeci.length - 1 ? 0 : fs * 0.22 }}>
                   {r}
